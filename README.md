@@ -1,2 +1,3 @@
-# boardeo
-An Android local bulletin board social network
+# Boardeo
+
+Boardeo is an Android app that allows you to interact with virtual bulletin boards physically near you.
