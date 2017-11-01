@@ -6,26 +6,34 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+/**
+ * Adapter that handle the translation from brut data to displayable view
+ * Automatize the updates between data and view
+ */
 public class BoardItemAdapter extends RecyclerView.Adapter<BoardItemAdapter.BoardItemViewHolder> {
 
-    // TODO fetch firebase data
+    // TODO retrieve firebase data
+    /**
+     * List of board item data
+     */
     private BoardItemData[] itemData = {
-            new BoardItemData("name1", "author1", "description1")
+            new BoardItemData("name1", "author1", "description1"),
+            new BoardItemData("name2", "author2", "description2"),
+            new BoardItemData("name3", "author3", "description3")
     };
 
     /**
-     * Created by esia on 31/10/17.
+     * Encapsulate the data of a board item
      */
-
-    public class BoardItemData {
+    private static class BoardItemData {
         private String boardName;
         private String boardAuthor;
-        private String boardShortDesc;
+        private String boardShortDescription;
 
-        public BoardItemData(String boardName, String boardAuthor, String boardShortDesc) {
+        public BoardItemData(String boardName, String boardAuthor, String boardShortDescription) {
             this.boardName = boardName;
             this.boardAuthor = boardAuthor;
-            this.boardShortDesc = boardShortDesc;
+            this.boardShortDescription = boardShortDescription;
         }
 
         public String getBoardName() {
@@ -36,12 +44,16 @@ public class BoardItemAdapter extends RecyclerView.Adapter<BoardItemAdapter.Boar
             return boardAuthor;
         }
 
-        public String getBoardShortDesc() {
-            return boardShortDesc;
+        public String getBoardShortDescription() {
+            return boardShortDescription;
         }
     }
 
-    public class BoardItemViewHolder extends RecyclerView.ViewHolder {
+    /**
+     * Encapsulate the useful views within a board item
+     * This allows for quick access when a change is necessary
+     */
+    public static class BoardItemViewHolder extends RecyclerView.ViewHolder {
 
         private TextView boardNameText;
         private TextView boardAuthorText;
@@ -57,22 +69,33 @@ public class BoardItemAdapter extends RecyclerView.Adapter<BoardItemAdapter.Boar
         public void set(BoardItemData data) {
             this.boardNameText.setText(data.getBoardName());
             this.boardAuthorText.setText(data.getBoardAuthor());
-            this.boardShortDescText.setText(data.getBoardShortDesc());
+            this.boardShortDescText.setText(data.getBoardShortDescription());
         }
     }
 
+    /**
+     * Called when the instantiation of a new board item is necessary
+     * @param parent parent view (the recycler view)
+     * @param viewType the type of the view to be created (not used, default to 0)
+     * @return the view holder encapsulation the newly created view
+     */
     @Override
     public BoardItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        // inflate (parse and create) view from layout file
         View newView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.board_item, parent, false);
-        BoardItemViewHolder newViewHolder = new BoardItemViewHolder(newView);
-        return newViewHolder;
+        return new BoardItemViewHolder(newView);
     }
 
+    /**
+     * Called when the data displayed by holder needs to be changed
+     * This is typically called when a view just has been created or is recycled
+     * @param holder view holder encapsulation the view
+     * @param position the position of the data to be displayed in the data list
+     */
     @Override
     public void onBindViewHolder(BoardItemViewHolder holder, int position) {
-        BoardItemData data = itemData[position];
-        holder.set(data);
+        holder.set(itemData[position]);
     }
 
     @Override
