@@ -1,9 +1,11 @@
 package fr.fouss.boardeo;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 /**
@@ -21,6 +23,11 @@ public class BoardItemAdapter extends RecyclerView.Adapter<BoardItemAdapter.Boar
             new BoardItemData("name2", "author2", "description2"),
             new BoardItemData("name3", "author3", "description3")
     };
+
+    /**
+     * Are items selectable (selection mode)
+     */
+    private boolean selectionMode = false;
 
     /**
      * Encapsulate the data of a board item
@@ -53,23 +60,56 @@ public class BoardItemAdapter extends RecyclerView.Adapter<BoardItemAdapter.Boar
      * Encapsulate the useful views within a board item
      * This allows for quick access when a change is necessary
      */
-    public static class BoardItemViewHolder extends RecyclerView.ViewHolder {
+    public class BoardItemViewHolder extends RecyclerView.ViewHolder
+        implements View.OnClickListener, View.OnLongClickListener
+    {
 
         private TextView boardNameText;
         private TextView boardAuthorText;
         private TextView boardShortDescText;
+        private CheckBox checkBox;
 
         public BoardItemViewHolder(View itemView) {
             super(itemView);
             boardNameText = itemView.findViewById(R.id.boardNameText);
             boardAuthorText = itemView.findViewById(R.id.boardAuthorText);
             boardShortDescText = itemView.findViewById(R.id.boardShortDescText);
+            checkBox = itemView.findViewById(R.id.checkBox);
+            itemView.setOnClickListener(this);
+            itemView.setOnLongClickListener(this);
         }
 
         public void set(BoardItemData data) {
             this.boardNameText.setText(data.getBoardName());
             this.boardAuthorText.setText(data.getBoardAuthor());
             this.boardShortDescText.setText(data.getBoardShortDescription());
+
+            if (isSelectionMode()) {
+                // show and enable checkbox if in selection mode
+                checkBox.setVisibility(View.VISIBLE);
+                checkBox.setEnabled(true);
+            } else {
+                // hide, disable and un-check if not in selection mode
+                checkBox.setVisibility(View.INVISIBLE);
+                checkBox.setEnabled(false);
+                checkBox.setChecked(false);
+            }
+        }
+
+        @Override
+        public void onClick(View v) {
+            // check (select) item if in selection mode
+            if (isSelectionMode()) {
+                checkBox.toggle();
+            }
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            // toggle selection mode
+            setSelectionMode(!isSelectionMode());
+            notifyDataSetChanged();
+            return true;
         }
     }
 
@@ -101,5 +141,13 @@ public class BoardItemAdapter extends RecyclerView.Adapter<BoardItemAdapter.Boar
     @Override
     public int getItemCount() {
         return itemData.length;
+    }
+
+    public boolean isSelectionMode() {
+        return selectionMode;
+    }
+
+    public void setSelectionMode(boolean selectionMode) {
+        this.selectionMode = selectionMode;
     }
 }
