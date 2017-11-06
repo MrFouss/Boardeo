@@ -1,11 +1,12 @@
 package fr.fouss.boardeo;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 /**
@@ -14,14 +15,13 @@ import android.widget.TextView;
  */
 public class BoardItemAdapter extends RecyclerView.Adapter<BoardItemAdapter.BoardItemViewHolder> {
 
-    // TODO retrieve firebase data
     /**
      * List of board item data
      */
     private BoardItemData[] itemData = {
-            new BoardItemData("name1", "author1", "description1"),
-            new BoardItemData("name2", "author2", "description2"),
-            new BoardItemData("name3", "author3", "description3")
+            new BoardItemData("name1", "author1", "description1", true),
+            new BoardItemData("name2", "author2", "description2", false),
+            new BoardItemData("name3", "author3", "description3", true)
     };
 
     /**
@@ -36,11 +36,13 @@ public class BoardItemAdapter extends RecyclerView.Adapter<BoardItemAdapter.Boar
         private String boardName;
         private String boardAuthor;
         private String boardShortDescription;
+        private boolean subscribed;
 
-        public BoardItemData(String boardName, String boardAuthor, String boardShortDescription) {
+        public BoardItemData(String boardName, String boardAuthor, String boardShortDescription, boolean subscribed) {
             this.boardName = boardName;
             this.boardAuthor = boardAuthor;
             this.boardShortDescription = boardShortDescription;
+            this.subscribed = subscribed;
         }
 
         public String getBoardName() {
@@ -54,62 +56,95 @@ public class BoardItemAdapter extends RecyclerView.Adapter<BoardItemAdapter.Boar
         public String getBoardShortDescription() {
             return boardShortDescription;
         }
+
+        public boolean isSubscribed() {
+            return subscribed;
+        }
+
+        public void setSubscribed(boolean subscribed) {
+            this.subscribed = subscribed;
+        }
     }
 
     /**
      * Encapsulate the useful views within a board item
      * This allows for quick access when a change is necessary
      */
-    public class BoardItemViewHolder extends RecyclerView.ViewHolder
-        implements View.OnClickListener, View.OnLongClickListener
-    {
+    public class BoardItemViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView boardNameText;
-        private TextView boardAuthorText;
-        private TextView boardShortDescText;
-        private CheckBox checkBox;
+        private TextView textName;
+        private TextView textAuthor;
+        private TextView textShortDescription;
+        private CheckBox checkBoxSelection;
+        private CheckBox checkBoxSubscription;
+        private TableRow tableRaw;
 
         public BoardItemViewHolder(View itemView) {
             super(itemView);
-            boardNameText = itemView.findViewById(R.id.boardNameText);
-            boardAuthorText = itemView.findViewById(R.id.boardAuthorText);
-            boardShortDescText = itemView.findViewById(R.id.boardShortDescText);
-            checkBox = itemView.findViewById(R.id.checkBox);
-            itemView.setOnClickListener(this);
-            itemView.setOnLongClickListener(this);
+            // store reference to view components
+            textName = itemView.findViewById(R.id.boardNameText);
+            textAuthor = itemView.findViewById(R.id.boardAuthorText);
+            textShortDescription = itemView.findViewById(R.id.boardShortDescText);
+            checkBoxSelection = itemView.findViewById(R.id.checkBoxSelect);
+            checkBoxSubscription = itemView.findViewById(R.id.checkBoxSubscription);
+            tableRaw =itemView.findViewById(R.id.tableRaw);
+
+            // setup listeners
+            checkBoxSubscription.setOnCheckedChangeListener(
+                    (buttonView, isChecked) -> onSubscriptionCheckedChanged(buttonView, isChecked)
+            );
+            itemView.setOnClickListener(v -> onItemClick(v));
+            itemView.setOnLongClickListener(v -> onItemLongClick(v));
         }
 
         public void set(BoardItemData data) {
-            this.boardNameText.setText(data.getBoardName());
-            this.boardAuthorText.setText(data.getBoardAuthor());
-            this.boardShortDescText.setText(data.getBoardShortDescription());
+            // texts
+            this.textName.setText(data.getBoardName());
+            this.textAuthor.setText(data.getBoardAuthor());
+            this.textShortDescription.setText(data.getBoardShortDescription());
 
+            // subscription checkbox
+            checkBoxSubscription.setChecked(data.isSubscribed());
+
+            // selection mode
             if (isSelectionMode()) {
-                // show and enable checkbox if in selection mode
-                checkBox.setVisibility(View.VISIBLE);
-                checkBox.setEnabled(true);
+                // add selection checkbox and remove subscription checkbox
+                if (tableRaw == checkBoxSubscription.getParent()) {
+                    tableRaw.removeView(checkBoxSubscription);
+                }
+                if (tableRaw != checkBoxSelection.getParent()) {
+                    tableRaw.addView(checkBoxSelection, 0);
+                }
             } else {
-                // hide, disable and un-check if not in selection mode
-                checkBox.setVisibility(View.INVISIBLE);
-                checkBox.setEnabled(false);
-                checkBox.setChecked(false);
+                // add subscription checkbox and remove selection checkbox
+                // set un-check selection checkbox
+                if (tableRaw != checkBoxSubscription.getParent()) {
+                    tableRaw.addView(checkBoxSubscription, 0);
+                }
+                if (tableRaw == checkBoxSelection.getParent()) {
+                    checkBoxSelection.setChecked(false);
+                    tableRaw.removeView(checkBoxSelection);
+                }
             }
         }
 
-        @Override
-        public void onClick(View v) {
+        public void onItemClick(View v) {
             // check (select) item if in selection mode
             if (isSelectionMode()) {
-                checkBox.toggle();
+                checkBoxSelection.toggle();
             }
         }
 
-        @Override
-        public boolean onLongClick(View v) {
+        public boolean onItemLongClick(View v) {
             // toggle selection mode
             setSelectionMode(!isSelectionMode());
             notifyDataSetChanged();
             return true;
+        }
+
+        public void onSubscriptionCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            // update data
+            itemData[this.getAdapterPosition()].setSubscribed(isChecked);
         }
     }
 
