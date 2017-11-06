@@ -13,7 +13,9 @@
         <activity android:name=".HomeActivity">
 
         </activity>
-        <activity android:name=".BoardActivity">
+        <activity android:name=".BoardActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
