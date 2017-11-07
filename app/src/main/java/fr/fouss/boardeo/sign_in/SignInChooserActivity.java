@@ -16,12 +16,12 @@ public class SignInChooserActivity extends AppCompatActivity {
 
         final Button emailPasswordSignInButton = findViewById(R.id.button_signin_emailpassword);
         emailPasswordSignInButton.setOnClickListener(e -> {
-            startActivity(new Intent(this, EmailPasswordSignInActivity.class))
+            startActivity(new Intent(this, EmailPasswordSignInActivity.class));
         });
 
         final Button googleSignInButton = findViewById(R.id.button_signin_google);
         googleSignInButton.setOnClickListener(e -> {
-            startActivity(new Intent(this, GoogleSignInActivity.class))
+            startActivity(new Intent(this, GoogleSignInActivity.class));
         });
     }
 }

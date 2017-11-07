@@ -22,7 +22,16 @@
             </intent-filter>
         </activity>
         <activity android:name=".BoardActivity" />
-        <activity android:name=".sign_in.SignInChooserActivity"></activity>
+        <activity
+            android:name=".sign_in.SignInChooserActivity"
+            android:label="@string/title_activity_sign_in_chooser" />
+        <activity
+            android:name=".sign_in.GoogleSignInActivity"
+            android:label="@string/title_activity_google_sign_in" />
+        <activity
+            android:name=".sign_in.EmailPasswordSignInActivity"
+            android:label="@string/title_activity_emailpassword_sign_in" />
+        <activity android:name=".sign_in.SignInBaseActivity" />
     </application>
 
 </manifest>
