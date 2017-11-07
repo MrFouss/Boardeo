@@ -1,9 +1,11 @@
 package fr.fouss.boardeo;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -83,11 +85,36 @@ public class BoardActivity extends AppCompatActivity {
                 boardAdapter.setSubscriptionOnSelection(true);
                 return true;
             case R.id.deleteBoardButton :
-                boardAdapter.removeSelection();
+                removeSelection();
                 return true;
             default :
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public void removeSelection() {
+        // 1. Instantiate an AlertDialog.Builder with its constructor
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        // 2. Chain together various setter methods to set the dialog characteristics
+        builder.setMessage("Do you really whan to delete boards ?")
+                .setTitle("Warning !");
+
+        // Add the buttons
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                boardAdapter.removeSelection();
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User cancelled the dialog
+            }
+        });
+
+        // 3. Get the AlertDialog from create()
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     @Override
