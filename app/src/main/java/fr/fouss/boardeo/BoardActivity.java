@@ -1,6 +1,5 @@
 package fr.fouss.boardeo;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +16,9 @@ import android.view.View;
  */
 public class BoardActivity extends AppCompatActivity {
 
+    private Menu toolbarMenu;
+    private BoardItemAdapter boardAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +34,8 @@ public class BoardActivity extends AppCompatActivity {
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
         boardRecyclerList.setLayoutManager(mLayoutManager);
         BoardItemAdapter adapter = new BoardItemAdapter();
+        boardAdapter = adapter;
+        adapter.setModeListener(selectionMode -> onSelectionModeToggle(selectionMode));
         boardRecyclerList.setAdapter(adapter);
 
         // set add board button listener
@@ -47,6 +51,7 @@ public class BoardActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.board_default_menu, menu);
+        toolbarMenu = menu;
         return true;
     }
 
@@ -57,12 +62,29 @@ public class BoardActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.filterSetting) {
-            Log.d("Board", "filter setting");
-            return true;
+        switch (id) {
+            case R.id.unsubscribeButton :
+                boardAdapter.setSubscriptionOnSelection(false);
+                return true;
+            case R.id.subscribeButton :
+                boardAdapter.setSubscriptionOnSelection(true);
+                return true;
+            default :
+                return super.onOptionsItemSelected(item);
         }
+    }
 
-        return super.onOptionsItemSelected(item);
+    public void onSelectionModeToggle(boolean selectionMode) {
+        Log.d("Board", "selection mode toggle : " + selectionMode);
+        // show/hide necessary options depending on the mode
+        if (selectionMode) {
+            toolbarMenu.findItem(R.id.unsubscribeButton).setVisible(true);
+            toolbarMenu.findItem(R.id.subscribeButton).setVisible(true);
+            toolbarMenu.findItem(R.id.filterSetting).setVisible(false);
+        } else {
+            toolbarMenu.findItem(R.id.unsubscribeButton).setVisible(false);
+            toolbarMenu.findItem(R.id.subscribeButton).setVisible(false);
+            toolbarMenu.findItem(R.id.filterSetting).setVisible(true);
+        }
     }
 }

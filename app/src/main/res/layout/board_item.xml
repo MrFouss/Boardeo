@@ -22,13 +22,6 @@
             android:button="@drawable/subscription_checkbox"
             android:checked="false" />
 
-        <CheckBox
-            android:id="@+id/checkBoxSelect"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="0"
-            android:textAlignment="center" />
-
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -55,6 +48,14 @@
                 android:text="Board short description" />
 
         </LinearLayout>
+
+        <CheckBox
+            android:id="@+id/checkBoxSelect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:textAlignment="center"
+            android:visibility="visible" />
 
     </TableRow>
 

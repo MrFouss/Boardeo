@@ -1,13 +1,15 @@
 package fr.fouss.boardeo;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.TableRow;
 import android.widget.TextView;
+
+import java.util.LinkedList;
 
 /**
  * Adapter that handle the translation from brut data to displayable view
@@ -18,16 +20,22 @@ public class BoardItemAdapter extends RecyclerView.Adapter<BoardItemAdapter.Boar
     /**
      * List of board item data
      */
-    private BoardItemData[] itemData = {
-            new BoardItemData("name1", "author1", "description1", true),
-            new BoardItemData("name2", "author2", "description2", false),
-            new BoardItemData("name3", "author3", "description3", true)
-    };
+    private LinkedList<BoardItemData> itemData = new LinkedList<>();
+
+    /**
+     * list of selected data
+     */
+    private LinkedList<BoardItemData> selectedData = new LinkedList<>();
 
     /**
      * Are items selectable (selection mode)
      */
     private boolean selectionMode = false;
+
+    /**
+     * list of listener of the mode
+     */
+    private ModeListener modeListener = null;
 
     /**
      * Encapsulate the data of a board item
@@ -67,6 +75,13 @@ public class BoardItemAdapter extends RecyclerView.Adapter<BoardItemAdapter.Boar
     }
 
     /**
+     * Interface to implement to be notified when the mode changes
+     */
+    public interface ModeListener {
+        void onSelectionModeToggle(boolean selectionMode);
+    }
+
+    /**
      * Encapsulate the useful views within a board item
      * This allows for quick access when a change is necessary
      */
@@ -77,19 +92,23 @@ public class BoardItemAdapter extends RecyclerView.Adapter<BoardItemAdapter.Boar
         private TextView textShortDescription;
         private CheckBox checkBoxSelection;
         private CheckBox checkBoxSubscription;
-        private TableRow tableRaw;
+
+        private BoardItemData data = null;
 
         public BoardItemViewHolder(View itemView) {
             super(itemView);
+
             // store reference to view components
             textName = itemView.findViewById(R.id.boardNameText);
             textAuthor = itemView.findViewById(R.id.boardAuthorText);
             textShortDescription = itemView.findViewById(R.id.boardShortDescText);
             checkBoxSelection = itemView.findViewById(R.id.checkBoxSelect);
             checkBoxSubscription = itemView.findViewById(R.id.checkBoxSubscription);
-            tableRaw =itemView.findViewById(R.id.tableRaw);
 
             // setup listeners
+            checkBoxSelection.setOnCheckedChangeListener(
+                    (buttonView, isChecked) -> onSelectionCheckedChanged(buttonView, isChecked)
+            );
             checkBoxSubscription.setOnCheckedChangeListener(
                     (buttonView, isChecked) -> onSubscriptionCheckedChanged(buttonView, isChecked)
             );
@@ -98,6 +117,7 @@ public class BoardItemAdapter extends RecyclerView.Adapter<BoardItemAdapter.Boar
         }
 
         public void set(BoardItemData data) {
+            Log.d("Board", "set item");
             // texts
             this.textName.setText(data.getBoardName());
             this.textAuthor.setText(data.getBoardAuthor());
@@ -106,25 +126,16 @@ public class BoardItemAdapter extends RecyclerView.Adapter<BoardItemAdapter.Boar
             // subscription checkbox
             checkBoxSubscription.setChecked(data.isSubscribed());
 
+            // selection
+            checkBoxSelection.setChecked(selectedData.contains(data));
+
             // selection mode
             if (isSelectionMode()) {
-                // add selection checkbox and remove subscription checkbox
-                if (tableRaw == checkBoxSubscription.getParent()) {
-                    tableRaw.removeView(checkBoxSubscription);
-                }
-                if (tableRaw != checkBoxSelection.getParent()) {
-                    tableRaw.addView(checkBoxSelection, 0);
-                }
+                // set selection checkbox visible
+                checkBoxSelection.setVisibility(View.VISIBLE);
             } else {
-                // add subscription checkbox and remove selection checkbox
-                // set un-check selection checkbox
-                if (tableRaw != checkBoxSubscription.getParent()) {
-                    tableRaw.addView(checkBoxSubscription, 0);
-                }
-                if (tableRaw == checkBoxSelection.getParent()) {
-                    checkBoxSelection.setChecked(false);
-                    tableRaw.removeView(checkBoxSelection);
-                }
+                // set selection checkbox gone
+                checkBoxSelection.setVisibility(View.GONE);
             }
         }
 
@@ -138,13 +149,21 @@ public class BoardItemAdapter extends RecyclerView.Adapter<BoardItemAdapter.Boar
         public boolean onItemLongClick(View v) {
             // toggle selection mode
             setSelectionMode(!isSelectionMode());
-            notifyDataSetChanged();
             return true;
         }
 
         public void onSubscriptionCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            // update data
-            itemData[this.getAdapterPosition()].setSubscribed(isChecked);
+            // update data subscription status
+            itemData.get(this.getAdapterPosition()).setSubscribed(isChecked);
+        }
+
+        public void onSelectionCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            // add/remove item to the selection list
+            if (isChecked) {
+                selectedData.add(itemData.get(this.getAdapterPosition()));
+            } else {
+                selectedData.remove(itemData.get(this.getAdapterPosition()));
+            }
         }
     }
 
@@ -170,12 +189,12 @@ public class BoardItemAdapter extends RecyclerView.Adapter<BoardItemAdapter.Boar
      */
     @Override
     public void onBindViewHolder(BoardItemViewHolder holder, int position) {
-        holder.set(itemData[position]);
+        holder.set(itemData.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return itemData.length;
+        return itemData.size();
     }
 
     public boolean isSelectionMode() {
@@ -183,6 +202,44 @@ public class BoardItemAdapter extends RecyclerView.Adapter<BoardItemAdapter.Boar
     }
 
     public void setSelectionMode(boolean selectionMode) {
+        // set mode
         this.selectionMode = selectionMode;
+
+        // if setting non-select mode, remove selection
+        if (!selectionMode) {
+            selectedData.clear();
+        }
+
+        // notify data change
+        notifyDataSetChanged();
+
+        // notify mode listener
+        if (modeListener != null) {
+            modeListener.onSelectionModeToggle(selectionMode);
+        }
+    }
+
+    public void setModeListener(ModeListener modeListener) {
+        this.modeListener = modeListener;
+    }
+
+    /**
+     * Set all selected data as subscription status
+     * @param setSubscribed true if setting data as subscribed
+     */
+    public void setSubscriptionOnSelection(boolean setSubscribed) {
+        for (BoardItemData data : selectedData) {
+            data.setSubscribed(setSubscribed);
+        }
+        notifyDataSetChanged();
+    }
+
+    public BoardItemAdapter() {
+        // add 100 items
+        for (int i = 0; i < 100; ++i) {
+            itemData.add(
+                    new BoardItemData("name"+i, "author"+i, "description"+i, false)
+            );
+        }
     }
 }

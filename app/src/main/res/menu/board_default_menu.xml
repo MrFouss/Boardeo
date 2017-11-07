@@ -3,6 +3,20 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/unsubscribeButton"
+        android:enabled="true"
+        android:icon="@drawable/ic_sub_false"
+        android:title="Item"
+        android:visible="false"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/subscribeButton"
+        android:checked="true"
+        android:icon="@drawable/ic_sub_true"
+        android:title="Item"
+        android:visible="false"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/filterSetting"
         android:icon="@android:drawable/ic_menu_sort_by_size"
         android:title="Item"
