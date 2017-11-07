@@ -82,6 +82,9 @@ public class BoardActivity extends AppCompatActivity {
             case R.id.subscribeButton :
                 boardAdapter.setSubscriptionOnSelection(true);
                 return true;
+            case R.id.deleteBoardButton :
+                boardAdapter.removeSelection();
+                return true;
             default :
                 return super.onOptionsItemSelected(item);
         }
@@ -101,6 +104,7 @@ public class BoardActivity extends AppCompatActivity {
             toolbarMenu.findItem(R.id.unsubscribeButton).setVisible(true);
             toolbarMenu.findItem(R.id.subscribeButton).setVisible(true);
             toolbarMenu.findItem(R.id.filterSetting).setVisible(false);
+            toolbarMenu.findItem(R.id.deleteBoardButton).setVisible(true);
             findViewById(R.id.addBoardButton).setVisibility(View.GONE);
 
             // show back button
@@ -109,10 +113,12 @@ public class BoardActivity extends AppCompatActivity {
             toolbarMenu.findItem(R.id.unsubscribeButton).setVisible(false);
             toolbarMenu.findItem(R.id.subscribeButton).setVisible(false);
             toolbarMenu.findItem(R.id.filterSetting).setVisible(true);
+            toolbarMenu.findItem(R.id.deleteBoardButton).setVisible(false);
             findViewById(R.id.addBoardButton).setVisibility(View.VISIBLE);
 
             // hide back button
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         }
     }
+
 }

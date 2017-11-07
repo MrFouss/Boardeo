@@ -206,6 +206,14 @@ public class BoardItemAdapter extends RecyclerView.Adapter<BoardItemAdapter.Boar
         }
     }
 
+    public void removeSelection() {
+        for (BoardData data : selectedData) {
+            itemData.remove(data);
+        }
+        selectedData.clear();
+        notifyDataSetChanged();
+    }
+
     public void addBoardItem(BoardData data) {
         this.itemData.add(data);
         notifyDataSetChanged();
