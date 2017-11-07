@@ -20,12 +20,12 @@ public class BoardItemAdapter extends RecyclerView.Adapter<BoardItemAdapter.Boar
     /**
      * List of board item data
      */
-    private LinkedList<BoardItemData> itemData = new LinkedList<>();
+    private LinkedList<BoardData> itemData = new LinkedList<>();
 
     /**
      * list of selected data
      */
-    private LinkedList<BoardItemData> selectedData = new LinkedList<>();
+    private LinkedList<BoardData> selectedData = new LinkedList<>();
 
     /**
      * Are items selectable (selection mode)
@@ -36,43 +36,6 @@ public class BoardItemAdapter extends RecyclerView.Adapter<BoardItemAdapter.Boar
      * list of listener of the mode
      */
     private ModeListener modeListener = null;
-
-    /**
-     * Encapsulate the data of a board item
-     */
-    private static class BoardItemData {
-        private String boardName;
-        private String boardAuthor;
-        private String boardShortDescription;
-        private boolean subscribed;
-
-        public BoardItemData(String boardName, String boardAuthor, String boardShortDescription, boolean subscribed) {
-            this.boardName = boardName;
-            this.boardAuthor = boardAuthor;
-            this.boardShortDescription = boardShortDescription;
-            this.subscribed = subscribed;
-        }
-
-        public String getBoardName() {
-            return boardName;
-        }
-
-        public String getBoardAuthor() {
-            return boardAuthor;
-        }
-
-        public String getBoardShortDescription() {
-            return boardShortDescription;
-        }
-
-        public boolean isSubscribed() {
-            return subscribed;
-        }
-
-        public void setSubscribed(boolean subscribed) {
-            this.subscribed = subscribed;
-        }
-    }
 
     /**
      * Interface to implement to be notified when the mode changes
@@ -93,7 +56,7 @@ public class BoardItemAdapter extends RecyclerView.Adapter<BoardItemAdapter.Boar
         private CheckBox checkBoxSelection;
         private CheckBox checkBoxSubscription;
 
-        private BoardItemData data = null;
+        private BoardData data = null;
 
         public BoardItemViewHolder(View itemView) {
             super(itemView);
@@ -116,7 +79,7 @@ public class BoardItemAdapter extends RecyclerView.Adapter<BoardItemAdapter.Boar
             itemView.setOnLongClickListener(v -> onItemLongClick(v));
         }
 
-        public void set(BoardItemData data) {
+        public void set(BoardData data) {
             Log.d("Board", "set item");
             // texts
             this.textName.setText(data.getBoardName());
@@ -228,7 +191,7 @@ public class BoardItemAdapter extends RecyclerView.Adapter<BoardItemAdapter.Boar
      * @param setSubscribed true if setting data as subscribed
      */
     public void setSubscriptionOnSelection(boolean setSubscribed) {
-        for (BoardItemData data : selectedData) {
+        for (BoardData data : selectedData) {
             data.setSubscribed(setSubscribed);
         }
         notifyDataSetChanged();
@@ -236,10 +199,15 @@ public class BoardItemAdapter extends RecyclerView.Adapter<BoardItemAdapter.Boar
 
     public BoardItemAdapter() {
         // add 100 items
-        for (int i = 0; i < 100; ++i) {
+        for (int i = 0; i < 10; ++i) {
             itemData.add(
-                    new BoardItemData("name"+i, "author"+i, "description"+i, false)
+                    new BoardData("name"+i, "author"+i, "description"+i, false)
             );
         }
+    }
+
+    public void addBoardItem(BoardData data) {
+        this.itemData.add(data);
+        notifyDataSetChanged();
     }
 }

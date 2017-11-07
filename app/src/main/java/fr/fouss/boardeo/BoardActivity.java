@@ -1,5 +1,6 @@
 package fr.fouss.boardeo;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -46,7 +47,17 @@ public class BoardActivity extends AppCompatActivity {
     public void onAddBoardButtonClick(View v) {
         // launch new board activity
         Intent intent = new Intent(this, NewBoardActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent, 0);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        String title = data.getStringExtra(BoardData.BOARD_NAME_FIELD);
+        String author = data.getStringExtra(BoardData.BOARD_AUTHOR_FIELD);
+        String shortDesc = data.getStringExtra(BoardData.BOARD_SHORT_DESCRIPTION_FIELD);
+        String fullDesc = data.getStringExtra(BoardData.BOARD_FULL_DESCRIPTION_FIELD);
+
+        boardAdapter.addBoardItem(new BoardData(title, author, shortDesc, true));
     }
 
     @Override
@@ -90,6 +101,7 @@ public class BoardActivity extends AppCompatActivity {
             toolbarMenu.findItem(R.id.unsubscribeButton).setVisible(true);
             toolbarMenu.findItem(R.id.subscribeButton).setVisible(true);
             toolbarMenu.findItem(R.id.filterSetting).setVisible(false);
+            findViewById(R.id.addBoardButton).setVisibility(View.GONE);
 
             // show back button
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -97,6 +109,7 @@ public class BoardActivity extends AppCompatActivity {
             toolbarMenu.findItem(R.id.unsubscribeButton).setVisible(false);
             toolbarMenu.findItem(R.id.subscribeButton).setVisible(false);
             toolbarMenu.findItem(R.id.filterSetting).setVisible(true);
+            findViewById(R.id.addBoardButton).setVisibility(View.VISIBLE);
 
             // hide back button
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);

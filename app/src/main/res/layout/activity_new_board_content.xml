@@ -24,12 +24,13 @@
                 android:text="Title" />
 
             <EditText
-                android:id="@+id/editText"
+                android:id="@+id/titleField"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:hint="My Board"
-                android:inputType="text" />
+                android:inputType="text"
+                android:text="My board" />
         </TableRow>
 
         <TableRow
@@ -43,7 +44,7 @@
                 android:text="Author" />
 
             <EditText
-                android:id="@+id/editText2"
+                android:id="@+id/authorField"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="10"
@@ -62,7 +63,7 @@
                 android:text="Short Description" />
 
             <EditText
-                android:id="@+id/editText3"
+                android:id="@+id/shortDescField"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="10"
@@ -81,7 +82,7 @@
                 android:text="Full Description" />
 
             <EditText
-                android:id="@+id/editText5"
+                android:id="@+id/fullDescField"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="10"
