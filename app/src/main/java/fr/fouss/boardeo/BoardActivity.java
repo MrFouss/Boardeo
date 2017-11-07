@@ -1,5 +1,6 @@
 package fr.fouss.boardeo;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -22,7 +23,6 @@ public class BoardActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_board);
 
         // toolbar
@@ -45,6 +45,8 @@ public class BoardActivity extends AppCompatActivity {
 
     public void onAddBoardButtonClick(View v) {
         // launch new board activity
+        Intent intent = new Intent(this, NewBoardActivity.class);
+        startActivity(intent);
     }
 
     @Override
