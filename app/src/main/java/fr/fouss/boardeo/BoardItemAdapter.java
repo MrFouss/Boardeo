@@ -148,7 +148,7 @@ public class BoardItemAdapter extends RecyclerView.Adapter<BoardItemAdapter.Boar
 
         public boolean onItemLongClick(View v) {
             // toggle selection mode
-            setSelectionMode(!isSelectionMode());
+            setSelectionMode(true);
             return true;
         }
 

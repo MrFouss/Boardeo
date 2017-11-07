@@ -74,6 +74,13 @@ public class BoardActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public boolean onSupportNavigateUp() {
+        Log.d("Board", "back");
+        boardAdapter.setSelectionMode(false);
+        return true;
+    }
+
     public void onSelectionModeToggle(boolean selectionMode) {
         Log.d("Board", "selection mode toggle : " + selectionMode);
         // show/hide necessary options depending on the mode
@@ -81,10 +88,16 @@ public class BoardActivity extends AppCompatActivity {
             toolbarMenu.findItem(R.id.unsubscribeButton).setVisible(true);
             toolbarMenu.findItem(R.id.subscribeButton).setVisible(true);
             toolbarMenu.findItem(R.id.filterSetting).setVisible(false);
+
+            // show back button
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         } else {
             toolbarMenu.findItem(R.id.unsubscribeButton).setVisible(false);
             toolbarMenu.findItem(R.id.subscribeButton).setVisible(false);
             toolbarMenu.findItem(R.id.filterSetting).setVisible(true);
+
+            // hide back button
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         }
     }
 }
