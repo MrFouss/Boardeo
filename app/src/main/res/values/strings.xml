@@ -1,3 +1,42 @@
 <resources>
-    <string name="app_name">boardeo</string>
+    <string name="app_name">Boardeo</string>
+
+    <!-- Sign in chooser activity -->
+    <string name="title_activity_sign_in_chooser">Sign in</string>
+    <string name="signin_chooser_label_emailpassword">Sign in with email/password</string>
+    <string name="signin_chooser_label_google">Sign in with Google</string>
+
+    <!-- Email/password sign in activity -->
+    <string name="title_activity_emailpassword_sign_in">Sign in with email</string>
+    <string name="emailpassword_user_status">Signed in email user: %1$s (verified: %2$b)</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Password</string>
+
+    <!-- Google sign in activity -->
+    <string name="title_activity_google_sign_in">Sign in with Google</string>
+    <string name="google_user_status">Signed in Google user: %s</string>
+
+    <!-- Sign in activities -->
+    <string name="create_account">Create account</string>
+    <string name="loading">Loading…</string>
+    <string name="sign_in">Sign in</string>
+    <string name="signed_in">Signed in</string>
+    <string name="sign_out">Sign out</string>
+    <string name="signed_out">Signed out</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password (optional)</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+    <string name="verify_email">Verify email</string>
+    <string name="auth_failed">Authentication failed</string>
+
 </resources>
