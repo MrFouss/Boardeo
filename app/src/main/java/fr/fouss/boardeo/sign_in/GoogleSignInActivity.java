@@ -42,9 +42,6 @@ public class GoogleSignInActivity extends SignInBaseActivity
      */
     private static final int RC_SIGN_IN = 9001;
 
-    /**
-     * Keep track of the login task to ensure we can cancel it if requested.
-     */
     private FirebaseAuth mAuth;
 
     private SharedPreferences sharedPreferences;
@@ -134,8 +131,6 @@ public class GoogleSignInActivity extends SignInBaseActivity
                     if (task.isSuccessful()) {
                         // Sign in success, update UI with the signed-in user's information
                         Log.d(TAG, "signInWithCredential:success");
-                        FirebaseUser user = mAuth.getCurrentUser();
-                        updateUI(user);
                     } else {
                         // If sign in fails, display a message to the user.
                         Log.w(TAG, "signInWithCredential:failure", task.getException());
