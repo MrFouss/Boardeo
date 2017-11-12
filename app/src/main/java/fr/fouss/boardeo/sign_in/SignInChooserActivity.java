@@ -24,4 +24,7 @@ public class SignInChooserActivity extends AppCompatActivity {
             startActivity(new Intent(this, GoogleSignInActivity.class));
         });
     }
+
+    @Override
+    public void onBackPressed() {}
 }
