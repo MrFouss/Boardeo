@@ -1,6 +1,8 @@
 package fr.fouss.boardeo.sign_in;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import android.util.Log;
@@ -19,7 +21,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
+import fr.fouss.boardeo.HomeActivity;
 import fr.fouss.boardeo.R;
+
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 /**
  * A login screen that offers login via email/password.
@@ -42,6 +47,8 @@ public class GoogleSignInActivity extends SignInBaseActivity
      */
     private FirebaseAuth mAuth;
 
+    private SharedPreferences sharedPreferences;
+
     private GoogleSignInClient mGoogleSignInClient;
 
     // UI references.
@@ -54,6 +61,11 @@ public class GoogleSignInActivity extends SignInBaseActivity
 
         // Firebase authentication initialization
         mAuth = FirebaseAuth.getInstance();
+
+        // Shared preferences
+        Context context = getApplicationContext();
+        sharedPreferences = context.getSharedPreferences(
+                getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
         // Views
         mStatusTextView = findViewById(R.id.status);
@@ -87,13 +99,26 @@ public class GoogleSignInActivity extends SignInBaseActivity
         if (requestCode == RC_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
 
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+
             try {
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 firebaseAuthWithGoogle(account);
+
+                editor.putBoolean("IsUserLoggedIn", true);
+                editor.apply();
+
+                Intent homeIntent = new Intent(GoogleSignInActivity.this, HomeActivity.class);
+                homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | FLAG_ACTIVITY_NEW_TASK);
+                startActivity(homeIntent);
             } catch (ApiException e) {
                 // Google Sign In failed, update UI appropriately
                 Log.w(TAG, "Google sign in failed", e);
+
+                editor.putBoolean("IsUserLoggedIn", false);
+                editor.apply();
+
                 updateUI(null);
             }
         }
