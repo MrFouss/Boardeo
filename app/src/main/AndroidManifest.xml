@@ -17,10 +17,15 @@
         <activity android:name=".HomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".BoardActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".NewBoardActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".BoardActivity" />
         <activity
             android:name=".sign_in.SignInChooserActivity"
