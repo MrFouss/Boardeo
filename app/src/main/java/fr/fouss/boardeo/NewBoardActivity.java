@@ -59,19 +59,24 @@ public class NewBoardActivity extends AppCompatActivity {
         EditText shortDesc = findViewById(R.id.shortDescField);
         EditText fullDesc = findViewById(R.id.fullDescField);
 
-        if(title.length() == 0
-                || author.length() == 0
-                || shortDesc.length() == 0
-                || fullDesc.length() == 0
-                ) {
-            // create an alert dialog if there is missing info
-            AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                    .setMessage("Fill all fields.")
-                    .setTitle("Warning !")
-                    .setPositiveButton("OK", (dialog, id) -> {});
-            AlertDialog dialog = builder.create();
-            dialog.show();
-        } else {
+        boolean filled = true;
+        if (title.length() == 0) {
+            title.setError("Missing");
+            filled = false;
+        }
+        if (author.length() == 0) {
+            author.setError("Missing");
+            filled = false;
+        }
+        if (shortDesc.length() == 0) {
+            shortDesc.setError("Missing");
+            filled = false;
+        }
+        if (fullDesc.length() == 0) {
+            fullDesc.setError("Missing");
+            filled = false;
+        }
+        if (filled) {
             onReturnResult();
         }
     }
