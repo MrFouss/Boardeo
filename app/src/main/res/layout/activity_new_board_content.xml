@@ -18,6 +18,26 @@
             android:layout_height="match_parent">
 
             <TextView
+                android:id="@+id/textView4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Full Description" />
+
+            <EditText
+                android:id="@+id/fullDescField"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="My full description \n ..."
+                android:inputType="textLongMessage" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
                 android:id="@+id/textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -76,18 +96,14 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/textView4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Full Description" />
+                android:text="Allow post" />
 
-            <EditText
-                android:id="@+id/fullDescField"
+            <CheckBox
+                android:id="@+id/allowPostCheckbox"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="My full description \n ..."
-                android:inputType="textLongMessage" />
+                android:layout_height="wrap_content" />
 
         </TableRow>
 

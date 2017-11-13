@@ -9,6 +9,7 @@ public class BoardData {
     public final static String BOARD_SHORT_DESCRIPTION_FIELD = "boardShortDescription";
     public final static String BOARD_FULL_DESCRIPTION_FIELD = "boardFullDescription";
     public final static String BOARD_SUBSCRIPTION_FIELD = "boardSubscription";
+    public final static String BOARD_ALLOW_POST_FIELD = "boardAllowPost";
 
     // TODO remove
     public static int idIncrement = 0;
@@ -19,14 +20,16 @@ public class BoardData {
     private String boardShortDescription;
     private String boardFullDescription;
     private boolean subscribed;
+    private boolean allowPost;
 
-    public BoardData(String boardName, String boardAuthor, String boardShortDescription, String boardFullDescription, boolean subscribed) {
+    public BoardData(String boardName, String boardAuthor, String boardShortDescription, String boardFullDescription, boolean subscribed, boolean allowPost) {
         this.boardId = idIncrement++;
         this.boardName = boardName;
         this.boardAuthor = boardAuthor;
         this.boardShortDescription = boardShortDescription;
         this.boardFullDescription = boardFullDescription;
         this.subscribed = subscribed;
+        this.allowPost = allowPost;
     }
 
     /**
@@ -39,7 +42,8 @@ public class BoardData {
         this.boardAuthor = intent.getStringExtra(BOARD_AUTHOR_FIELD);
         this.boardShortDescription = intent.getStringExtra(BOARD_SHORT_DESCRIPTION_FIELD);
         this.boardFullDescription = intent.getStringExtra(BOARD_FULL_DESCRIPTION_FIELD);
-        this.subscribed = intent.getBooleanExtra(BOARD_SUBSCRIPTION_FIELD, false);
+        this.subscribed = intent.getBooleanExtra(BOARD_SUBSCRIPTION_FIELD, true);
+        this.allowPost = intent.getBooleanExtra(BOARD_ALLOW_POST_FIELD, false);
     }
 
     /**
@@ -52,6 +56,7 @@ public class BoardData {
         this.boardShortDescription = intent.getStringExtra(BOARD_SHORT_DESCRIPTION_FIELD);
         this.boardFullDescription = intent.getStringExtra(BOARD_FULL_DESCRIPTION_FIELD);
         this.subscribed = intent.getBooleanExtra(BOARD_SUBSCRIPTION_FIELD, isSubscribed());
+        this.allowPost = intent.getBooleanExtra(BOARD_ALLOW_POST_FIELD, isAllowPost());
     }
 
     /**
@@ -66,6 +71,7 @@ public class BoardData {
         intent.putExtra(BoardData.BOARD_SHORT_DESCRIPTION_FIELD, getBoardShortDescription());
         intent.putExtra(BoardData.BOARD_FULL_DESCRIPTION_FIELD, getBoardFullDescription());
         intent.putExtra(BoardData.BOARD_SUBSCRIPTION_FIELD, isSubscribed());
+        intent.putExtra(BoardData.BOARD_ALLOW_POST_FIELD, isAllowPost());
 
         return intent;
     }
@@ -97,4 +103,12 @@ public class BoardData {
     public void setSubscribed(boolean subscribed) {
             this.subscribed = subscribed;
         }
+
+    public boolean isAllowPost() {
+        return allowPost;
+    }
+
+    public void setAllowPost(boolean allowPost) {
+        this.allowPost = allowPost;
+    }
 }

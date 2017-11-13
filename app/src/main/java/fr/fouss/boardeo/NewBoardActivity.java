@@ -42,6 +42,8 @@ public class NewBoardActivity extends AppCompatActivity {
         shortDesc.setText(request.getStringExtra(BoardData.BOARD_SHORT_DESCRIPTION_FIELD));
         EditText fullDesc = findViewById(R.id.fullDescField);
         fullDesc.setText(request.getStringExtra(BoardData.BOARD_FULL_DESCRIPTION_FIELD));
+        CheckBox allowPost = findViewById(R.id.allowPostCheckbox);
+        allowPost.setChecked(request.getBooleanExtra(BoardData.BOARD_ALLOW_POST_FIELD, false));
     }
 
     ///// EVENTS /////
@@ -89,6 +91,7 @@ public class NewBoardActivity extends AppCompatActivity {
         EditText author = findViewById(R.id.authorField);
         EditText shortDesc = findViewById(R.id.shortDescField);
         EditText fullDesc = findViewById(R.id.fullDescField);
+        CheckBox allowPost = findViewById(R.id.allowPostCheckbox);
 
         Intent result = new Intent();
 
@@ -101,6 +104,7 @@ public class NewBoardActivity extends AppCompatActivity {
         result.putExtra(BoardData.BOARD_SHORT_DESCRIPTION_FIELD, shortDesc.getText().toString());
         result.putExtra(BoardData.BOARD_FULL_DESCRIPTION_FIELD, fullDesc.getText().toString());
         result.putExtra(BoardData.BOARD_SUBSCRIPTION_FIELD, true);
+        result.putExtra(BoardData.BOARD_ALLOW_POST_FIELD, allowPost.isChecked());
 
         // return to requesting activity
         setResult(MiscUtil.NEW_BOARD_RESULT, result);

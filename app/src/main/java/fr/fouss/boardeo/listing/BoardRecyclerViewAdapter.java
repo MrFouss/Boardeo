@@ -29,7 +29,7 @@ public class BoardRecyclerViewAdapter extends SelectableRecyclerViewAdapter<Boar
         // TODO remove
         for (int i = 0; i < 10; ++i) {
             addItem(
-                    new BoardData("name"+i, "author"+i, "description"+i, "full description"+i, false)
+                    new BoardData("name"+i, "author"+i, "description"+i, "full description"+i, false, false)
             );
         }
     }
