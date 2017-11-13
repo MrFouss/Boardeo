@@ -1,12 +1,10 @@
 package fr.fouss.boardeo.listing;
 
-import android.content.Intent;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
-import fr.fouss.boardeo.NewBoardActivity;
 import fr.fouss.boardeo.R;
 
 /**
@@ -26,7 +24,7 @@ public class BoardRecyclerViewAdapter extends SelectableRecyclerViewAdapter<Boar
     }
 
     public BoardRecyclerViewAdapter() {
-        super(R.layout.board_item);
+        super(R.layout.board_list_item);
 
         // TODO remove
         for (int i = 0; i < 10; ++i) {

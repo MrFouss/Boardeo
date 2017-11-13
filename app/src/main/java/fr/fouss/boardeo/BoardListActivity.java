@@ -32,7 +32,7 @@ public class BoardListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_board);
+        setContentView(R.layout.activity_board_list);
 
         // toolbar
         setSupportActionBar(findViewById(R.id.boardToolbar));

@@ -49,6 +49,6 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_board_details" />
+    <include layout="@layout/activity_board_details_content" />
 
 </android.support.design.widget.CoordinatorLayout>
