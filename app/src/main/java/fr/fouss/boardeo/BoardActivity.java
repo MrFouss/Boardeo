@@ -1,7 +1,11 @@
 package fr.fouss.boardeo;
 
+import android.app.Activity;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,7 +26,6 @@ public class BoardActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_board);
 
         // toolbar
@@ -45,6 +48,18 @@ public class BoardActivity extends AppCompatActivity {
 
     public void onAddBoardButtonClick(View v) {
         // launch new board activity
+        Intent intent = new Intent(this, NewBoardActivity.class);
+        startActivityForResult(intent, 0);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        String title = data.getStringExtra(BoardData.BOARD_NAME_FIELD);
+        String author = data.getStringExtra(BoardData.BOARD_AUTHOR_FIELD);
+        String shortDesc = data.getStringExtra(BoardData.BOARD_SHORT_DESCRIPTION_FIELD);
+        String fullDesc = data.getStringExtra(BoardData.BOARD_FULL_DESCRIPTION_FIELD);
+
+        boardAdapter.addBoardItem(new BoardData(title, author, shortDesc, true));
     }
 
     @Override
@@ -69,9 +84,37 @@ public class BoardActivity extends AppCompatActivity {
             case R.id.subscribeButton :
                 boardAdapter.setSubscriptionOnSelection(true);
                 return true;
+            case R.id.deleteBoardButton :
+                removeSelection();
+                return true;
             default :
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public void removeSelection() {
+        // 1. Instantiate an AlertDialog.Builder with its constructor
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        // 2. Chain together various setter methods to set the dialog characteristics
+        builder.setMessage("Do you really whan to delete boards ?")
+                .setTitle("Warning !");
+
+        // Add the buttons
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                boardAdapter.removeSelection();
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User cancelled the dialog
+            }
+        });
+
+        // 3. Get the AlertDialog from create()
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     @Override
@@ -88,6 +131,8 @@ public class BoardActivity extends AppCompatActivity {
             toolbarMenu.findItem(R.id.unsubscribeButton).setVisible(true);
             toolbarMenu.findItem(R.id.subscribeButton).setVisible(true);
             toolbarMenu.findItem(R.id.filterSetting).setVisible(false);
+            toolbarMenu.findItem(R.id.deleteBoardButton).setVisible(true);
+            findViewById(R.id.addBoardButton).setVisibility(View.GONE);
 
             // show back button
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -95,9 +140,12 @@ public class BoardActivity extends AppCompatActivity {
             toolbarMenu.findItem(R.id.unsubscribeButton).setVisible(false);
             toolbarMenu.findItem(R.id.subscribeButton).setVisible(false);
             toolbarMenu.findItem(R.id.filterSetting).setVisible(true);
+            toolbarMenu.findItem(R.id.deleteBoardButton).setVisible(false);
+            findViewById(R.id.addBoardButton).setVisibility(View.VISIBLE);
 
             // hide back button
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         }
     }
+
 }
