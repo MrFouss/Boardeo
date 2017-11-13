@@ -1,5 +1,8 @@
 package fr.fouss.boardeo.sign_in;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,7 +19,10 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import fr.fouss.boardeo.HomeActivity;
 import fr.fouss.boardeo.R;
+
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 public class EmailPasswordSignInActivity extends SignInBaseActivity
         implements View.OnClickListener {
@@ -29,6 +35,8 @@ public class EmailPasswordSignInActivity extends SignInBaseActivity
 
     private FirebaseAuth mAuth;
 
+    private SharedPreferences sharedPreferences;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,6 +44,11 @@ public class EmailPasswordSignInActivity extends SignInBaseActivity
 
         // Firebase authentication initialization
         mAuth = FirebaseAuth.getInstance();
+
+        // Shared preferences
+        Context context = getApplicationContext();
+        sharedPreferences = context.getSharedPreferences(
+                getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
         // Views
         mStatusTextView = findViewById(R.id.status);
@@ -68,14 +81,22 @@ public class EmailPasswordSignInActivity extends SignInBaseActivity
         // [START create_user_with_email]
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, (Task<AuthResult> task) -> {
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+
                     if (task.isSuccessful()) {
-                        // Sign in success, update UI with the signed-in user's information
-                        Log.d(TAG, "createUserWithEmail:success");
-                        FirebaseUser user = mAuth.getCurrentUser();
-                        updateUI(user);
+                        editor.putBoolean("IsUserLoggedIn", true);
+                        editor.apply();
+
+                        Intent homeIntent = new Intent(EmailPasswordSignInActivity.this, HomeActivity.class);
+                        homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(homeIntent);
                     } else {
                         // If sign in fails, display a message to the user.
                         Log.w(TAG, "createUserWithEmail:failure", task.getException());
+
+                        editor.putBoolean("IsUserLoggedIn", false);
+                        editor.apply();
+
                         Toast.makeText(EmailPasswordSignInActivity.this, "Authentication failed.",
                                 Toast.LENGTH_SHORT).show();
                         updateUI(null);
@@ -95,16 +116,27 @@ public class EmailPasswordSignInActivity extends SignInBaseActivity
 
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+
                     if (task.isSuccessful()) {
                         // Sign in success, update UI with the signed-in user's information
                         Log.d(TAG, "signInWithEmail:success");
-                        FirebaseUser user = mAuth.getCurrentUser();
-                        updateUI(user);
+
+                        editor.putBoolean("IsUserLoggedIn", true);
+                        editor.apply();
+
+                        Intent homeIntent = new Intent(EmailPasswordSignInActivity.this, HomeActivity.class);
+                        homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(homeIntent);
                     } else {
                         // If sign in fails, display a message to the user.
                         Log.w(TAG, "signInWithEmail:failure", task.getException());
                         Toast.makeText(EmailPasswordSignInActivity.this, "Authentication failed.",
                                 Toast.LENGTH_SHORT).show();
+
+                        editor.putBoolean("IsUserLoggedIn", false);
+                        editor.apply();
+
                         updateUI(null);
                     }
 

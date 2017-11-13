@@ -1,6 +1,12 @@
 <resources>
     <string name="app_name">Boardeo</string>
 
+    <!-- Home activity -->
+    <string name="title_activity_home">Boardeo</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_settings">Settings</string>
+
     <!-- Sign in chooser activity -->
     <string name="title_activity_sign_in_chooser">Sign in</string>
     <string name="signin_chooser_label_emailpassword">Sign in with email/password</string>
@@ -38,5 +44,7 @@
     </string>
     <string name="verify_email">Verify email</string>
     <string name="auth_failed">Authentication failed</string>
+    <string name="preference_file_key">fr.fouss.boardeo.GLOBAL_INFO</string>
+    <string name="user_uid">user_uid</string>
 
 </resources>
