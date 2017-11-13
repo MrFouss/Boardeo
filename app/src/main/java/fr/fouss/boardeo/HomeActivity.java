@@ -1,8 +1,11 @@
 package fr.fouss.boardeo;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import fr.fouss.boardeo.sign_in.SignInChooserActivity;
 
 public class HomeActivity extends Activity {
 
@@ -10,5 +13,6 @@ public class HomeActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        startActivity(new Intent(this, SignInChooserActivity.class));
     }
 }
