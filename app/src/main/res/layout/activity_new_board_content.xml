@@ -29,8 +29,8 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:hint="My Board"
-                android:inputType="text"
-                android:text="My board" />
+                android:inputType="text" />
+
         </TableRow>
 
         <TableRow
@@ -88,6 +88,24 @@
                 android:ems="10"
                 android:hint="My full description \n ..."
                 android:inputType="textLongMessage" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Subscribed" />
+
+            <CheckBox
+                android:id="@+id/newBoardSubCheckBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:button="@drawable/subscription_checkbox"
+                android:checked="true" />
 
         </TableRow>
 

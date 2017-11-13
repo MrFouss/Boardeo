@@ -1,10 +1,12 @@
 package fr.fouss.boardeo.listing;
 
+import android.content.Intent;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
+import fr.fouss.boardeo.NewBoardActivity;
 import fr.fouss.boardeo.R;
 
 /**
@@ -13,13 +15,23 @@ import fr.fouss.boardeo.R;
 
 public class BoardRecyclerViewAdapter extends SelectableRecyclerViewAdapter<BoardData> {
 
+    private ItemClickListener itemClickListener;
+
+    public void setItemClickListener(ItemClickListener listener) {
+        itemClickListener = listener;
+    }
+
+    public static interface ItemClickListener {
+        public void onItemClickListener(int position);
+    }
+
     public BoardRecyclerViewAdapter() {
         super(R.layout.board_item);
 
         // TODO remove
         for (int i = 0; i < 10; ++i) {
             addItem(
-                    new BoardData("name"+i, "author"+i, "description"+i, false)
+                    new BoardData("name"+i, "author"+i, "description"+i, "full description"+i, false)
             );
         }
     }
@@ -54,6 +66,15 @@ public class BoardRecyclerViewAdapter extends SelectableRecyclerViewAdapter<Boar
         data.get(position).setSubscribed(setSubscribed);
     }
 
+    public BoardData getItemById(int id) {
+        for (BoardData d : data) {
+            if (d.getBoardId() == id) {
+                return d;
+            }
+        }
+        return null;
+    }
+
     public class BoardItemViewHolder extends SelectableItemViewHolder {
 
         private TextView nameText;
@@ -77,6 +98,7 @@ public class BoardRecyclerViewAdapter extends SelectableRecyclerViewAdapter<Boar
             subscriptionCheckbox.setOnCheckedChangeListener(
                     (buttonView, isChecked) -> onSubscriptionCheckedChange(buttonView, isChecked)
             );
+            itemView.setOnClickListener(v -> onItemClick(v));
         }
 
         public void onSubscriptionCheckedChange(CompoundButton buttonView, boolean isChecked) {
@@ -92,6 +114,12 @@ public class BoardRecyclerViewAdapter extends SelectableRecyclerViewAdapter<Boar
 
             // subscription checkbox
             subscriptionCheckbox.setChecked(d.isSubscribed());
+        }
+
+        public void onItemClick(View v) {
+            if (itemClickListener != null) {
+                itemClickListener.onItemClickListener(getAdapterPosition());
+            }
         }
     }
 }

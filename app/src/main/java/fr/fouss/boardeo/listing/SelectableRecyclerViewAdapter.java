@@ -120,6 +120,8 @@ public abstract class SelectableRecyclerViewAdapter<Data>
         this.data.add(d);
     }
 
+    public Data getItem(int position) {return this.data.get(position);}
+
     public boolean isSelected(int position) {
         return selectedData.contains(data.get(position));
     }

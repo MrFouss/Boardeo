@@ -42,27 +42,37 @@ public class BoardActivity extends AppCompatActivity {
         boardAdapter = adapter;
         adapter.setModeListener(selectionMode -> onSelectionModeToggle(selectionMode));
         boardRecyclerList.setAdapter(adapter);
+        adapter.setItemClickListener(position -> onBoardClick(position));
 
         // set add board button listener
         FloatingActionButton addButton = findViewById(R.id.addBoardButton);
         addButton.setOnClickListener(v -> onAddBoardButtonClick(v));
     }
 
+    public void onBoardClick(int position) {
+        Intent intent = new Intent(this, BoardDetailsActivity.class);
+        BoardData d = boardAdapter.getItem(position);
+        d.fillIntentExtras(intent);
+        startActivityForResult(intent, MiscUtil.BOARD_DETAIL_REQUEST);
+    }
+
     public void onAddBoardButtonClick(View v) {
         // launch new board activity
         Intent intent = new Intent(this, NewBoardActivity.class);
-        startActivityForResult(intent, 0);
+//        BoardData.fillDefaultIntentExtras(intent);
+        startActivityForResult(intent, MiscUtil.BOARD_CREATION_REQUEST);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        String title = data.getStringExtra(BoardData.BOARD_NAME_FIELD);
-        String author = data.getStringExtra(BoardData.BOARD_AUTHOR_FIELD);
-        String shortDesc = data.getStringExtra(BoardData.BOARD_SHORT_DESCRIPTION_FIELD);
-        String fullDesc = data.getStringExtra(BoardData.BOARD_FULL_DESCRIPTION_FIELD);
-
-        boardAdapter.addItem(new fr.fouss.boardeo.listing.BoardData(title, author, shortDesc, true));
-        boardAdapter.notifyDataSetChanged();
+        if (requestCode == MiscUtil.BOARD_CREATION_REQUEST && resultCode == MiscUtil.NEW_BOARD_RESULT) {
+            boardAdapter.addItem(new fr.fouss.boardeo.listing.BoardData(data));
+            boardAdapter.notifyDataSetChanged();
+        } else if (requestCode == MiscUtil.BOARD_DETAIL_REQUEST && resultCode == MiscUtil.BOARD_DETAIL_RESULT) {
+            BoardData d = boardAdapter.getItemById(data.getIntExtra(BoardData.BOARD_ID_FIELD, -1));
+            d.setFromIntent(data);
+            boardAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override
