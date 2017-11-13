@@ -1,8 +1,9 @@
-package fr.fouss.boardeo;
+package fr.fouss.boardeo.listing;
 
 /**
- * Encapsulate the data of a board item
+ * Created by esia on 12/11/17.
  */
+
 public class BoardData {
     public final static String BOARD_NAME_FIELD = "boardName";
     public final static String BOARD_AUTHOR_FIELD = "boardAuthor";
@@ -38,6 +39,6 @@ public class BoardData {
     }
 
     public void setSubscribed(boolean subscribed) {
-        this.subscribed = subscribed;
-    }
+            this.subscribed = subscribed;
+        }
 }

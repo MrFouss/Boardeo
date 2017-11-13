@@ -1,6 +1,5 @@
 package fr.fouss.boardeo;
 
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,13 +14,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import fr.fouss.boardeo.listing.BoardRecyclerViewAdapter;
+import fr.fouss.boardeo.listing.BoardData;
+
 /**
  * Activity that displays a list of boards
  */
 public class BoardActivity extends AppCompatActivity {
 
     private Menu toolbarMenu;
-    private BoardItemAdapter boardAdapter;
+    private BoardRecyclerViewAdapter boardAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +38,7 @@ public class BoardActivity extends AppCompatActivity {
         RecyclerView boardRecyclerList = findViewById(R.id.boardRecyclerList);
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
         boardRecyclerList.setLayoutManager(mLayoutManager);
-        BoardItemAdapter adapter = new BoardItemAdapter();
+        BoardRecyclerViewAdapter adapter = new BoardRecyclerViewAdapter();
         boardAdapter = adapter;
         adapter.setModeListener(selectionMode -> onSelectionModeToggle(selectionMode));
         boardRecyclerList.setAdapter(adapter);
@@ -59,7 +61,8 @@ public class BoardActivity extends AppCompatActivity {
         String shortDesc = data.getStringExtra(BoardData.BOARD_SHORT_DESCRIPTION_FIELD);
         String fullDesc = data.getStringExtra(BoardData.BOARD_FULL_DESCRIPTION_FIELD);
 
-        boardAdapter.addBoardItem(new BoardData(title, author, shortDesc, true));
+        boardAdapter.addItem(new fr.fouss.boardeo.listing.BoardData(title, author, shortDesc, true));
+        boardAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -79,10 +82,12 @@ public class BoardActivity extends AppCompatActivity {
 
         switch (id) {
             case R.id.unsubscribeButton :
-                boardAdapter.setSubscriptionOnSelection(false);
+                boardAdapter.setSelectionSubscription(false);
+                boardAdapter.notifyDataSetChanged();
                 return true;
             case R.id.subscribeButton :
-                boardAdapter.setSubscriptionOnSelection(true);
+                boardAdapter.setSelectionSubscription(true);
+                boardAdapter.notifyDataSetChanged();
                 return true;
             case R.id.deleteBoardButton :
                 removeSelection();
@@ -103,7 +108,8 @@ public class BoardActivity extends AppCompatActivity {
         // Add the buttons
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                boardAdapter.removeSelection();
+                boardAdapter.deleteSelection();
+                boardAdapter.notifyDataSetChanged();
             }
         });
         builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -121,6 +127,7 @@ public class BoardActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         Log.d("Board", "back");
         boardAdapter.setSelectionMode(false);
+        boardAdapter.notifyDataSetChanged();
         return true;
     }
 
