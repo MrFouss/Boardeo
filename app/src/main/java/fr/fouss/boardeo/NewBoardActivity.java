@@ -42,8 +42,6 @@ public class NewBoardActivity extends AppCompatActivity {
         shortDesc.setText(request.getStringExtra(BoardData.BOARD_SHORT_DESCRIPTION_FIELD));
         EditText fullDesc = findViewById(R.id.fullDescField);
         fullDesc.setText(request.getStringExtra(BoardData.BOARD_FULL_DESCRIPTION_FIELD));
-        CheckBox subCheckbox = findViewById(R.id.newBoardSubCheckBox);
-        subCheckbox.setChecked(request.getBooleanExtra(BoardData.BOARD_SUBSCRIPTION_FIELD, true));
     }
 
     ///// EVENTS /////
@@ -91,7 +89,6 @@ public class NewBoardActivity extends AppCompatActivity {
         EditText author = findViewById(R.id.authorField);
         EditText shortDesc = findViewById(R.id.shortDescField);
         EditText fullDesc = findViewById(R.id.fullDescField);
-        CheckBox subCheckbox = findViewById(R.id.newBoardSubCheckBox);
 
         Intent result = new Intent();
 
@@ -103,7 +100,7 @@ public class NewBoardActivity extends AppCompatActivity {
         result.putExtra(BoardData.BOARD_AUTHOR_FIELD, author.getText().toString());
         result.putExtra(BoardData.BOARD_SHORT_DESCRIPTION_FIELD, shortDesc.getText().toString());
         result.putExtra(BoardData.BOARD_FULL_DESCRIPTION_FIELD, fullDesc.getText().toString());
-        result.putExtra(BoardData.BOARD_SUBSCRIPTION_FIELD, subCheckbox.isChecked());
+        result.putExtra(BoardData.BOARD_SUBSCRIPTION_FIELD, true);
 
         // return to requesting activity
         setResult(MiscUtil.NEW_BOARD_RESULT, result);

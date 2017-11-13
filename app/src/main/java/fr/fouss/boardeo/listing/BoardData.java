@@ -2,10 +2,6 @@ package fr.fouss.boardeo.listing;
 
 import android.content.Intent;
 
-/**
- * Created by esia on 12/11/17.
- */
-
 public class BoardData {
     public final static String BOARD_ID_FIELD = "boardId";
     public final static String BOARD_NAME_FIELD = "boardName";
@@ -33,6 +29,10 @@ public class BoardData {
         this.subscribed = subscribed;
     }
 
+    /**
+     * Create a new BoardData from an intent
+     * @param intent
+     */
     public BoardData(Intent intent) {
         this.boardId = idIncrement++;
         this.boardName = intent.getStringExtra(BOARD_NAME_FIELD);
@@ -42,14 +42,23 @@ public class BoardData {
         this.subscribed = intent.getBooleanExtra(BOARD_SUBSCRIPTION_FIELD, false);
     }
 
+    /**
+     * Set data from intent
+     * @param intent
+     */
     public void setFromIntent(Intent intent) {
         this.boardName = intent.getStringExtra(BOARD_NAME_FIELD);
         this.boardAuthor = intent.getStringExtra(BOARD_AUTHOR_FIELD);
         this.boardShortDescription = intent.getStringExtra(BOARD_SHORT_DESCRIPTION_FIELD);
         this.boardFullDescription = intent.getStringExtra(BOARD_FULL_DESCRIPTION_FIELD);
-        this.subscribed = intent.getBooleanExtra(BOARD_SUBSCRIPTION_FIELD, false);
+        this.subscribed = intent.getBooleanExtra(BOARD_SUBSCRIPTION_FIELD, isSubscribed());
     }
 
+    /**
+     * Translate to an intent
+     * @param intent
+     * @return
+     */
     public Intent fillIntentExtras(Intent intent) {
         intent.putExtra(BoardData.BOARD_ID_FIELD, getBoardId());
         intent.putExtra(BoardData.BOARD_NAME_FIELD, getBoardName());
@@ -57,17 +66,6 @@ public class BoardData {
         intent.putExtra(BoardData.BOARD_SHORT_DESCRIPTION_FIELD, getBoardShortDescription());
         intent.putExtra(BoardData.BOARD_FULL_DESCRIPTION_FIELD, getBoardFullDescription());
         intent.putExtra(BoardData.BOARD_SUBSCRIPTION_FIELD, isSubscribed());
-
-        return intent;
-    }
-
-    public static Intent fillDefaultIntentExtras(Intent intent) {
-        intent.putExtra(BoardData.BOARD_ID_FIELD, -1);
-        intent.putExtra(BoardData.BOARD_NAME_FIELD, "BoardName");
-        intent.putExtra(BoardData.BOARD_AUTHOR_FIELD, "BoardAuthor");
-        intent.putExtra(BoardData.BOARD_SHORT_DESCRIPTION_FIELD, "ShortDescription");
-        intent.putExtra(BoardData.BOARD_FULL_DESCRIPTION_FIELD, "FullDesciption");
-        intent.putExtra(BoardData.BOARD_SUBSCRIPTION_FIELD, false);
 
         return intent;
     }
