@@ -136,6 +136,14 @@ public abstract class SelectableRecyclerViewAdapter<Data>
         selectedData.remove(data.get(position));
     }
 
+    public void toggleSelect(int position) {
+        if (isSelected(position)) {
+            unSelect(position);
+        } else {
+            select(position);
+        }
+    }
+
     ///// SELECTABLE VIEW HOLDER /////
 
     /**

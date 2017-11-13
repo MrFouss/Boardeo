@@ -2,6 +2,7 @@ package fr.fouss.boardeo;
 
 import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -15,19 +16,24 @@ public class NewBoardActivity extends AppCompatActivity {
 
     Intent request;
 
+    ///// LIFECYCLE /////
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_board);
 
-        Toolbar toolbar = findViewById(R.id.NewBoardToolbar);
-        setSupportActionBar(toolbar);
+        // setup toolbar
+        setSupportActionBar(findViewById(R.id.NewBoardToolbar));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        FloatingActionButton addButton = findViewById(R.id.validateBoardEditionButton);
-        addButton.setOnClickListener(v -> onValidateButtonClick(v));
+        // setup validation button
+        findViewById(R.id.validateBoardEditionButton).setOnClickListener(v -> onValidateButtonClick(v));
 
+        // get request intent
         request = getIntent();
+
+        // setup fields based on request intent
         EditText title = findViewById(R.id.titleField);
         title.setText(request.getStringExtra(BoardData.BOARD_NAME_FIELD));
         EditText author = findViewById(R.id.authorField);
@@ -40,29 +46,73 @@ public class NewBoardActivity extends AppCompatActivity {
         subCheckbox.setChecked(request.getBooleanExtra(BoardData.BOARD_SUBSCRIPTION_FIELD, true));
     }
 
-    public void onValidateButtonClick(View v) {
-        Intent resultData = new Intent();
-        resultData.putExtras(request);
+    ///// EVENTS /////
 
+    /**
+     * When validation floating button is clicked
+     * @param v
+     */
+    public void onValidateButtonClick(View v) {
+        // retrieve fields
+        EditText title = findViewById(R.id.titleField);
+        EditText author = findViewById(R.id.authorField);
+        EditText shortDesc = findViewById(R.id.shortDescField);
+        EditText fullDesc = findViewById(R.id.fullDescField);
+
+        if(title.length() == 0
+                || author.length() == 0
+                || shortDesc.length() == 0
+                || fullDesc.length() == 0
+                ) {
+            // create an alert dialog if there is missing info
+            AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                    .setMessage("Fill all fields.")
+                    .setTitle("Warning !")
+                    .setPositiveButton("OK", (dialog, id) -> {});
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        } else {
+            onReturnResult();
+        }
+    }
+
+    /**
+     * When returning the new board data
+     * Data should have been verified before calling this
+     */
+    public void onReturnResult() {
+        // retrieve fields
         EditText title = findViewById(R.id.titleField);
         EditText author = findViewById(R.id.authorField);
         EditText shortDesc = findViewById(R.id.shortDescField);
         EditText fullDesc = findViewById(R.id.fullDescField);
         CheckBox subCheckbox = findViewById(R.id.newBoardSubCheckBox);
 
-        resultData.putExtra(BoardData.BOARD_NAME_FIELD, title.getText().toString());
-        resultData.putExtra(BoardData.BOARD_AUTHOR_FIELD, author.getText().toString());
-        resultData.putExtra(BoardData.BOARD_SHORT_DESCRIPTION_FIELD, shortDesc.getText().toString());
-        resultData.putExtra(BoardData.BOARD_FULL_DESCRIPTION_FIELD, fullDesc.getText().toString());
-        resultData.putExtra(BoardData.BOARD_SUBSCRIPTION_FIELD, subCheckbox.isChecked());
+        Intent result = new Intent();
 
-        setResult(MiscUtil.NEW_BOARD_RESULT, resultData);
+        // copy request intent
+        result.putExtras(request);
 
+        // replace some fields in the result intent
+        result.putExtra(BoardData.BOARD_NAME_FIELD, title.getText().toString());
+        result.putExtra(BoardData.BOARD_AUTHOR_FIELD, author.getText().toString());
+        result.putExtra(BoardData.BOARD_SHORT_DESCRIPTION_FIELD, shortDesc.getText().toString());
+        result.putExtra(BoardData.BOARD_FULL_DESCRIPTION_FIELD, fullDesc.getText().toString());
+        result.putExtra(BoardData.BOARD_SUBSCRIPTION_FIELD, subCheckbox.isChecked());
+
+        // return to requesting activity
+        setResult(MiscUtil.NEW_BOARD_RESULT, result);
         finish();
     }
 
     @Override
+    public void onBackPressed() {
+        onSupportNavigateUp();
+    }
+
+    @Override
     public boolean onSupportNavigateUp() {
+        // return without any result
         setResult(MiscUtil.CANCEL_NEW_BOARD_RESULT);
         finish();
         return true;
