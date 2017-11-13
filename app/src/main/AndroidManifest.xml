@@ -29,7 +29,6 @@
         <activity
             android:name=".NewBoardActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".BoardActivity" />
         <activity
             android:name=".sign_in.SignInChooserActivity"
             android:label="@string/title_activity_sign_in_chooser" />
