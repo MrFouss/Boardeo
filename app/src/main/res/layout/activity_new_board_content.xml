@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/fab_margin"
+    android:paddingRight="@dimen/fab_margin"
+    android:paddingBottom="@dimen/fab_margin"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    <EditText
+        android:id="@+id/titleField"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/fab_margin"
+        android:hint="Board name"
+        android:background="@color/grey_300"
+        android:padding="@dimen/fab_margin"
+        android:inputType="text" />
+
+    <EditText
+        android:id="@+id/authorField"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/fab_margin"
+        android:hint="Author"
+        android:background="@color/grey_300"
+        android:padding="@dimen/fab_margin"
+        android:inputType="text" />
+
+    <EditText
+        android:id="@+id/shortDescField"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/fab_margin"
+        android:hint="Short description"
+        android:background="@color/grey_300"
+        android:padding="@dimen/fab_margin"
+        android:inputType="textShortMessage" />
+
+    <EditText
+        android:id="@+id/fullDescField"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="top"
+        android:layout_marginTop="@dimen/fab_margin"
+        android:hint="Full description"
+        android:background="@color/grey_300"
+        android:padding="@dimen/fab_margin"
+        android:inputType="textMultiLine"/>
+
+    <CheckBox
+        android:id="@+id/allowPostCheckbox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/fab_margin"
+        android:text="Allow post"/>
+
+</LinearLayout>
