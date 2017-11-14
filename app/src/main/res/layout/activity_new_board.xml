@@ -35,6 +35,6 @@
         android:layout_margin="16dp"
         android:clickable="true"
         app:backgroundTint="@color/primary"
-        app:srcCompat="@android:drawable/ic_input_add" />
+        app:srcCompat="@drawable/ic_media_play_light" />
 
 </android.support.design.widget.CoordinatorLayout>

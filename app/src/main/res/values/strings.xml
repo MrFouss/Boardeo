@@ -56,5 +56,6 @@
     </string>
     <string name="verify_email">Verify email</string>
     <string name="auth_failed">Authentication failed</string>
+    <string name="title_activity_board_details">BoardDetailsActivity</string>
 
 </resources>
