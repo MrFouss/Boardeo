@@ -12,6 +12,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import fr.fouss.boardeo.sign_in.SignInChooserActivity;
 import fr.fouss.boardeo.utils.UserUtils;
@@ -20,6 +22,8 @@ public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private UserUtils userUtils;
+
+    private TextView usernameLabel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +41,9 @@ public class HomeActivity extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        View navHeaderView = navigationView.getHeaderView(0);
+        usernameLabel = navHeaderView.findViewById(R.id.username);
+
         userUtils = new UserUtils(this);
     }
 
@@ -45,7 +52,7 @@ public class HomeActivity extends AppCompatActivity
         super.onResume();
 
         if (userUtils.isSignedIn()) {
-
+            usernameLabel.setText(userUtils.getUserName());
         } else {
             startActivity(new Intent(this, SignInChooserActivity.class));
         }

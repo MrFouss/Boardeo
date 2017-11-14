@@ -53,6 +53,10 @@ public class UserUtils {
         editor.apply();
     }
 
+    public String getUserName() {
+        return getUser().getDisplayName();
+    }
+
     public String getUserEmail() {
         return getUser().getEmail();
     }

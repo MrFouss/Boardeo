@@ -67,6 +67,7 @@ public class EmailPasswordSignInActivity extends SignInBaseActivity
                             homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | FLAG_ACTIVITY_NEW_TASK);
                             startActivity(homeIntent);
                         } else {
+                            userUtils.emailSendVerification();
                             userUtils.signOut();
                             Toast.makeText(this,
                                     "Activate your account first\nVerification email sent at: " + userUtils.getUserEmail(),
