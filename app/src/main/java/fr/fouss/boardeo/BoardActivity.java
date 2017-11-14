@@ -97,19 +97,13 @@ public class BoardActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         // 2. Chain together various setter methods to set the dialog characteristics
-        builder.setMessage("Do you really whan to delete boards ?")
-                .setTitle("Warning !");
+        builder.setMessage("Do you really want to delete these boards?")
+                .setTitle("Warning!");
 
         // Add the buttons
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                boardAdapter.removeSelection();
-            }
-        });
-        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                // User cancelled the dialog
-            }
+        builder.setPositiveButton("Yes", (dialog, id) -> boardAdapter.removeSelection());
+        builder.setNegativeButton("No", (dialog, id) -> {
+            // User cancelled the dialog
         });
 
         // 3. Get the AlertDialog from create()

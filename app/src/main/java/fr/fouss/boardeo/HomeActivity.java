@@ -1,13 +1,9 @@
 package fr.fouss.boardeo;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.view.View;
+import android.support.v7.app.AlertDialog;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -18,11 +14,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import fr.fouss.boardeo.sign_in.SignInChooserActivity;
+import fr.fouss.boardeo.utils.UserUtils;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private SharedPreferences sharedPreferences;
+    private UserUtils userUtils;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,19 +37,14 @@ public class HomeActivity extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        // Shared preferences
-        Context context = getApplicationContext();
-        sharedPreferences = context.getSharedPreferences(
-                getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        userUtils = new UserUtils(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        Boolean isLoggedIn = sharedPreferences.getBoolean("IsUserLoggedIn", false);
-
-        if (isLoggedIn) {
+        if (userUtils.isSignedIn()) {
 
         } else {
             startActivity(new Intent(this, SignInChooserActivity.class));
@@ -100,14 +92,28 @@ public class HomeActivity extends AppCompatActivity
             // Handle the camera action
         } else if (id == R.id.nav_gallery) {
 
-        } else if (id == R.id.nav_slideshow) {
-
         } else if (id == R.id.nav_manage) {
 
-        } else if (id == R.id.nav_share) {
+        } else if (id == R.id.nav_settings) {
+            startActivity(new Intent(this, SettingsActivity.class));
+        } else if (id == R.id.nav_sign_out) {
+            // 1. Instantiate an AlertDialog.Builder with its constructor
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-        } else if (id == R.id.nav_send) {
+            // 2. Chain together various setter methods to set the dialog characteristics
+            builder.setMessage(getString(R.string.dialog_content_sign_out))
+                    .setTitle(getString(R.string.dialog_title_sign_out));
 
+            // Add the buttons
+            builder.setPositiveButton("Yes", (dialog, id1) -> {
+                userUtils.signOut();
+                startActivity(new Intent(this, SignInChooserActivity.class));
+            });
+            builder.setNegativeButton("No", (dialog, id1) -> {});
+
+            // 3. Get the AlertDialog from create()
+            AlertDialog dialog = builder.create();
+            dialog.show();
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
