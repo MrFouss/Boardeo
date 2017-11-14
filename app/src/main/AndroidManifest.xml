@@ -25,10 +25,18 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".BoardActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:name=".BoardListActivity"
+            android:label="@string/title_activity_board_list"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".HomeActivity" />
         <activity
             android:name=".NewBoardActivity"
+            android:label="@string/title_activity_new_board"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".BoardListActivity" />
+        <activity
+            android:name=".BoardDetailsActivity"
+            android:label="@string/title_activity_board_details"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".SettingsActivity"

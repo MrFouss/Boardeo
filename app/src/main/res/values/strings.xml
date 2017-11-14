@@ -5,7 +5,19 @@
     <string name="title_activity_home">Boardeo</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_my_boards">My boards</string>
+    <string name="action_board_list">Browse boards</string>
     <string name="action_settings">Settings</string>
+    <string name="action_clear_notifications">Clear notifications</string>
+
+    <!-- Board list activity -->
+    <string name="title_activity_board_list">Board list</string>
+
+    <!-- New board activity -->
+    <string name="title_activity_new_board">Create a board</string>
+
+    <!-- Board details activity -->
+    <string name="title_activity_board_details">Board details</string>
 
     <!-- Settings activity -->
     <string name="title_activity_settings">Settings</string>
@@ -56,6 +68,5 @@
     </string>
     <string name="verify_email">Verify email</string>
     <string name="auth_failed">Authentication failed</string>
-    <string name="title_activity_board_details">BoardDetailsActivity</string>
 
 </resources>

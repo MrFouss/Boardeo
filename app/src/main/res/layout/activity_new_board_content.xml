@@ -1,112 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/fab_margin"
+    android:paddingRight="@dimen/fab_margin"
+    android:paddingBottom="@dimen/fab_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <TableLayout
-        android:layout_width="wrap_content"
+    <EditText
+        android:id="@+id/titleField"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_marginTop="@dimen/fab_margin"
+        android:hint="Board name"
+        android:background="@color/grey_300"
+        android:padding="@dimen/fab_margin"
+        android:inputType="text" />
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+    <EditText
+        android:id="@+id/authorField"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/fab_margin"
+        android:hint="Author"
+        android:background="@color/grey_300"
+        android:padding="@dimen/fab_margin"
+        android:inputType="text" />
 
-            <TextView
-                android:id="@+id/textView4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Full Description" />
+    <EditText
+        android:id="@+id/shortDescField"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/fab_margin"
+        android:hint="Short description"
+        android:background="@color/grey_300"
+        android:padding="@dimen/fab_margin"
+        android:inputType="textShortMessage" />
 
-            <EditText
-                android:id="@+id/fullDescField"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="My full description \n ..."
-                android:inputType="textLongMessage" />
+    <EditText
+        android:id="@+id/fullDescField"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="top"
+        android:layout_marginTop="@dimen/fab_margin"
+        android:hint="Full description"
+        android:background="@color/grey_300"
+        android:padding="@dimen/fab_margin"
+        android:inputType="textMultiLine"/>
 
-        </TableRow>
+    <CheckBox
+        android:id="@+id/allowPostCheckbox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/fab_margin"
+        android:text="Allow post"/>
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <TextView
-                android:id="@+id/textView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Title" />
-
-            <EditText
-                android:id="@+id/titleField"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="My Board"
-                android:inputType="text" />
-
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <TextView
-                android:id="@+id/textView2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Author" />
-
-            <EditText
-                android:id="@+id/authorField"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="Lola"
-                android:inputType="text" />
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <TextView
-                android:id="@+id/textView3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Short Description" />
-
-            <EditText
-                android:id="@+id/shortDescField"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="My short description"
-                android:inputType="textShortMessage" />
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Allow post" />
-
-            <CheckBox
-                android:id="@+id/allowPostCheckbox"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-        </TableRow>
-
-    </TableLayout>
-
-</android.support.constraint.ConstraintLayout>
+</LinearLayout>
