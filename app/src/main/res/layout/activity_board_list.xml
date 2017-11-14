@@ -23,7 +23,7 @@
     </android.support.design.widget.AppBarLayout>
 
     <include
-        layout="@layout/activity_board_content"
+        layout="@layout/activity_board_list_content"
         tools:layout_editor_absoluteX="218dp"
         tools:layout_editor_absoluteY="355dp"
         />
