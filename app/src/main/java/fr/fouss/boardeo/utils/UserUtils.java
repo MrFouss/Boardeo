@@ -4,13 +4,22 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
+import android.widget.Toast;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
+import fr.fouss.boardeo.R;
+
 public class UserUtils {
+
+    private Activity activity;
 
     /**
      * Firebase authenticator instance
@@ -22,7 +31,11 @@ public class UserUtils {
      */
     private SharedPreferences sharedPreferences;
 
+    private GoogleSignInClient mGoogleSignInClient;
+
     public UserUtils(Activity activity) {
+
+        this.activity = activity;
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -30,6 +43,15 @@ public class UserUtils {
         sharedPreferences = activity.getSharedPreferences(
                 "fr.fouss.boardeo.GLOBAL_INFO",
                 Context.MODE_PRIVATE);
+
+        // Configure Google Sign In
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(activity.getResources().getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+        // [END config_signin]
+
+        mGoogleSignInClient = GoogleSignIn.getClient(activity, gso);
     }
 
     public void emailSendVerification() {
@@ -66,12 +88,10 @@ public class UserUtils {
     }
 
     public void signOut() {
-        assert mAuth.getCurrentUser() != null;
-
-        switch (mAuth.getCurrentUser().getProviderId()) {
+        switch (getUser().getProviderId()) {
             case GoogleAuthProvider.PROVIDER_ID:
                 mAuth.signOut();
-
+                mGoogleSignInClient.signOut();
                 break;
 
             case EmailAuthProvider.PROVIDER_ID:
