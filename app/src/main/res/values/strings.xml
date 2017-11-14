@@ -7,6 +7,9 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_settings">Settings</string>
 
+    <!-- Settings activity -->
+    <string name="title_activity_settings">Settings</string>
+
     <!-- Sign in chooser activity -->
     <string name="title_activity_sign_in_chooser">Sign in</string>
     <string name="signin_chooser_label_emailpassword">Sign in with email/password</string>
@@ -17,6 +20,15 @@
     <string name="emailpassword_user_status">Signed in email user: %1$s (verified: %2$b)</string>
     <string name="hint_email">Email</string>
     <string name="hint_password">Password</string>
+    <string name="dialog_title_sign_out">Sign out</string>
+    <string name="dialog_content_sign_out">Do you really want to sign out?</string>
+
+    <!-- Email/password create account activity -->
+    <string name="title_activity_emailpassword_create_account">Create an account</string>
+    <string name="hint_username">Username</string>
+    <string name="hint_password_again">Password (again)</string>
+    <string name="dialog_title_email_account_created">Account successfully created</string>
+    <string name="dialog_content_email_account_created">Don\'t forget to check your emails to activate your account</string>
 
     <!-- Google sign in activity -->
     <string name="title_activity_google_sign_in">Sign in with Google</string>
@@ -44,8 +56,6 @@
     </string>
     <string name="verify_email">Verify email</string>
     <string name="auth_failed">Authentication failed</string>
-    <string name="preference_file_key">fr.fouss.boardeo.GLOBAL_INFO</string>
-    <string name="user_uid">user_uid</string>
     <string name="title_activity_board_details">BoardDetailsActivity</string>
 
 </resources>
