@@ -34,7 +34,7 @@
         android:layout_gravity="bottom|right"
         android:layout_margin="16dp"
         android:clickable="true"
-        app:backgroundTint="@color/primary"
-        app:srcCompat="@drawable/ic_media_play_light" />
+        android:src="@drawable/ic_done"
+        app:backgroundTint="@color/secondaryDark" />
 
 </android.support.design.widget.CoordinatorLayout>

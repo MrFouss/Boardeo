@@ -3,29 +3,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
-    <group android:id="@+id/group_settings2">
+    <group android:id="@+id/group_board">
         <item
-            android:id="@+id/nav_camera"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="Import" />
+            android:id="@+id/nav_my_boards"
+            android:icon="@drawable/ic_my_boards"
+            android:title="@string/action_my_boards" />
         <item
-            android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Gallery" />
-        <item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Tools" />
+            android:id="@+id/nav_boards"
+            android:icon="@drawable/ic_dashboard"
+            android:title="@string/action_board_list" />
     </group>
 
     <group android:id="@+id/group_settings">
         <item
             android:id="@+id/nav_settings"
-            android:icon="@drawable/ic_settings_black_24dp"
+            android:icon="@drawable/ic_settings"
             android:title="@string/action_settings" />
         <item
             android:id="@+id/nav_sign_out"
-            android:icon="@drawable/ic_exit_black_24dp"
+            android:icon="@drawable/ic_exit"
             android:title="@string/sign_out" />
     </group>
 

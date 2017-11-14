@@ -109,10 +109,12 @@ public abstract class SelectableRecyclerViewAdapter<Data>
         }
     }
 
+    public void clearSelection() {
+        selectedData.clear();
+    }
+
     public void deleteSelection() {
-        for (Data d : selectedData) {
-            data.remove(d);
-        }
+        data.removeAll(selectedData);
         selectedData.clear();
     }
 

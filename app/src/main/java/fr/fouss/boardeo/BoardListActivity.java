@@ -126,10 +126,12 @@ public class BoardListActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.unsubscribeButton :
                 boardRecyclerViewAdapter.setSelectionSubscription(false);
+                boardRecyclerViewAdapter.clearSelection();
                 boardRecyclerViewAdapter.notifyDataSetChanged();
                 return true;
             case R.id.subscribeButton :
                 boardRecyclerViewAdapter.setSelectionSubscription(true);
+                boardRecyclerViewAdapter.clearSelection();
                 boardRecyclerViewAdapter.notifyDataSetChanged();
                 return true;
             case R.id.deleteBoardButton :
@@ -148,11 +150,11 @@ public class BoardListActivity extends AppCompatActivity {
      */
     public void onDeleteBoardButtonClick() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                .setMessage("Do you really whan to delete boards ?")
-                .setTitle("Warning !")
+                .setMessage("Do you really want to delete boards?")
+                .setTitle("Warning!")
                 .setPositiveButton("Yes", (dialog, id) -> {
                     boardRecyclerViewAdapter.deleteSelection();
-                    boardRecyclerViewAdapter.notifyDataSetChanged();
+                    onSupportNavigateUp();
                 })
                 .setNegativeButton("No", (dialog, id) -> {});
         AlertDialog dialog = builder.create();
@@ -168,6 +170,15 @@ public class BoardListActivity extends AppCompatActivity {
         boardRecyclerViewAdapter.setSelectionMode(false);
         boardRecyclerViewAdapter.notifyDataSetChanged();
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (boardRecyclerViewAdapter.isSelectionMode()) {
+            onSupportNavigateUp();
+        } else {
+            super.onBackPressed();
+        }
     }
 
     /**

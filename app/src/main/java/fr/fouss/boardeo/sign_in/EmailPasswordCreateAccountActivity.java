@@ -82,6 +82,8 @@ public class EmailPasswordCreateAccountActivity extends SignInBaseActivity
                                         builder.setMessage(getString(R.string.dialog_content_email_account_created))
                                                 .setTitle(getString(R.string.dialog_title_email_account_created));
 
+                                        builder.setCancelable(false);
+
                                         // Add the buttons
                                         builder.setNeutralButton("Ok", (dialog, id1) -> {
                                             userUtils.signOut();

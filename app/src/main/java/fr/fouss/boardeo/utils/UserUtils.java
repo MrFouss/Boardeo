@@ -19,8 +19,6 @@ import fr.fouss.boardeo.R;
 
 public class UserUtils {
 
-    private Activity activity;
-
     /**
      * Firebase authenticator instance
      */
@@ -34,8 +32,6 @@ public class UserUtils {
     private GoogleSignInClient mGoogleSignInClient;
 
     public UserUtils(Activity activity) {
-
-        this.activity = activity;
 
         mAuth = FirebaseAuth.getInstance();
 
