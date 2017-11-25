@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:configChanges="orientation"
+    android:screenOrientation="portrait"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    tools:context="fr.fouss.boardeo.sign_in.SignInActivity">
+
+    <TextView
+        android:id="@+id/app_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/big_spacing"
+        android:layout_alignParentTop="true"
+        style="@style/Drawy.AppTitle"
+        android:text="@string/app_name" />
+
+    <LinearLayout
+        android:id="@+id/email_password_fields"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/big_spacing"
+        android:orientation="vertical"
+        android:layout_below="@id/app_name">
+
+        <EditText
+            android:id="@+id/field_email"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_email"
+            android:inputType="textEmailAddress" />
+
+        <EditText
+            android:id="@+id/field_password"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_password"
+            android:inputType="textPassword" />
+
+        <Button
+            android:id="@+id/email_sign_in_button"
+            style="@style/Widget.AppCompat.Button"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_margin"
+            android:text="@string/sign_in" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/email_forgotten_password_link"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/fab_margin"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/email_password_fields"
+        style="@style/Drawy.LoginLinks"
+        android:text="@string/login_forgot_your_password" />
+
+    <TextView
+        android:id="@+id/email_create_account_link"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/big_spacing"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/email_forgotten_password_link"
+        style="@style/Drawy.LoginLinks"
+        android:text="@string/login_no_account_yet_create_one" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/fab_margin"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@id/google_sign_in_button"
+        android:text="@string/login_or_sign_in_with_google" />
+
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/google_sign_in_button"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="@dimen/fab_margin"
+        android:layout_marginBottom="@dimen/fab_margin" />
+
+</RelativeLayout>

@@ -15,7 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import fr.fouss.boardeo.sign_in.SignInChooserActivity;
+import fr.fouss.boardeo.sign_in.SignInActivity;
 import fr.fouss.boardeo.utils.UserUtils;
 
 public class HomeActivity extends AppCompatActivity
@@ -54,7 +54,7 @@ public class HomeActivity extends AppCompatActivity
         if (userUtils.isSignedIn()) {
             usernameLabel.setText(userUtils.getUserName());
         } else {
-            startActivity(new Intent(this, SignInChooserActivity.class));
+            startActivity(new Intent(this, SignInActivity.class));
         }
     }
 
@@ -92,33 +92,35 @@ public class HomeActivity extends AppCompatActivity
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
+        switch (item.getItemId()) {
+            case R.id.nav_my_boards:
 
-        if (id == R.id.nav_my_boards) {
+                break;
+            case R.id.nav_boards:
+                startActivity(new Intent(this, BoardListActivity.class));
+                break;
+            case R.id.nav_settings:
+                startActivity(new Intent(this, SettingsActivity.class));
+                break;
+            case R.id.nav_sign_out:
+                // 1. Instantiate an AlertDialog.Builder with its constructor
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-        } else if (id == R.id.nav_boards) {
-            startActivity(new Intent(this, BoardListActivity.class));
-        } else if (id == R.id.nav_settings) {
-            startActivity(new Intent(this, SettingsActivity.class));
-        } else if (id == R.id.nav_sign_out) {
-            // 1. Instantiate an AlertDialog.Builder with its constructor
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                // 2. Chain together various setter methods to set the dialog characteristics
+                builder.setMessage(getString(R.string.dialog_content_sign_out))
+                        .setTitle(getString(R.string.dialog_title_sign_out));
 
-            // 2. Chain together various setter methods to set the dialog characteristics
-            builder.setMessage(getString(R.string.dialog_content_sign_out))
-                    .setTitle(getString(R.string.dialog_title_sign_out));
+                // Add the buttons
+                builder.setPositiveButton("Yes", (dialog, id1) -> {
+                    userUtils.signOut();
+                    startActivity(new Intent(this, SignInActivity.class));
+                });
+                builder.setNegativeButton("No", (dialog, id1) -> {});
 
-            // Add the buttons
-            builder.setPositiveButton("Yes", (dialog, id1) -> {
-                userUtils.signOut();
-                startActivity(new Intent(this, SignInChooserActivity.class));
-            });
-            builder.setNegativeButton("No", (dialog, id1) -> {});
-
-            // 3. Get the AlertDialog from create()
-            AlertDialog dialog = builder.create();
-            dialog.show();
+                // 3. Get the AlertDialog from create()
+                AlertDialog dialog = builder.create();
+                dialog.show();
+                break;
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
