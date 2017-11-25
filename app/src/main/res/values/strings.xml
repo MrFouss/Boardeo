@@ -36,7 +36,7 @@
     <string name="dialog_content_sign_out">Do you really want to sign out?</string>
 
     <!-- Email/password create account activity -->
-    <string name="title_activity_emailpassword_create_account">Create an account</string>
+    <string name="title_activity_create_account">Create an account</string>
     <string name="hint_username">Username</string>
     <string name="hint_password_again">Password (again)</string>
     <string name="dialog_title_email_account_created">Account successfully created</string>
@@ -68,5 +68,9 @@
     </string>
     <string name="verify_email">Verify email</string>
     <string name="auth_failed">Authentication failed</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="login_or_sign_in_with_google">Or sign in with Google</string>
+    <string name="login_no_account_yet_create_one">No account yet? Create one!</string>
+    <string name="login_forgot_your_password">Forgot your password?</string>
 
 </resources>

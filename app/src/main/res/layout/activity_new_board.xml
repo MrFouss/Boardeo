@@ -35,6 +35,6 @@
         android:layout_margin="16dp"
         android:clickable="true"
         android:src="@drawable/ic_done"
-        app:backgroundTint="@color/secondaryDark" />
+        app:backgroundTint="@color/secondaryColorDark" />
 
 </android.support.design.widget.CoordinatorLayout>
