@@ -43,6 +43,7 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.BoardViewHol
      */
     private final TreeMap<String, Board> boards = new TreeMap<>();
 
+    private ChildEventListener subscriptionListener = null;
     private Map<String, ValueEventListener> boardListenerMap = new HashMap<>();
 
     ///// CONSTRUCTOR /////
@@ -89,24 +90,45 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.BoardViewHol
 
     ///// DATA MANAGEMENT /////
 
-    private void initBoardsListener() {
+    private void initSubscriptionsListener() {
 
-        mDatabase.child("users").child(userUtils.getUserUid()).child("subscriptions")
-                .addListenerForSingleValueEvent(new ValueEventListener() {
+        if (subscriptionListener == null) {
+            subscriptionListener = new ChildEventListener() {
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    String key = dataSnapshot.getKey();
+                    setBoard(key);
+                }
 
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        for (DataSnapshot item : dataSnapshot.getChildren()) {
-                            String key = item.getKey();
-                            setBoard(key);
-                        }
-                    }
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        throw databaseError.toException();
-                    }
-                });
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
+                    String key = dataSnapshot.getKey();
+                    removeBoardListener(key);
+                }
+
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    throw databaseError.toException();
+                }
+            };
+
+            mDatabase.child("users").child(userUtils.getUserUid()).child("subscriptions")
+                    .addChildEventListener(subscriptionListener);
+        }
+    }
+
+    private void removeSubscriptionsListener() {
+        if (subscriptionListener != null) {
+            mDatabase.child("users").child(userUtils.getUserUid()).child("subscriptions")
+                    .removeEventListener(subscriptionListener);
+            subscriptionListener = null;
+        }
     }
 
     @Override
