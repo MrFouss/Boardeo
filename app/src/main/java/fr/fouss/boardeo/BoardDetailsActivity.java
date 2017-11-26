@@ -3,20 +3,30 @@ package fr.fouss.boardeo;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import fr.fouss.boardeo.listing.BoardData;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import fr.fouss.boardeo.data.Board;
 
 public class BoardDetailsActivity extends AppCompatActivity {
 
     /**
      * The current board data to be returned
      */
-    Intent currBoardData;
+    Intent boardIntent;
+
+    /**
+     * Firebase database instance
+     */
+    private DatabaseReference mDatabase;
 
     ///// LIFECYCLE /////
 
@@ -25,25 +35,22 @@ public class BoardDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_board_details);
 
-        // setup toolbar
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+
+        // Setup toolbar
         setSupportActionBar(findViewById(R.id.toolbar));
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        currBoardData = new Intent();
-        // copy intent
-        currBoardData.putExtras(getIntent());
+        boardIntent = new Intent();
 
-        // setting texts
-        TextView title = findViewById(R.id.detailBoardTitle);
-        title.setText(currBoardData.getStringExtra(BoardData.BOARD_NAME_FIELD));
-        TextView author = findViewById(R.id.detailAuthorName);
-        author.setText(currBoardData.getStringExtra(BoardData.BOARD_AUTHOR_FIELD));
-        TextView fullDescription = findViewById(R.id.detailFullDescription);
-        fullDescription.setText(currBoardData.getStringExtra(BoardData.BOARD_FULL_DESCRIPTION_FIELD));
+        // Copy intent
+        boardIntent.putExtras(getIntent());
+        updateTextFields();
 
-        // setup edit button listener
+        // Setup of the edit button and its listener
         Button editButton = findViewById(R.id.editBoardButton);
-        editButton.setOnClickListener(v -> onEditBoardButtonClick(v));
+        editButton.setOnClickListener(this::onEditBoardButtonClick);
     }
 
     /**
@@ -51,9 +58,10 @@ public class BoardDetailsActivity extends AppCompatActivity {
      * @param v
      */
     public void onEditBoardButtonClick(View v) {
-        // start new board activity
+
+        // Start new board activity
         Intent intent = new Intent(this, NewBoardActivity.class);
-        intent.putExtras(currBoardData);
+        intent.putExtras(boardIntent);
         startActivityForResult(intent, MiscUtil.BOARD_CREATION_REQUEST);
     }
 
@@ -61,19 +69,45 @@ public class BoardDetailsActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == MiscUtil.BOARD_CREATION_REQUEST
                 && resultCode == MiscUtil.NEW_BOARD_RESULT) {
-            // new board activity normal return
+            // New board activity normal return
 
-            // copy result intent
-            currBoardData.putExtras(data);
-
-            // update views
-            TextView title = findViewById(R.id.detailBoardTitle);
-            title.setText(currBoardData.getStringExtra(BoardData.BOARD_NAME_FIELD));
-            TextView author = findViewById(R.id.detailAuthorName);
-            author.setText(currBoardData.getStringExtra(BoardData.BOARD_AUTHOR_FIELD));
-            TextView fullDescription = findViewById(R.id.detailFullDescription);
-            fullDescription.setText(currBoardData.getStringExtra(BoardData.BOARD_FULL_DESCRIPTION_FIELD));
+            // Copy result intent
+            boardIntent.putExtras(data);
+            updateTextFields();
         }
+    }
+
+    private void updateTextFields() {
+        String boardKey = boardIntent.getStringExtra("BOARD_KEY");
+        DatabaseReference dataReference = mDatabase.child("boards").child(boardKey);
+
+        dataReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Board board = (Board) dataSnapshot.getValue();
+                assert board != null;
+
+                // Setup of texts
+                TextView name = findViewById(R.id.boardName);
+                name.setText(board.getName());
+                TextView shortDescription = findViewById(R.id.boardShortDescription);
+                shortDescription.setText(board.getShortDescription());
+                TextView fullDescription = findViewById(R.id.boardFullDescription);
+                fullDescription.setText(board.getFullDescription());
+                TextView ownerUid = findViewById(R.id.boardOwnerUid);
+                ownerUid.setText(board.getOwnerUid());
+                TextView coordinates = findViewById(R.id.boardCoordinates);
+                String coordinatesText = board.getLatitude() + " ; " + board.getLongitude();
+                coordinates.setText(coordinatesText);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Toast.makeText(BoardDetailsActivity.this,
+                        "Board info couldn't be retrieved",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
@@ -85,7 +119,7 @@ public class BoardDetailsActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         Intent intent = new Intent();
         // copy the current board data to update the requesting activity
-        intent.putExtras(currBoardData);
+        intent.putExtras(boardIntent);
         setResult(MiscUtil.BOARD_DETAIL_RESULT, intent);
         finish();
         return true;

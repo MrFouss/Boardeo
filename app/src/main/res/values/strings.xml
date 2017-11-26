@@ -74,5 +74,7 @@
     <string name="login_forgot_your_password">Forgot your password?</string>
     <string name="allow_location">Allow location</string>
     <string name="activate_location">Activate location</string>
+    <string name="board_banner">Board banner</string>
+    <string name="board_status">Board status</string>
 
 </resources>

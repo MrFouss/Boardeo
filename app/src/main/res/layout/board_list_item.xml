@@ -1,62 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/boardRootLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/common_google_signin_btn_icon_light_normal_background"
-    android:orientation="vertical">
+    android:orientation="horizontal">
 
-    <TableRow
-        android:id="@+id/tableRaw"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
+    <CheckBox
+        android:id="@+id/subscription_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:button="@drawable/subscription_checkbox"
+        android:checked="false" />
 
-        <CheckBox
-            android:id="@+id/checkBoxSubscription"
-            android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/small_spacing"
+        android:layout_marginRight="@dimen/small_spacing"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/board_name_label"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0"
-            android:button="@drawable/subscription_checkbox"
-            android:checked="false" />
+            android:text="Board name" />
 
-        <LinearLayout
-            android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/board_short_description_label"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_weight="10"
-            android:orientation="vertical">
+            android:text="Board short description" />
 
-            <TextView
-                android:id="@+id/boardNameText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Board name" />
+    </LinearLayout>
 
-            <TextView
-                android:id="@+id/boardAuthorText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Board Author" />
-
-            <TextView
-                android:id="@+id/boardShortDescText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Board short description \n ..." />
-
-        </LinearLayout>
-
-        <CheckBox
-            android:id="@+id/checkBoxSelect"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="0"
-            android:textAlignment="center"
-            android:visibility="visible" />
-
-    </TableRow>
+    <CheckBox
+        android:id="@+id/selection_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible" />
 
 </LinearLayout>

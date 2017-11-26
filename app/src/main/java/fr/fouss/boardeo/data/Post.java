@@ -82,4 +82,20 @@ public class Post {
     public Long getTimestamp() {
         return timestamp;
     }
+
+    public void setBoardKey(String boardKey) {
+        this.boardKey = boardKey;
+    }
+
+    public void setAuthorUid(String authorUid) {
+        this.authorUid = authorUid;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public void setTimestamp(Long timestamp) {
+        this.timestamp = timestamp;
+    }
 }

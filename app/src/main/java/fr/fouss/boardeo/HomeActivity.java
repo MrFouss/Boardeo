@@ -47,7 +47,6 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import fr.fouss.boardeo.data.Board;
 import fr.fouss.boardeo.sign_in.SignInActivity;
@@ -66,11 +65,12 @@ public class HomeActivity extends AppCompatActivity
     private static final double RADIUS = 100.0;
 
     /**
-     * Firebase authenticator instance
+     * Firebase database instance
      */
     private DatabaseReference mDatabase;
     private ChildEventListener mNearbyBoardsListener;
     private Map<String, Marker> markerList;
+    private Map<String, Board> boardList;
     private Circle mCircle;
 
     private UserUtils userUtils;
@@ -94,6 +94,7 @@ public class HomeActivity extends AppCompatActivity
         mDatabase = FirebaseDatabase.getInstance().getReference();
         userUtils = new UserUtils(this);
         markerList = new HashMap<>();
+        boardList = new HashMap<>();
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -284,7 +285,9 @@ public class HomeActivity extends AppCompatActivity
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Toast.makeText(HomeActivity.this, "Board info couldn't be retrieved", Toast.LENGTH_SHORT).show();
+                Toast.makeText(HomeActivity.this,
+                        "Board info couldn't be retrieved",
+                        Toast.LENGTH_SHORT).show();
             }
         };
 
@@ -322,6 +325,7 @@ public class HomeActivity extends AppCompatActivity
                     .snippet(board.getShortDescription()));
             marker.setTag(key);
             markerList.put(key, marker);
+            boardList.put(key, board);
         }
     }
 
@@ -352,11 +356,18 @@ public class HomeActivity extends AppCompatActivity
         marker.setTag(null);
         marker.remove();
         markerList.remove(key);
+        boardList.remove(key);
     }
 
     @Override
     public void onInfoWindowClick(Marker marker) {
-        Toast.makeText(this, "Tag: " + marker.getTag(), Toast.LENGTH_SHORT).show();
+        String key = (String) marker.getTag();
+        Board board = boardList.get(key);
+
+        // Launch board detail activity
+        Intent intent = new Intent(this, BoardDetailsActivity.class);
+        board.fillIntentExtras(intent);
+        startActivity(intent);
     }
 
     @Override
@@ -365,11 +376,13 @@ public class HomeActivity extends AppCompatActivity
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         mMap.setMinZoomPreference(17.5f);
         mMap.setMaxZoomPreference(17.5f);
-//        mMap.setInfoWindowAdapter(new BoardeoInfoWindowAdapter());
+        mMap.setInfoWindowAdapter(new BoardeoInfoWindowAdapter());
         if (ActivityCompat.checkSelfPermission(this,
                 android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mMap.setMyLocationEnabled(true);
         }
+
+        mMap.setOnInfoWindowClickListener(this);
     }
 
     private void updateCameraPosition(Location location) {
@@ -462,73 +475,49 @@ public class HomeActivity extends AppCompatActivity
     /** Demonstrates customizing the info window and/or its contents. */
     class BoardeoInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
 
-        // These are both viewgroups containing an ImageView with id "badge" and two TextViews with id
-        // "title" and "snippet".
-        private final View mWindow;
         private final View mContents;
 
         BoardeoInfoWindowAdapter() {
-            mWindow = getLayoutInflater().inflate(R.layout.maps_info_window, null);
             mContents = getLayoutInflater().inflate(R.layout.maps_info_contents, null);
         }
 
         @Override
         public View getInfoWindow(Marker marker) {
-//            if (mOptions.getCheckedRadioButtonId() != R.id.custom_info_window) {
-//                // This means that getInfoContents will be called.
-//                return null;
-//            }
-            render(marker, mWindow);
-            return mWindow;
+            // This means that getInfoContents will be called.
+            return null;
         }
 
         @Override
         public View getInfoContents(Marker marker) {
-//            if (mOptions.getCheckedRadioButtonId() != R.id.custom_info_contents) {
-//                // This means that the default info contents will be used.
-//                return null;
-//            }
             render(marker, mContents);
             return mContents;
         }
 
         private void render(Marker marker, View view) {
-            int badge;
-            // Use the equals() method on a Marker to check for equals.  Do not use ==.
-//            if (marker.equals(mBrisbane)) {
-//                badge = R.drawable.badge_qld;
-//            } else if (marker.equals(mAdelaide)) {
-//                badge = R.drawable.badge_sa;
-//            } else if (marker.equals(mSydney)) {
-//                badge = R.drawable.badge_nsw;
-//            } else if (marker.equals(mMelbourne)) {
-//                badge = R.drawable.badge_victoria;
-//            } else if (marker.equals(mPerth)) {
-//                badge = R.drawable.badge_wa;
-//            } else {
-//                // Passing 0 to setImageResource will clear the image view.
-//                badge = 0;
-//            }
-//            ((ImageView) view.findViewById(R.id.badge)).setImageResource(badge);
+//            int bannerId = 0;
+//            ((ImageView) view.findViewById(R.id.banner)).setImageResource(bannerId);
 
             String title = marker.getTitle();
-            TextView titleUi = ((TextView) view.findViewById(R.id.title));
+            TextView titleUi = view.findViewById(R.id.title);
             if (title != null) {
-                // Spannable string allows us to edit the formatting of the text.
-                SpannableString titleText = new SpannableString(title);
-                titleText.setSpan(new ForegroundColorSpan(Color.RED), 0, titleText.length(), 0);
-                titleUi.setText(titleText);
+                titleUi.setText(title);
+
+                String key = (String) marker.getTag();
+                Boolean isEditable = boardList.get(key).getPublic();
+                if (isEditable)
+                    titleUi.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_public, 0, 0, 0);
+                else
+                    titleUi.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_locked, 0, 0, 0);
+//                SpannableString titleText = new SpannableString(title);
+//                titleText.setSpan(new ForegroundColorSpan(Color.RED), 0, titleText.length(), 0);
             } else {
                 titleUi.setText("");
             }
 
             String snippet = marker.getSnippet();
-            TextView snippetUi = ((TextView) view.findViewById(R.id.snippet));
-            if (snippet != null && snippet.length() > 12) {
-                SpannableString snippetText = new SpannableString(snippet);
-                snippetText.setSpan(new ForegroundColorSpan(Color.MAGENTA), 0, 10, 0);
-                snippetText.setSpan(new ForegroundColorSpan(Color.BLUE), 12, snippet.length(), 0);
-                snippetUi.setText(snippetText);
+            TextView snippetUi = view.findViewById(R.id.snippet);
+            if (snippet != null) {
+                snippetUi.setText(snippet);
             } else {
                 snippetUi.setText("");
             }

@@ -13,7 +13,7 @@ public class Board {
     public final static String OWNER_UID_FIELD = "boardOwnerUid";
     public final static String LATITUDE_FIELD = "boardLatitude";
     public final static String LONGITUDE_FIELD = "boardLongitude";
-    public final static String IS_EDITABLE_FIELD = "boardIsEditable";
+    public final static String IS_PUBLIC_FIELD = "boardIsPublic";
 
     private String name;
 
@@ -25,7 +25,7 @@ public class Board {
     private Double latitude;
     private Double longitude;
 
-    private Boolean isEditable;
+    private Boolean isPublic;
 
     public Board() {}
 
@@ -33,7 +33,7 @@ public class Board {
                  String ownerUid,
                  Double latitude,
                  Double longitude,
-                 Boolean isEditable) {
+                 Boolean isPublic) {
 
         this.name = name;
         this.shortDescription = "";
@@ -41,7 +41,15 @@ public class Board {
         this.ownerUid = ownerUid;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.isEditable = isEditable;
+        this.isPublic = isPublic;
+    }
+
+    /**
+     * Create a new Board from an intent
+     * @param intent
+     */
+    public Board(Intent intent) {
+        setFromIntent(intent);
     }
 
     public Map<String, Object> toMap() {
@@ -52,7 +60,7 @@ public class Board {
         result.put(OWNER_UID_FIELD, getOwnerUid());
         result.put(LATITUDE_FIELD, getLatitude());
         result.put(LONGITUDE_FIELD, getLongitude());
-        result.put(IS_EDITABLE_FIELD, getEditable());
+        result.put(IS_PUBLIC_FIELD, getPublic());
 
         return result;
     }
@@ -69,7 +77,7 @@ public class Board {
         this.ownerUid = intent.getStringExtra(OWNER_UID_FIELD);
         this.latitude = intent.getDoubleExtra(LATITUDE_FIELD, 0.0);
         this.longitude = intent.getDoubleExtra(LONGITUDE_FIELD, 0.0);
-        this.isEditable = intent.getBooleanExtra(IS_EDITABLE_FIELD, false);
+        this.isPublic = intent.getBooleanExtra(IS_PUBLIC_FIELD, false);
     }
 
     /**
@@ -85,7 +93,7 @@ public class Board {
         intent.putExtra(OWNER_UID_FIELD, getOwnerUid());
         intent.putExtra(LATITUDE_FIELD, getLatitude());
         intent.putExtra(LONGITUDE_FIELD, getLongitude());
-        intent.putExtra(IS_EDITABLE_FIELD, getEditable());
+        intent.putExtra(IS_PUBLIC_FIELD, getPublic());
 
         return intent;
     }
@@ -114,7 +122,35 @@ public class Board {
         return longitude;
     }
 
-    public Boolean getEditable() {
-        return isEditable;
+    public Boolean getPublic() {
+        return isPublic;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setShortDescription(String shortDescription) {
+        this.shortDescription = shortDescription;
+    }
+
+    public void setFullDescription(String fullDescription) {
+        this.fullDescription = fullDescription;
+    }
+
+    public void setOwnerUid(String ownerUid) {
+        this.ownerUid = ownerUid;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+    public void setIsPublicField(Boolean isPublic) {
+        isPublic = isPublic;
     }
 }

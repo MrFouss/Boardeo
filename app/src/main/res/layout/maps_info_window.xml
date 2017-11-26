@@ -1,38 +1,32 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:orientation="vertical"
+    android:padding="@dimen/fab_margin"
+    android:background="@color/grey_100">
 
-    <ImageView
-        android:id="@+id/badge"
+    <!--<ImageView-->
+        <!--android:id="@+id/banner"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginBottom="@dimen/fab_margin"-->
+        <!--android:contentDescription="@string/board_banner"-->
+        <!--android:adjustViewBounds="true" />-->
+
+    <TextView
+        android:id="@+id/title"
+        android:drawableLeft="@drawable/ic_locked"
+        android:drawablePadding="@dimen/small_spacing"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="5dp"
-        android:adjustViewBounds="true"></ImageView>
+        style="@style/Drawy.MapsInfoWindowTitle"
+        android:layout_marginBottom="@dimen/small_spacing"
+        tools:ignore="RtlHardcoded" />
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/snippet"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:ellipsize="end"
-            android:singleLine="true"
-            android:textColor="#ff000000"
-            android:textSize="14dp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/snippet"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:singleLine="true"
-            android:textColor="#ff7f7f7f"
-            android:textSize="14dp" />
-    </LinearLayout>
+        style="@style/Drawy.MapsInfoWindowSnippet"/>
 </LinearLayout>

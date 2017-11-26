@@ -1,20 +1,42 @@
 package fr.fouss.boardeo;
 
-import android.content.Intent;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AlertDialog;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Toast;
 
-import fr.fouss.boardeo.listing.BoardData;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import fr.fouss.boardeo.data.Board;
+import fr.fouss.boardeo.utils.UserUtils;
 
 public class NewBoardActivity extends AppCompatActivity {
 
-    Intent request;
+    /**
+     * Firebase database instance
+     */
+    private DatabaseReference mDatabase;
+
+    private UserUtils userUtils;
+
+    private String boardKey;
+    private Board board;
+
+    private Double latitude;
+    private Double longitude;
+    private float minAccuracy = 5.0f;
 
     ///// LIFECYCLE /////
 
@@ -23,27 +45,70 @@ public class NewBoardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_board);
 
-        // setup toolbar
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        userUtils = new UserUtils(this);
+
+        LocationManager mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (mLocationManager != null && ActivityCompat.checkSelfPermission(this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0L, 0.0f, new LocationListener() {
+                @Override
+                public void onLocationChanged(Location location) {
+                    if(location.hasAccuracy() && location.getAccuracy() <= minAccuracy) {
+                        latitude = location.getLatitude();
+                        longitude = location.getLongitude();
+                        minAccuracy = location.getAccuracy();
+                    }
+                }
+
+                @Override
+                public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+                @Override
+                public void onProviderEnabled(String provider) {}
+
+                @Override
+                public void onProviderDisabled(String provider) {}
+            });
+        }
+
+        // Setup the toolbar
         setSupportActionBar(findViewById(R.id.NewBoardToolbar));
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        // setup validation button
-        findViewById(R.id.validateBoardEditionButton).setOnClickListener(v -> onValidateButtonClick(v));
+        // Setup validation button
+        findViewById(R.id.validateBoardEditionButton).setOnClickListener(this::onValidateButtonClick);
 
-        // get request intent
-        request = getIntent();
+        // Get the board's key if it exists, null otherwise
+        boardKey = getIntent().getStringExtra("BOARD_KEY");
 
-        // setup fields based on request intent
-        EditText title = findViewById(R.id.titleField);
-        title.setText(request.getStringExtra(BoardData.BOARD_NAME_FIELD));
-        EditText author = findViewById(R.id.authorField);
-        author.setText(request.getStringExtra(BoardData.BOARD_AUTHOR_FIELD));
-        EditText shortDesc = findViewById(R.id.shortDescField);
-        shortDesc.setText(request.getStringExtra(BoardData.BOARD_SHORT_DESCRIPTION_FIELD));
-        EditText fullDesc = findViewById(R.id.fullDescField);
-        fullDesc.setText(request.getStringExtra(BoardData.BOARD_FULL_DESCRIPTION_FIELD));
-        CheckBox allowPost = findViewById(R.id.allowPostCheckbox);
-        allowPost.setChecked(request.getBooleanExtra(BoardData.BOARD_ALLOW_POST_FIELD, false));
+        if (boardKey != null) {
+            DatabaseReference dataReference = mDatabase.child("boards").child(boardKey);
+            dataReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    board = (Board) dataSnapshot.getValue();
+
+                    // Setup fields based on request intent
+                    EditText title = findViewById(R.id.boardNameField);
+                    title.setText(board.getName());
+                    EditText shortDescription = findViewById(R.id.shortDescriptionField);
+                    shortDescription.setText(board.getShortDescription());
+                    EditText fullDescription = findViewById(R.id.fullDescriptionField);
+                    fullDescription.setText(board.getFullDescription());
+                    CheckBox isPublic = findViewById(R.id.isPublicCheckbox);
+                    isPublic.setChecked(board.getPublic());
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Toast.makeText(NewBoardActivity.this,
+                            "Board info couldn't be retrieved",
+                            Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 
     ///// EVENTS /////
@@ -54,60 +119,59 @@ public class NewBoardActivity extends AppCompatActivity {
      */
     public void onValidateButtonClick(View v) {
         // retrieve fields
-        EditText title = findViewById(R.id.titleField);
-        EditText author = findViewById(R.id.authorField);
-        EditText shortDesc = findViewById(R.id.shortDescField);
-        EditText fullDesc = findViewById(R.id.fullDescField);
+        EditText name = findViewById(R.id.boardNameField);
+        EditText shortDescription = findViewById(R.id.shortDescriptionField);
+        EditText fullDescription = findViewById(R.id.fullDescriptionField);
 
         boolean filled = true;
-        if (title.length() == 0) {
-            title.setError("Missing");
+        if (name.length() == 0) {
+            name.setError("Missing");
             filled = false;
         }
-        if (author.length() == 0) {
-            author.setError("Missing");
+        if (shortDescription.length() == 0) {
+            shortDescription.setError("Missing");
             filled = false;
         }
-        if (shortDesc.length() == 0) {
-            shortDesc.setError("Missing");
-            filled = false;
-        }
-        if (fullDesc.length() == 0) {
-            fullDesc.setError("Missing");
+        if (fullDescription.length() == 0) {
+            fullDescription.setError("Missing");
             filled = false;
         }
         if (filled) {
-            onReturnResult();
+            validateResult();
         }
     }
 
     /**
-     * When returning the new board data
-     * Data should have been verified before calling this
+     * Validates data and updates the database
      */
-    public void onReturnResult() {
+    public void validateResult() {
         // retrieve fields
-        EditText title = findViewById(R.id.titleField);
-        EditText author = findViewById(R.id.authorField);
-        EditText shortDesc = findViewById(R.id.shortDescField);
-        EditText fullDesc = findViewById(R.id.fullDescField);
-        CheckBox allowPost = findViewById(R.id.allowPostCheckbox);
+        String name = ((EditText) findViewById(R.id.boardNameField)).getText().toString();
+        String shortDescription = ((EditText) findViewById(R.id.shortDescriptionField)).getText().toString();
+        String fullDescription = ((EditText) findViewById(R.id.fullDescriptionField)).getText().toString();
+        Boolean isPublic = ((CheckBox) findViewById(R.id.isPublicCheckbox)).isChecked();
 
-        Intent result = new Intent();
+        // If this is an update
+        if (boardKey != null) {
+            board.setName(name);
+            board.setShortDescription(shortDescription);
+            board.setFullDescription(fullDescription);
+            board.setIsPublicField(isPublic);
 
-        // copy request intent
-        result.putExtras(request);
+            mDatabase.child("boards").child(boardKey).setValue(board);
 
-        // replace some fields in the result intent
-        result.putExtra(BoardData.BOARD_NAME_FIELD, title.getText().toString());
-        result.putExtra(BoardData.BOARD_AUTHOR_FIELD, author.getText().toString());
-        result.putExtra(BoardData.BOARD_SHORT_DESCRIPTION_FIELD, shortDesc.getText().toString());
-        result.putExtra(BoardData.BOARD_FULL_DESCRIPTION_FIELD, fullDesc.getText().toString());
-        result.putExtra(BoardData.BOARD_SUBSCRIPTION_FIELD, true);
-        result.putExtra(BoardData.BOARD_ALLOW_POST_FIELD, allowPost.isChecked());
-
-        // return to requesting activity
-        setResult(MiscUtil.NEW_BOARD_RESULT, result);
+        // If this is a board creation
+        } else {
+            if (latitude != null && longitude != null) {
+                board = new Board(name, userUtils.getUserUid(), latitude, longitude, isPublic);
+                board.setShortDescription(shortDescription);
+                board.setFullDescription(fullDescription);
+                mDatabase.child("boards").push().setValue(board);
+            } else {
+                Toast.makeText(this, "A more precise location is required to create a new board.", Toast.LENGTH_LONG).show();
+                return;
+            }
+        }
         finish();
     }
 

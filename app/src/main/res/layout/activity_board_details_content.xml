@@ -1,11 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    android:orientation="vertical"
     tools:context="fr.fouss.boardeo.BoardDetailsActivity"
     tools:showIn="@layout/activity_board_details">
 
-</android.support.constraint.ConstraintLayout>
+    <TextView
+        android:id="@+id/boardName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Board name" />
+
+    <TextView
+        android:id="@+id/boardShortDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Short description" />
+
+    <TextView
+        android:id="@+id/boardFullDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Full description" />
+
+    <TextView
+        android:id="@+id/boardOwnerUid"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Owner UID" />
+
+    <TextView
+        android:id="@+id/boardCoordinates"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Coordinates" />
+
+    <Button
+        android:id="@+id/editBoardButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Edit" />
+
+</LinearLayout>

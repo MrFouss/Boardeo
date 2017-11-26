@@ -71,6 +71,10 @@ public class UserUtils {
         editor.apply();
     }
 
+    public String getUserUid() {
+        return getUser().getUid();
+    }
+
     public String getUserName() {
         return getUser().getDisplayName();
     }

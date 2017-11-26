@@ -83,4 +83,20 @@ public class Comment {
     public Long getTimestamp() {
         return timestamp;
     }
+
+    public void setPostKey(String postKey) {
+        this.postKey = postKey;
+    }
+
+    public void setAuthorUid(String authorUid) {
+        this.authorUid = authorUid;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public void setTimestamp(Long timestamp) {
+        this.timestamp = timestamp;
+    }
 }
