@@ -4,7 +4,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.google.firebase.database.ChildEventListener;
@@ -14,8 +13,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -36,6 +35,9 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.BoardViewHol
      * A comparator can be specified to order them
      */
     private final TreeMap<String, Board> boards = new TreeMap<>();
+
+    private ChildEventListener boardListListener;
+    private Map<String, ValueEventListener> boardListenerMap = new HashMap<>();
 
     ///// CONSTRUCTOR /////
 
@@ -80,42 +82,48 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.BoardViewHol
 
     ///// DATA MANAGEMENT /////
 
-    public void initBoards() {
-        mDatabase.child("boards")
-                .addChildEventListener(new ChildEventListener() {
-                    @Override
-                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                        String key = dataSnapshot.getKey();
-                        Board board = dataSnapshot.getValue(Board.class);
+    public void initBoardsListener() {
+        boardListListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                String key = dataSnapshot.getKey();
+                Board board = dataSnapshot.getValue(Board.class);
 
-                        // TODO when a board is added (all boards go through this at the beginning)
-                        // That's why you have to add to the list all boards recorded here
-                    }
+                // TODO when a board is added (all boards go through this at the beginning)
+                // That's why you have to add to the list all boards recorded here
+            }
 
-                    @Override
-                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                        String key = dataSnapshot.getKey();
-                        Board board = dataSnapshot.getValue(Board.class);
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                String key = dataSnapshot.getKey();
+                Board board = dataSnapshot.getValue(Board.class);
 
-                        // TODO when a board is edited
-                    }
+                // TODO when a board is edited
+            }
 
-                    @Override
-                    public void onChildRemoved(DataSnapshot dataSnapshot) {
-                        String key = dataSnapshot.getKey();
-                        Board board = dataSnapshot.getValue(Board.class);
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                String key = dataSnapshot.getKey();
+                Board board = dataSnapshot.getValue(Board.class);
 
-                        // TODO when a board is removed
-                    }
+                // TODO when a board is removed
+            }
 
-                    @Override
-                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        throw databaseError.toException();
-                    }
-                });
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                throw databaseError.toException();
+            }
+        };
+
+        mDatabase.child("boards").addChildEventListener(boardListListener);
+    }
+
+    public void removeBoardsListener() {
+        mDatabase.child("boards").removeEventListener(boardListListener);
+        // TODO don't forget to add
     }
 
     @Override
@@ -125,7 +133,8 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.BoardViewHol
 
     public void setBoard(String key) {
         mDatabase.child("boards").child(key)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
+                .addValueEventListener(new ValueEventListener() {
+
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Board board = (Board) dataSnapshot.getValue();
@@ -138,6 +147,14 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.BoardViewHol
                 throw databaseError.toException();
             }
         });
+    }
+
+    public void removeBoardListener(String key) {
+        if (boardListenerMap.containsKey(key)) {
+            mDatabase.child("boards").child(key)
+                    .removeEventListener(boardListenerMap.get(key));
+        }
+        // TODO don't forget to add
     }
 
     public void removeBoard(String key) {
