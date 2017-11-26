@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -80,8 +81,41 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.BoardViewHol
     ///// DATA MANAGEMENT /////
 
     public void initBoards() {
-        // TODO setup a listener that will init the board list, and add/remove board that are
-        // added/removed in the DB
+        mDatabase.child("boards")
+                .addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                        String key = dataSnapshot.getKey();
+                        Board board = dataSnapshot.getValue(Board.class);
+
+                        // TODO when a board is added (all boards go through this at the beginning)
+                        // That's why you have to add to the list all boards recorded here
+                    }
+
+                    @Override
+                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                        String key = dataSnapshot.getKey();
+                        Board board = dataSnapshot.getValue(Board.class);
+
+                        // TODO when a board is edited
+                    }
+
+                    @Override
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+                        String key = dataSnapshot.getKey();
+                        Board board = dataSnapshot.getValue(Board.class);
+
+                        // TODO when a board is removed
+                    }
+
+                    @Override
+                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        throw databaseError.toException();
+                    }
+                });
     }
 
     @Override
