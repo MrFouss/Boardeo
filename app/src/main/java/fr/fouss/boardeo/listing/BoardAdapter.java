@@ -1,5 +1,6 @@
 package fr.fouss.boardeo.listing;
 
+import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +21,7 @@ import java.util.TreeMap;
 
 import fr.fouss.boardeo.R;
 import fr.fouss.boardeo.data.Board;
+import fr.fouss.boardeo.utils.UserUtils;
 
 public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.BoardViewHolder> {
 
@@ -31,19 +33,24 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.BoardViewHol
     private DatabaseReference mDatabase;
 
     /**
+     * User utility class instance
+     */
+    private UserUtils userUtils;
+
+    /**
      * Map of boards
      * A comparator can be specified to order them
      */
     private final TreeMap<String, Board> boards = new TreeMap<>();
 
-    private ChildEventListener boardListListener = null;
     private Map<String, ValueEventListener> boardListenerMap = new HashMap<>();
 
     ///// CONSTRUCTOR /////
 
-    public BoardAdapter() {
+    public BoardAdapter(Activity activity) {
         super();
         mDatabase = FirebaseDatabase.getInstance().getReference();
+        userUtils = new UserUtils(activity);
     }
 
     ///// NECESSARY IMPLEMENTATIONS /////
@@ -83,39 +90,23 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.BoardViewHol
     ///// DATA MANAGEMENT /////
 
     private void initBoardsListener() {
-        boardListListener = new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                String key = dataSnapshot.getKey();
-                setBoard(key);
-            }
 
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
+        mDatabase.child("users").child(userUtils.getUserUid()).child("subscriptions")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
 
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-                String key = dataSnapshot.getKey();
-                removeBoard(key);
-            }
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for (DataSnapshot item : dataSnapshot.getChildren()) {
+                            String key = item.getKey();
+                            setBoard(key);
+                        }
+                    }
 
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                throw databaseError.toException();
-            }
-        };
-
-        mDatabase.child("boards").addChildEventListener(boardListListener);
-    }
-
-    private void removeBoardsListener() {
-        if (boardListListener != null) {
-            mDatabase.child("boards").removeEventListener(boardListListener);
-            boardListListener = null;
-        }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        throw databaseError.toException();
+                    }
+                });
     }
 
     @Override
@@ -146,6 +137,7 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.BoardViewHol
         if (boardListenerMap.containsKey(key)) {
             mDatabase.child("boards").child(key)
                     .removeEventListener(boardListenerMap.get(key));
+            boardListenerMap.remove(key);
         }
     }
 
