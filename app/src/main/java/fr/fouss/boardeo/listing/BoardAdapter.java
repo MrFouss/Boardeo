@@ -79,13 +79,17 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.BoardViewHol
 
     ///// DATA MANAGEMENT /////
 
+    public void initBoards() {
+        // TODO setup a listener that will init the board list, and add/remove board that are
+        // added/removed in the DB
+    }
+
     @Override
     public int getItemCount() {
         return boards.size();
     }
 
     public void setBoard(String key) {
-
         mDatabase.child("boards").child(key)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
