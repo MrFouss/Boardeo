@@ -5,13 +5,6 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal">
 
-    <CheckBox
-        android:id="@+id/subscription_checkbox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:button="@drawable/subscription_checkbox"
-        android:checked="false" />
-
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -33,11 +26,5 @@
             android:text="Board short description" />
 
     </LinearLayout>
-
-    <CheckBox
-        android:id="@+id/selection_checkbox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="visible" />
 
 </LinearLayout>
