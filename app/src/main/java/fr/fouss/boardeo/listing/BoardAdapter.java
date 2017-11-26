@@ -136,23 +136,25 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.BoardViewHol
     }
 
     public void setBoard(String key) {
-        ValueEventListener listener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Board board = (Board) dataSnapshot.getValue();
-                boards.put(key, board);
-                notifyDataSetChanged();
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                throw databaseError.toException();
-            }
-        };
+        if (!boardListenerMap.containsKey(key)) {
+            ValueEventListener listener = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    Board board = (Board) dataSnapshot.getValue();
+                    boards.put(key, board);
+                    notifyDataSetChanged();
+                }
 
-        removeBoardListener(key);
-        boardListenerMap.put(key, listener);
-        mDatabase.child("boards").child(key).addValueEventListener(listener);
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    throw databaseError.toException();
+                }
+            };
+
+            boardListenerMap.put(key, listener);
+            mDatabase.child("boards").child(key).addValueEventListener(listener);
+        }
     }
 
     private void removeBoardListener(String key) {
