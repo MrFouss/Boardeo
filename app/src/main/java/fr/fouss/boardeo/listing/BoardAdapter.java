@@ -7,6 +7,12 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
@@ -15,17 +21,27 @@ import java.util.TreeMap;
 import fr.fouss.boardeo.R;
 import fr.fouss.boardeo.data.Board;
 
-
-
 public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.BoardViewHolder> {
 
     ///// FIELDS /////
 
     /**
+     * Firebase database instance
+     */
+    private DatabaseReference mDatabase;
+
+    /**
      * Map of boards
      * A comparator can be specified to order them
      */
-    private final TreeMap<Long, Board> boards = new TreeMap<>();
+    private final TreeMap<String, Board> boards = new TreeMap<>();
+
+    ///// CONSTRUCTOR /////
+
+    public BoardAdapter() {
+        super();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+    }
 
     ///// NECESSARY IMPLEMENTATIONS /////
 
@@ -51,8 +67,8 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.BoardViewHol
      */
     @Override
     public void onBindViewHolder(BoardViewHolder holder, int position) {
-        Map.Entry<Long, Board> entry = null;
-        Iterator<Map.Entry<Long, Board>> it = boards.entrySet().iterator();
+        Map.Entry<String, Board> entry = null;
+        Iterator<Map.Entry<String, Board>> it = boards.entrySet().iterator();
         for (int i = 0; i < position; ++i) {
             entry = it.next();
         }
@@ -68,17 +84,26 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.BoardViewHol
         return boards.size();
     }
 
-    public void setBoard(long id) {
-        Board board = null;
+    public void setBoard(String key) {
 
-        // TODO retrieve board from DB
+        mDatabase.child("boards").child(key)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Board board = (Board) dataSnapshot.getValue();
+                boards.put(key, board);
+                notifyDataSetChanged();
+            }
 
-        boards.put(id, board);
-        notifyDataSetChanged();
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                throw databaseError.toException();
+            }
+        });
     }
 
-    public void removeBoard(long id) {
-        boards.remove(id);
+    public void removeBoard(String key) {
+        boards.remove(key);
         notifyDataSetChanged();
     }
 
@@ -91,7 +116,7 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.BoardViewHol
 
         private TextView nameLabel;
         private TextView shortDescriptionLabel;
-        private long id;
+        private String key;
 
         public BoardViewHolder(View itemView) {
             super(itemView);
@@ -101,13 +126,13 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.BoardViewHol
 
             itemView.setOnClickListener(v -> {
                 if (clickListener != null) {
-                    clickListener.onBoardClicked(this.id);
+                    clickListener.onBoardClicked(this.key);
                 }
             });
         }
 
-        public void set(long id, Board board) {
-            this.id = id;
+        public void set(String key, Board board) {
+            this.key = key;
             this.nameLabel.setText(board.getName());
             this.shortDescriptionLabel.setText(board.getShortDescription());
         }
@@ -122,6 +147,6 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.BoardViewHol
     }
 
     public interface BoardClickListener {
-        void onBoardClicked(long id);
+        void onBoardClicked(String key);
     }
 }
