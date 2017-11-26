@@ -36,7 +36,7 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.BoardViewHol
      */
     private final TreeMap<String, Board> boards = new TreeMap<>();
 
-    private ChildEventListener boardListListener;
+    private ChildEventListener boardListListener = null;
     private Map<String, ValueEventListener> boardListenerMap = new HashMap<>();
 
     ///// CONSTRUCTOR /////
@@ -82,31 +82,21 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.BoardViewHol
 
     ///// DATA MANAGEMENT /////
 
-    public void initBoardsListener() {
+    private void initBoardsListener() {
         boardListListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 String key = dataSnapshot.getKey();
-                Board board = dataSnapshot.getValue(Board.class);
-
-                // TODO when a board is added (all boards go through this at the beginning)
-                // That's why you have to add to the list all boards recorded here
+                setBoard(key);
             }
 
             @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                String key = dataSnapshot.getKey();
-                Board board = dataSnapshot.getValue(Board.class);
-
-                // TODO when a board is edited
-            }
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
                 String key = dataSnapshot.getKey();
-                Board board = dataSnapshot.getValue(Board.class);
-
-                // TODO when a board is removed
+                removeBoard(key);
             }
 
             @Override
@@ -121,9 +111,11 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.BoardViewHol
         mDatabase.child("boards").addChildEventListener(boardListListener);
     }
 
-    public void removeBoardsListener() {
-        mDatabase.child("boards").removeEventListener(boardListListener);
-        // TODO don't forget to add
+    private void removeBoardsListener() {
+        if (boardListListener != null) {
+            mDatabase.child("boards").removeEventListener(boardListListener);
+            boardListListener = null;
+        }
     }
 
     @Override
@@ -132,9 +124,7 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.BoardViewHol
     }
 
     public void setBoard(String key) {
-        mDatabase.child("boards").child(key)
-                .addValueEventListener(new ValueEventListener() {
-
+        ValueEventListener listener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Board board = (Board) dataSnapshot.getValue();
@@ -146,18 +136,21 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.BoardViewHol
             public void onCancelled(DatabaseError databaseError) {
                 throw databaseError.toException();
             }
-        });
+        };
+
+        boardListenerMap.put(key, listener);
+        mDatabase.child("boards").child(key).addValueEventListener(listener);
     }
 
-    public void removeBoardListener(String key) {
+    private void removeBoardListener(String key) {
         if (boardListenerMap.containsKey(key)) {
             mDatabase.child("boards").child(key)
                     .removeEventListener(boardListenerMap.get(key));
         }
-        // TODO don't forget to add
     }
 
     public void removeBoard(String key) {
+        removeBoardListener(key);
         boards.remove(key);
         notifyDataSetChanged();
     }
