@@ -72,5 +72,7 @@
     <string name="login_or_sign_in_with_google">Or sign in with Google</string>
     <string name="login_no_account_yet_create_one">No account yet? Create one!</string>
     <string name="login_forgot_your_password">Forgot your password?</string>
+    <string name="allow_location">Allow location</string>
+    <string name="activate_location">Activate location</string>
 
 </resources>

@@ -1,8 +1,13 @@
 package fr.fouss.boardeo;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -14,30 +19,48 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 import fr.fouss.boardeo.sign_in.SignInActivity;
 import fr.fouss.boardeo.utils.UserUtils;
 
 public class HomeActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
+        implements NavigationView.OnNavigationItemSelectedListener,
+                OnMapReadyCallback, View.OnClickListener {
+
+    private static final String REQUESTING_LOCATION_UPDATES_KEY = "REQUESTING_LOCATION_UPDATES";
+    private static final int REQUEST_CODE_LOCATION_ALLOWANCE = 6942;
+    private static final int REQUEST_CODE_LOCATION_ACTIVATE = 7357;
 
     private UserUtils userUtils;
 
     private TextView usernameLabel;
 
     private GoogleMap mMap;
+    private LocationRequest mLocationRequest;
+    private FusedLocationProviderClient mFusedLocationClient;
+    private LocationCallback mLocationCallback;
+    private Boolean mRequestingLocationUpdates;
+    private LocationManager mLocationManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        updateValuesFromBundle(savedInstanceState);
 
         userUtils = new UserUtils(this);
 
@@ -60,6 +83,24 @@ public class HomeActivity extends AppCompatActivity
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        // Setup the location activation and allowance buttons
+        findViewById(R.id.allow_location_button).setOnClickListener(this);
+        findViewById(R.id.activate_location_button).setOnClickListener(this);
+
+        // Setup all location based settings
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(20000);
+        mLocationRequest.setFastestInterval(10000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+        // Get the location provider
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        // Create the location callback
+        mLocationCallback = new BoardeoLocationCallback();
+
+        mRequestingLocationUpdates = true;
     }
 
     @Override
@@ -68,8 +109,47 @@ public class HomeActivity extends AppCompatActivity
 
         if (userUtils.isSignedIn()) {
             usernameLabel.setText(userUtils.getUserName());
+
+            // Check for location permission
+            if (ActivityCompat.checkSelfPermission(this,
+                    android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                findViewById(R.id.allow_location_button).setVisibility(View.VISIBLE);
+                return;
+            }
+
+            if (mLocationManager == null)
+                mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            if (mLocationManager == null || !mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                findViewById(R.id.activate_location_button).setVisibility(View.VISIBLE);
+                return;
+            }
+
+            startLocationUpdates();
+
         } else {
             startActivity(new Intent(this, SignInActivity.class));
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        stopLocationUpdates();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean(REQUESTING_LOCATION_UPDATES_KEY, mRequestingLocationUpdates);
+        super.onSaveInstanceState(outState);
+    }
+
+    private void updateValuesFromBundle(Bundle savedInstanceState) {
+        // Update the value of mRequestingLocationUpdates from the Bundle.
+        if (savedInstanceState != null &&
+                savedInstanceState.keySet().contains(REQUESTING_LOCATION_UPDATES_KEY)) {
+            mRequestingLocationUpdates = savedInstanceState.getBoolean(
+                    REQUESTING_LOCATION_UPDATES_KEY);
         }
     }
 
@@ -130,7 +210,8 @@ public class HomeActivity extends AppCompatActivity
                     userUtils.signOut();
                     startActivity(new Intent(this, SignInActivity.class));
                 });
-                builder.setNegativeButton("No", (dialog, id1) -> {});
+                builder.setNegativeButton("No", (dialog, id1) -> {
+                });
 
                 // 3. Get the AlertDialog from create()
                 AlertDialog dialog = builder.create();
@@ -146,10 +227,92 @@ public class HomeActivity extends AppCompatActivity
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+    }
 
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+    private void updateCameraPosition(Location location) {
+
+        CameraPosition cameraPosition = CameraPosition.builder()
+                .target(new LatLng(location.getLatitude(), location.getLongitude()))
+                .zoom(15.0f)
+                .build();
+        mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+    }
+
+    private void startLocationUpdates() {
+        if (mRequestingLocationUpdates
+                && ActivityCompat.checkSelfPermission(this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mFusedLocationClient.requestLocationUpdates(mLocationRequest,
+                    mLocationCallback,
+                    null);
+            mRequestingLocationUpdates = false;
+        }
+    }
+
+    private void stopLocationUpdates() {
+        mFusedLocationClient.removeLocationUpdates(mLocationCallback);
+        mRequestingLocationUpdates = true;
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.allow_location_button:
+                ActivityCompat.requestPermissions(this,
+                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                        REQUEST_CODE_LOCATION_ALLOWANCE);
+                break;
+
+            case R.id.activate_location_button:
+                startActivityForResult(
+                        new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS),
+                                REQUEST_CODE_LOCATION_ACTIVATE);
+                break;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+
+        if (requestCode == REQUEST_CODE_LOCATION_ALLOWANCE) {
+            // If request is cancelled, the result arrays are empty.
+            if (grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                findViewById(R.id.allow_location_button).setVisibility(View.GONE);
+                startLocationUpdates();
+            } else {
+                Toast.makeText(this,
+                        "The goal of this app is to use geolocation, so trust us! ;)",
+                        Toast.LENGTH_LONG).show();
+                findViewById(R.id.allow_location_button).setVisibility(View.VISIBLE);
+            }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case REQUEST_CODE_LOCATION_ACTIVATE:
+                if (mLocationManager == null)
+                    mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                if (mLocationManager != null && mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
+                    findViewById(R.id.activate_location_button).setVisibility(View.GONE);
+                break;
+        }
+    }
+
+    private class BoardeoLocationCallback extends LocationCallback {
+
+        @Override
+        public void onLocationResult(LocationResult locationResult) {
+            if (ActivityCompat.checkSelfPermission(HomeActivity.this,
+                    android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                Location location = locationResult.getLastLocation();
+                updateCameraPosition(location);
+            }
+        }
     }
 }
