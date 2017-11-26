@@ -91,7 +91,6 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.BoardViewHol
     ///// DATA MANAGEMENT /////
 
     private void initSubscriptionsListener() {
-
         if (subscriptionListener == null) {
             subscriptionListener = new ChildEventListener() {
                 @Override
@@ -106,7 +105,7 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.BoardViewHol
                 @Override
                 public void onChildRemoved(DataSnapshot dataSnapshot) {
                     String key = dataSnapshot.getKey();
-                    removeBoardListener(key);
+                    removeBoard(key);
                 }
 
                 @Override
@@ -151,6 +150,7 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.BoardViewHol
             }
         };
 
+        removeBoardListener(key);
         boardListenerMap.put(key, listener);
         mDatabase.child("boards").child(key).addValueEventListener(listener);
     }
