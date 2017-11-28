@@ -139,6 +139,8 @@ public class HomeActivity extends AppCompatActivity
         if (userUtils.isSignedIn()) {
             usernameLabel.setText(userUtils.getUserName());
 
+            mDatabase.child("users").child(userUtils.getUserUid()).child("username").setValue(userUtils.getUserName());
+
             // Check for location permission
             if (ActivityCompat.checkSelfPermission(this,
                     android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
