@@ -41,6 +41,7 @@ public class BoardListActivity extends AppCompatActivity {
         boardRecyclerView.setLayoutManager(layoutManager);
         boardRecyclerViewAdapter = new BoardAdapter(this);
         boardRecyclerView.setAdapter(boardRecyclerViewAdapter);
+        boardRecyclerViewAdapter.initSubscriptionsListener();
 
         // set new board button listener
         newBoardButton = findViewById(R.id.addBoardButton);
