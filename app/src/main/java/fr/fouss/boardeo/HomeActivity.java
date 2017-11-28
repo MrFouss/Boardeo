@@ -139,6 +139,7 @@ public class HomeActivity extends AppCompatActivity
         if (userUtils.isSignedIn()) {
             usernameLabel.setText(userUtils.getUserName());
 
+            // Updates the user's name in database
             mDatabase.child("users").child(userUtils.getUserUid()).child("username").setValue(userUtils.getUserName());
 
             // Check for location permission
