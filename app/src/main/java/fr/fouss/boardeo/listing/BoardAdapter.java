@@ -2,7 +2,6 @@ package fr.fouss.boardeo.listing;
 
 import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -92,7 +91,6 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.BoardViewHol
     ///// DATA MANAGEMENT /////
 
     public void initSubscriptionsListener() {
-        Log.i("BoardAdapter", "initSubscriptionsListener: ");
         if (subscriptionListener == null) {
             subscriptionListener = new ChildEventListener() {
                 @Override
@@ -138,7 +136,6 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.BoardViewHol
     }
 
     public void setBoard(String key) {
-        Log.i("BoardAdapter", "setBoard: start");
         if (!boardListenerMap.containsKey(key)) {
             ValueEventListener listener = new ValueEventListener() {
                 @Override
@@ -151,7 +148,6 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.BoardViewHol
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-                    Log.i("BoardAdapter", "onCancelled: ");
                     throw databaseError.toException();
                 }
             };
@@ -159,7 +155,6 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.BoardViewHol
             boardListenerMap.put(key, listener);
             mDatabase.child("boards").child(key).addValueEventListener(listener);
         }
-        Log.i("BoardAdapter", "setBoard: end");
     }
 
     private void removeBoardListener(String key) {
@@ -171,7 +166,6 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.BoardViewHol
     }
 
     public void removeBoard(String key) {
-        Log.i("BoardAdapter", "removeBoard: ");
         removeBoardListener(key);
         boards.remove(key);
         notifyDataSetChanged();
