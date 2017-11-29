@@ -3,7 +3,6 @@ package fr.fouss.boardeo;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,8 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import fr.fouss.boardeo.listing.BoardRecyclerViewAdapter;
-import fr.fouss.boardeo.listing.BoardData;
+import fr.fouss.boardeo.listing.BoardAdapter;
 
 /**
  * Activity that displays a list of boards
@@ -25,7 +23,7 @@ public class BoardListActivity extends AppCompatActivity {
     private MenuItem toolbarDeleteButton;
     private FloatingActionButton newBoardButton;
 
-    private BoardRecyclerViewAdapter boardRecyclerViewAdapter;
+    private BoardAdapter boardRecyclerViewAdapter;
 
     ///// LIFECYCLE /////
 
@@ -41,10 +39,9 @@ public class BoardListActivity extends AppCompatActivity {
         RecyclerView boardRecyclerView = findViewById(R.id.boardRecyclerList);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         boardRecyclerView.setLayoutManager(layoutManager);
-        boardRecyclerViewAdapter = new BoardRecyclerViewAdapter();
-        boardRecyclerViewAdapter.setModeListener(selectionMode -> onSelectionModeChange(selectionMode));
+        boardRecyclerViewAdapter = new BoardAdapter(this);
         boardRecyclerView.setAdapter(boardRecyclerViewAdapter);
-        boardRecyclerViewAdapter.setItemClickListener(position -> onBoardClick(position));
+        boardRecyclerViewAdapter.initSubscriptionsListener();
 
         // set new board button listener
         newBoardButton = findViewById(R.id.addBoardButton);
@@ -58,17 +55,17 @@ public class BoardListActivity extends AppCompatActivity {
      * @param position
      */
     public void onBoardClick(int position) {
-        if (boardRecyclerViewAdapter.isSelectionMode()) {
-            // toggle selection checkbox of the clicked item
-            boardRecyclerViewAdapter.toggleSelect(position);
-            boardRecyclerViewAdapter.notifyDataSetChanged();
-        } else {
-            // launch board detail activity
-            Intent intent = new Intent(this, BoardDetailsActivity.class);
-            BoardData boardData = boardRecyclerViewAdapter.getItem(position);
-            boardData.fillIntentExtras(intent);
-            startActivityForResult(intent, MiscUtil.BOARD_DETAIL_REQUEST);
-        }
+//        if (boardRecyclerViewAdapter.isSelectionMode()) {
+//            // toggle selection checkbox of the clicked item
+//            boardRecyclerViewAdapter.toggleSelect(position);
+//            boardRecyclerViewAdapter.notifyDataSetChanged();
+//        } else {
+//            // launch board detail activity
+//            Intent intent = new Intent(this, BoardDetailsActivity.class);
+//            BoardData boardData = boardRecyclerViewAdapter.getItem(position);
+//            boardData.fillIntentExtras(intent);
+//            startActivityForResult(intent, MiscUtil.BOARD_DETAIL_REQUEST);
+//        }
     }
 
     /**
@@ -89,15 +86,15 @@ public class BoardListActivity extends AppCompatActivity {
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == MiscUtil.BOARD_CREATION_REQUEST && resultCode == MiscUtil.NEW_BOARD_RESULT) {
-            // normal return of new board activity
-            boardRecyclerViewAdapter.addItem(new fr.fouss.boardeo.listing.BoardData(data));
-        } else if (requestCode == MiscUtil.BOARD_DETAIL_REQUEST && resultCode == MiscUtil.BOARD_DETAIL_RESULT) {
-            // normal return of detail board activity
-            BoardData boardData = boardRecyclerViewAdapter.getItemById(data.getIntExtra(BoardData.BOARD_ID_FIELD, -1));
-            boardData.setFromIntent(data);
-        }
-        boardRecyclerViewAdapter.notifyDataSetChanged();
+//        if (requestCode == MiscUtil.BOARD_CREATION_REQUEST && resultCode == MiscUtil.NEW_BOARD_RESULT) {
+//            // normal return of new board activity
+//            boardRecyclerViewAdapter.addItem(new fr.fouss.boardeo.listing.BoardData(data));
+//        } else if (requestCode == MiscUtil.BOARD_DETAIL_REQUEST && resultCode == MiscUtil.BOARD_DETAIL_RESULT) {
+//            // normal return of detail board activity
+//            BoardData boardData = boardRecyclerViewAdapter.getItemById(data.getIntExtra(BoardData.BOARD_ID_FIELD, -1));
+//            boardData.setFromIntent(data);
+//        }
+//        boardRecyclerViewAdapter.notifyDataSetChanged();
     }
 
     /**
@@ -123,42 +120,43 @@ public class BoardListActivity extends AppCompatActivity {
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.unsubscribeButton :
-                boardRecyclerViewAdapter.setSelectionSubscription(false);
-                boardRecyclerViewAdapter.clearSelection();
-                boardRecyclerViewAdapter.notifyDataSetChanged();
-                return true;
-            case R.id.subscribeButton :
-                boardRecyclerViewAdapter.setSelectionSubscription(true);
-                boardRecyclerViewAdapter.clearSelection();
-                boardRecyclerViewAdapter.notifyDataSetChanged();
-                return true;
-            case R.id.deleteBoardButton :
-                onDeleteBoardButtonClick();
-                return true;
-            case R.id.filterSetting :
-                // TODO
-                return true;
-            default :
-                return super.onOptionsItemSelected(item);
-        }
+        return true;
+//        switch (item.getItemId()) {
+//            case R.id.unsubscribeButton :
+//                boardRecyclerViewAdapter.setSelectionSubscription(false);
+//                boardRecyclerViewAdapter.clearSelection();
+//                boardRecyclerViewAdapter.notifyDataSetChanged();
+//                return true;
+//            case R.id.subscribeButton :
+//                boardRecyclerViewAdapter.setSelectionSubscription(true);
+//                boardRecyclerViewAdapter.clearSelection();
+//                boardRecyclerViewAdapter.notifyDataSetChanged();
+//                return true;
+//            case R.id.deleteBoardButton :
+//                onDeleteBoardButtonClick();
+//                return true;
+//            case R.id.filterSetting :
+//                // TODO
+//                return true;
+//            default :
+//                return super.onOptionsItemSelected(item);
+//        }
     }
 
     /**
      * When the delete button is clicked in the toobar
      */
     public void onDeleteBoardButtonClick() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                .setMessage("Do you really want to delete boards?")
-                .setTitle("Warning!")
-                .setPositiveButton("Yes", (dialog, id) -> {
-                    boardRecyclerViewAdapter.deleteSelection();
-                    onSupportNavigateUp();
-                })
-                .setNegativeButton("No", (dialog, id) -> {});
-        AlertDialog dialog = builder.create();
-        dialog.show();
+//        AlertDialog.Builder builder = new AlertDialog.Builder(this)
+//                .setMessage("Do you really want to delete boards?")
+//                .setTitle("Warning!")
+//                .setPositiveButton("Yes", (dialog, id) -> {
+//                    boardRecyclerViewAdapter.deleteSelection();
+//                    onSupportNavigateUp();
+//                })
+//                .setNegativeButton("No", (dialog, id) -> {});
+//        AlertDialog dialog = builder.create();
+//        dialog.show();
     }
 
     /**
@@ -167,18 +165,18 @@ public class BoardListActivity extends AppCompatActivity {
      */
     @Override
     public boolean onSupportNavigateUp() {
-        boardRecyclerViewAdapter.setSelectionMode(false);
-        boardRecyclerViewAdapter.notifyDataSetChanged();
+//        boardRecyclerViewAdapter.setSelectionMode(false);
+//        boardRecyclerViewAdapter.notifyDataSetChanged();
         return true;
     }
 
     @Override
     public void onBackPressed() {
-        if (boardRecyclerViewAdapter.isSelectionMode()) {
-            onSupportNavigateUp();
-        } else {
-            super.onBackPressed();
-        }
+//        if (boardRecyclerViewAdapter.isSelectionMode()) {
+//            onSupportNavigateUp();
+//        } else {
+//            super.onBackPressed();
+//        }
     }
 
     /**

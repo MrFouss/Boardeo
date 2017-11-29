@@ -19,34 +19,6 @@
             app:popupTheme="@style/AppTheme.PopupOverlay"
             app:title="Boardeo" />
 
-        <TextView
-            android:id="@+id/detailBoardTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="TextView" />
-
-        <TextView
-            android:id="@+id/detailAuthorName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="TextView" />
-
-        <TextView
-            android:id="@+id/detailFullDescription"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="TextView" />
-
-        <Button
-            android:id="@+id/editBoardButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Edit" />
-
     </android.support.design.widget.AppBarLayout>
 
     <include layout="@layout/activity_board_details_content" />

@@ -8,6 +8,9 @@
     <color name="secondaryColorDark">#006db3</color>
     <color name="secondaryColorLight">#63ccff</color>
 
+    <color name="mapCircleFillColor">#5563ccff</color>
+    <color name="mapCircleStrokeColor">#AA006db3</color>
+
     <color name="grey_100">#F5F5F5</color>
     <color name="grey_200">#EEEEEE</color>
     <color name="grey_300">#E0E0E0</color>
