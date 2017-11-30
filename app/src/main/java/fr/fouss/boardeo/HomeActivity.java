@@ -362,11 +362,10 @@ public class HomeActivity extends AppCompatActivity
     @Override
     public void onInfoWindowClick(Marker marker) {
         String key = (String) marker.getTag();
-        Board board = boardList.get(key);
 
         // Launch board detail activity
         Intent intent = new Intent(this, BoardDetailsActivity.class);
-        board.fillIntentExtras(intent);
+        intent.putExtra(Board.KEY_FIELD, key);
         startActivity(intent);
     }
 
