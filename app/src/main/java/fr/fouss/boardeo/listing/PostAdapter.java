@@ -83,7 +83,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
     public void onBindViewHolder(PostViewHolder holder, int position) {
         Map.Entry<String, Post> entry = null;
         Iterator<Map.Entry<String, Post>> it = posts.entrySet().iterator();
-        for (int i = 0; i < position; ++i) {
+        for (int i = 0; i <= position; ++i) {
             entry = it.next();
         }
         if (entry != null) {

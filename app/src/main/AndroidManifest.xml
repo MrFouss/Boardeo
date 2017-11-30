@@ -32,6 +32,11 @@
             android:parentActivityName=".BoardListActivity"
             android:theme="@style/Drawy.NoActionBar" />
         <activity
+            android:name=".NewPostActivity"
+            android:label="@string/title_activity_new_post"
+            android:parentActivityName=".BoardDetailsActivity"
+            android:theme="@style/Drawy.NoActionBar" />
+        <activity
             android:name=".BoardDetailsActivity"
             android:label="@string/title_activity_board_details"
             android:theme="@style/Drawy.NoActionBar" />

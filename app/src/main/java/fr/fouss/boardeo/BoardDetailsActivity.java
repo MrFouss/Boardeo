@@ -3,6 +3,8 @@ package fr.fouss.boardeo;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -15,15 +17,14 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import fr.fouss.boardeo.data.Board;
+import fr.fouss.boardeo.listing.PostAdapter;
 
 public class BoardDetailsActivity extends AppCompatActivity {
 
-    String boardKey;
-
     /**
-     * The current board data to be returned
+     * Board key to retrieve its data
      */
-//    Intent boardIntent;
+    String boardKey;
 
     /**
      * Firebase database instance
@@ -37,6 +38,7 @@ public class BoardDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_board_details);
 
+        // data base reference
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
         // Setup toolbar
@@ -44,22 +46,33 @@ public class BoardDetailsActivity extends AppCompatActivity {
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        // get board data
         boardKey = getIntent().getStringExtra(Board.KEY_FIELD);
-
-//        boardIntent = new Intent();
-
-        // Copy intent
-//        boardIntent.putExtras(getIntent());
         updateTextFields();
 
         // Setup of the edit button and its listener
         Button editButton = findViewById(R.id.editBoardButton);
         editButton.setOnClickListener(this::onEditBoardButtonClick);
+
+        RecyclerView postsView = findViewById(R.id.postRecyclerView);
+        postsView.setLayoutManager(new LinearLayoutManager(this));
+        PostAdapter postAdapter = new PostAdapter(this);
+        postsView.setAdapter(postAdapter);
+        postAdapter.initPostListListener(boardKey);
+
+        findViewById(R.id.addPostButton).setOnClickListener(this::onAddPostButtonClick);
+    }
+
+    public void onAddPostButtonClick(View v) {
+        // Start new board activity
+        Intent intent = new Intent(this, NewPostActivity.class);
+        intent.putExtra(Board.KEY_FIELD, boardKey);
+        startActivity(intent);
     }
 
     /**
      * When edit button is clicked
-     * @param v
+     * @param v view
      */
     public void onEditBoardButtonClick(View v) {
         // Start new board activity
@@ -68,20 +81,7 @@ public class BoardDetailsActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        if (requestCode == MiscUtil.BOARD_CREATION_REQUEST
-//                && resultCode == MiscUtil.NEW_BOARD_RESULT) {
-//            // New board activity normal return
-//
-//            // Copy result intent
-//            boardIntent.putExtras(data);
-//            updateTextFields();
-//        }
-    }
-
     private void updateTextFields() {
-//        String boardKey = boardIntent.getStringExtra("BOARD_KEY");
         DatabaseReference dataReference = mDatabase.child("boards").child(boardKey);
 
         dataReference.addValueEventListener(new ValueEventListener() {
@@ -120,10 +120,6 @@ public class BoardDetailsActivity extends AppCompatActivity {
 
     @Override
     public boolean onSupportNavigateUp() {
-//        Intent intent = new Intent();
-//        // copy the current board data to update the requesting activity
-//        intent.putExtras(boardIntent);
-//        setResult(MiscUtil.BOARD_DETAIL_RESULT, intent);
         finish();
         return true;
     }
