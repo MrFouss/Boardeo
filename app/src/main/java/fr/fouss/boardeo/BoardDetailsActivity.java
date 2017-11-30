@@ -2,6 +2,7 @@ package fr.fouss.boardeo;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,7 +18,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import fr.fouss.boardeo.data.Board;
+import fr.fouss.boardeo.data.Post;
 import fr.fouss.boardeo.listing.PostAdapter;
+import fr.fouss.boardeo.utils.UserUtils;
 
 public class BoardDetailsActivity extends AppCompatActivity {
 
@@ -25,6 +28,8 @@ public class BoardDetailsActivity extends AppCompatActivity {
      * Board key to retrieve its data
      */
     String boardKey;
+
+    private UserUtils userUtils;
 
     /**
      * Firebase database instance
@@ -39,6 +44,7 @@ public class BoardDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_board_details);
 
         // data base reference
+        userUtils = new UserUtils(this);
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
         // Setup toolbar
@@ -59,8 +65,7 @@ public class BoardDetailsActivity extends AppCompatActivity {
         PostAdapter postAdapter = new PostAdapter(this);
         postsView.setAdapter(postAdapter);
         postAdapter.initPostListListener(boardKey);
-
-        findViewById(R.id.addPostButton).setOnClickListener(this::onAddPostButtonClick);
+        postAdapter.setPostClickListener(this::onPostClicked);
     }
 
     public void onAddPostButtonClick(View v) {
@@ -102,6 +107,15 @@ public class BoardDetailsActivity extends AppCompatActivity {
                 TextView coordinates = findViewById(R.id.boardCoordinates);
                 String coordinatesText = board.getLatitude() + " ; " + board.getLongitude();
                 coordinates.setText(coordinatesText);
+
+
+                // hide/show add post button depending on authorizations
+                FloatingActionButton addPostButton = findViewById(R.id.addPostButton);
+                if (board.getOwnerUid().equals(userUtils.getUserUid()) || board.getIsPublic()) {
+                    addPostButton.setOnClickListener(v -> onAddPostButtonClick(v));
+                } else {
+                    addPostButton.setVisibility(View.GONE);
+                }
             }
 
             @Override
@@ -122,6 +136,12 @@ public class BoardDetailsActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         finish();
         return true;
+    }
+
+    public void onPostClicked(String postKey) {
+        Intent intent = new Intent(this, PostActivity.class);
+        intent.putExtra(Post.KEY_FIELD, postKey);
+        startActivity(intent);
     }
 
 }
