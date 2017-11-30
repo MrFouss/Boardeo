@@ -56,10 +56,6 @@ public class BoardDetailsActivity extends AppCompatActivity {
         boardKey = getIntent().getStringExtra(Board.KEY_FIELD);
         updateTextFields();
 
-        // Setup of the edit button and its listener
-        Button editButton = findViewById(R.id.editBoardButton);
-        editButton.setOnClickListener(this::onEditBoardButtonClick);
-
         RecyclerView postsView = findViewById(R.id.postRecyclerView);
         postsView.setLayoutManager(new LinearLayoutManager(this));
         PostAdapter postAdapter = new PostAdapter(this);
@@ -115,6 +111,15 @@ public class BoardDetailsActivity extends AppCompatActivity {
                     addPostButton.setOnClickListener(v -> onAddPostButtonClick(v));
                 } else {
                     addPostButton.setVisibility(View.GONE);
+                }
+
+
+                // Setup of the edit button and its listener
+                Button editButton = findViewById(R.id.editBoardButton);
+                if (board.getOwnerUid().equals(userUtils.getUserUid())) {
+                    editButton.setOnClickListener(v -> onEditBoardButtonClick(v));
+                } else {
+                    editButton.setVisibility(View.GONE);
                 }
             }
 
