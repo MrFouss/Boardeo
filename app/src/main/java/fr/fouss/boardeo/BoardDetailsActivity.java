@@ -84,7 +84,7 @@ public class BoardDetailsActivity extends AppCompatActivity {
 //        String boardKey = boardIntent.getStringExtra("BOARD_KEY");
         DatabaseReference dataReference = mDatabase.child("boards").child(boardKey);
 
-        dataReference.addListenerForSingleValueEvent(new ValueEventListener() {
+        dataReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Board board = dataSnapshot.getValue(Board.class);

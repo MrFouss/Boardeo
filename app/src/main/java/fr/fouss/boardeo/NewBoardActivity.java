@@ -17,7 +17,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Logger;
 import com.google.firebase.database.ValueEventListener;
 
 import fr.fouss.boardeo.data.Board;
@@ -103,7 +102,7 @@ public class NewBoardActivity extends AppCompatActivity {
                     EditText fullDescription = findViewById(R.id.fullDescriptionField);
                     fullDescription.setText(board.getFullDescription());
                     CheckBox isPublic = findViewById(R.id.isPublicCheckbox);
-                    isPublic.setChecked(board.getPublic());
+                    isPublic.setChecked(board.getIsPublic());
                 }
 
                 @Override
@@ -161,7 +160,7 @@ public class NewBoardActivity extends AppCompatActivity {
             board.setName(name);
             board.setShortDescription(shortDescription);
             board.setFullDescription(fullDescription);
-            board.setIsPublicField(isPublic);
+            board.setIsPublic(isPublic);
 
             mDatabase.child("boards").child(boardKey).setValue(board);
 

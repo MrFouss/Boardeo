@@ -503,7 +503,7 @@ public class HomeActivity extends AppCompatActivity
                 titleUi.setText(title);
 
                 String key = (String) marker.getTag();
-                Boolean isEditable = boardList.get(key).getPublic();
+                Boolean isEditable = boardList.get(key).getIsPublic();
                 if (isEditable)
                     titleUi.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_public, 0, 0, 0);
                 else
