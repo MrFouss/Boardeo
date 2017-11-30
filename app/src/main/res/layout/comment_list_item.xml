@@ -1,16 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/boardRootLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
-
-    <android.support.v7.widget.CardView
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:layout_weight="1">
+    android:orientation="horizontal"
+    android:layout_margin="@dimen/small_spacing"
+    android:layout_weight="1">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -24,21 +19,20 @@
                 android:id="@+id/comment_content_label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Comment content" />
+                android:text="@string/comment_content_field" />
 
             <TextView
                 android:id="@+id/comment_date_label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Comment date" />
+                android:text="@string/comment_date_field" />
 
             <TextView
                 android:id="@+id/comment_author_label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Comment author" />
+                android:text="@string/comment_author_field" />
 
         </LinearLayout>
-    </android.support.v7.widget.CardView>
 
-</LinearLayout>
+</android.support.v7.widget.CardView>

@@ -79,5 +79,19 @@
     <string name="activate_location">Activate location</string>
     <string name="board_banner">Board banner</string>
     <string name="board_status">Board status</string>
+    <string name="board_name_field">Board name</string>
+    <string name="short_description_field">Short description</string>
+    <string name="full_description_field">Full description</string>
+    <string name="owner_uid_field">Owner UID</string>
+    <string name="coordinates_field">Coordinates</string>
+    <string name="edit_field">Edit</string>
+    <string name="public_board_field">Public board</string>
+    <string name="post_title_field">Post title</string>
+    <string name="comment_content_field">Comment content</string>
+    <string name="comment_date_field">Comment date</string>
+    <string name="comment_author_field">Comment author</string>
+    <string name="post_content_field">Post content</string>
+    <string name="post_date_field">Post date</string>
+    <string name="post_author_field">Post author</string>
 
 </resources>

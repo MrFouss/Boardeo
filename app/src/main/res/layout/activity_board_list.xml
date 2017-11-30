@@ -18,14 +18,12 @@
             android:background="?attr/colorPrimary"
             android:minHeight="?attr/actionBarSize"
             android:theme="?attr/actionBarTheme"
-            app:title="Boardeo"></android.support.v7.widget.Toolbar>
+            app:title="Boardeo" />
 
     </android.support.design.widget.AppBarLayout>
 
     <include
         layout="@layout/activity_board_list_content"
-        tools:layout_editor_absoluteX="218dp"
-        tools:layout_editor_absoluteY="355dp"
         />
 
     <android.support.design.widget.FloatingActionButton
@@ -33,9 +31,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
+        android:layout_margin="@dimen/fab_margin"
         android:clickable="true"
         android:src="@drawable/ic_add"
-        app:backgroundTint="@color/secondaryColorDark" />
+        app:backgroundTint="@color/secondaryColorDark"
+        android:focusable="true" />
 
 </android.support.design.widget.CoordinatorLayout>

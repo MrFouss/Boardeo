@@ -13,37 +13,37 @@
         android:id="@+id/boardName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Board name" />
+        android:text="@string/board_name_field" />
 
     <TextView
         android:id="@+id/boardShortDescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Short description" />
+        android:text="@string/short_description_field" />
 
     <TextView
         android:id="@+id/boardFullDescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Full description" />
+        android:text="@string/full_description_field" />
 
     <TextView
         android:id="@+id/boardOwnerUid"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Owner UID" />
+        android:text="@string/owner_uid_field" />
 
     <TextView
         android:id="@+id/boardCoordinates"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Coordinates" />
+        android:text="@string/coordinates_field" />
 
     <Button
         android:id="@+id/editBoardButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Edit" />
+        android:text="@string/edit_field" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/postRecyclerView"

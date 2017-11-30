@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -15,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/fab_margin"
-        android:hint="Board name"
+        android:hint="@string/board_name_field"
         android:padding="@dimen/fab_margin"
         android:inputType="text" />
 
@@ -24,7 +23,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/fab_margin"
-        android:hint="Short description"
+        android:hint="@string/short_description_field"
         android:padding="@dimen/fab_margin"
         android:inputType="textShortMessage" />
 
@@ -35,7 +34,7 @@
         android:layout_weight="1"
         android:gravity="top"
         android:layout_marginTop="@dimen/fab_margin"
-        android:hint="Full description"
+        android:hint="@string/full_description_field"
         android:padding="@dimen/fab_margin"
         android:inputType="textMultiLine"/>
 
@@ -44,6 +43,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/fab_margin"
-        android:text="Public board"/>
+        android:text="@string/public_board_field"/>
 
 </LinearLayout>

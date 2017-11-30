@@ -1,16 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/boardRootLayout"
+    android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
-
-    <android.support.v7.widget.CardView
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:layout_weight="1">
+    android:layout_margin="@dimen/small_spacing"
+    android:layout_weight="1">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -24,15 +19,14 @@
                 android:id="@+id/board_name_label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Board name" />
+                android:text="@string/board_name_field" />
 
             <TextView
                 android:id="@+id/board_short_description_label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Board short description" />
+                android:text="@string/short_description_field" />
 
         </LinearLayout>
-    </android.support.v7.widget.CardView>
 
-</LinearLayout>
+</android.support.v7.widget.CardView>
