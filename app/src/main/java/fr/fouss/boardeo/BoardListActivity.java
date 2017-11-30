@@ -6,8 +6,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 
 import fr.fouss.boardeo.data.Board;
@@ -17,10 +15,6 @@ import fr.fouss.boardeo.listing.BoardAdapter;
  * Activity that displays a list of boards
  */
 public class BoardListActivity extends AppCompatActivity {
-
-    private FloatingActionButton newBoardButton;
-
-    private BoardAdapter boardAdapter;
 
     ///// LIFECYCLE /////
 
@@ -36,14 +30,14 @@ public class BoardListActivity extends AppCompatActivity {
         RecyclerView boardRecyclerView = findViewById(R.id.boardRecyclerList);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         boardRecyclerView.setLayoutManager(layoutManager);
-        boardAdapter = new BoardAdapter(this);
+        BoardAdapter boardAdapter = new BoardAdapter(this);
         boardRecyclerView.setAdapter(boardAdapter);
         boardAdapter.initSubscriptionsListener();
-        boardAdapter.setBoardClickListener(key -> onBoardClicked(key));
+        boardAdapter.setBoardClickListener(this::onBoardClicked);
 
         // set new board button listener
-        newBoardButton = findViewById(R.id.addBoardButton);
-        newBoardButton.setOnClickListener(v -> onNewBoardButtonClick(v));
+        FloatingActionButton newBoardButton = findViewById(R.id.addBoardButton);
+        newBoardButton.setOnClickListener(this::onNewBoardButtonClick);
     }
 
     ///// EVENTS /////
@@ -62,47 +56,5 @@ public class BoardListActivity extends AppCompatActivity {
         // launch new board activity
         Intent intent = new Intent(this, NewBoardActivity.class);
         startActivity(intent);
-    }
-
-    /**
-     * When creating the toolbar
-     * @param menu
-     * @return
-     */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.board_list_menu, menu);
-        return true;
-    }
-
-    /**
-     * When a menu item in the toolbar is clicked
-     * @param item
-     * @return
-     */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return true;
-//        switch (item.getItemId()) {
-//            case R.id.unsubscribeButton :
-//                boardAdapter.setSelectionSubscription(false);
-//                boardAdapter.clearSelection();
-//                boardAdapter.notifyDataSetChanged();
-//                return true;
-//            case R.id.subscribeButton :
-//                boardAdapter.setSelectionSubscription(true);
-//                boardAdapter.clearSelection();
-//                boardAdapter.notifyDataSetChanged();
-//                return true;
-//            case R.id.deleteBoardButton :
-//                onDeleteBoardButtonClick();
-//                return true;
-//            case R.id.filterSetting :
-//                // TODO
-//                return true;
-//            default :
-//                return super.onOptionsItemSelected(item);
-//        }
     }
 }

@@ -46,35 +46,12 @@ public class NewBoardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_board);
 
+        // data base
         mDatabase = FirebaseDatabase.getInstance().getReference();
         userUtils = new UserUtils(this);
 
-        LocationManager mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if (mLocationManager != null && ActivityCompat.checkSelfPermission(this,
-                android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-
-            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0L, 0.0f, new LocationListener() {
-                @Override
-                public void onLocationChanged(Location location) {
-                    if(location.hasAccuracy() && location.getAccuracy() <= minAccuracy) {
-                        latitude = location.getLatitude();
-                        longitude = location.getLongitude();
-                        minAccuracy = location.getAccuracy();
-                    }
-                }
-
-                @Override
-                public void onStatusChanged(String provider, int status, Bundle extras) {}
-
-                @Override
-                public void onProviderEnabled(String provider) {}
-
-                @Override
-                public void onProviderDisabled(String provider) {}
-            });
-        } else {
-            Toast.makeText(this, "The location permission is needed", Toast.LENGTH_SHORT).show();
-        }
+        // geolocation
+        retrieveLocation();
 
         // Setup the toolbar
         setSupportActionBar(findViewById(R.id.NewBoardToolbar));
@@ -86,7 +63,10 @@ public class NewBoardActivity extends AppCompatActivity {
 
         // Get the board's key if it exists, null otherwise
         boardKey = getIntent().getStringExtra(Board.KEY_FIELD);
+        updateFields();
+    }
 
+    private void updateFields() {
         if (boardKey != null) {
             DatabaseReference dataReference = mDatabase.child("boards").child(boardKey);
             dataReference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -115,11 +95,40 @@ public class NewBoardActivity extends AppCompatActivity {
         }
     }
 
+    private void retrieveLocation() {
+        LocationManager mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (mLocationManager != null && ActivityCompat.checkSelfPermission(this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+
+            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0L, 0.0f, new LocationListener() {
+                @Override
+                public void onLocationChanged(Location location) {
+                    if(location.hasAccuracy() && location.getAccuracy() <= minAccuracy) {
+                        latitude = location.getLatitude();
+                        longitude = location.getLongitude();
+                        minAccuracy = location.getAccuracy();
+                    }
+                }
+
+                @Override
+                public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+                @Override
+                public void onProviderEnabled(String provider) {}
+
+                @Override
+                public void onProviderDisabled(String provider) {}
+            });
+        } else {
+            Toast.makeText(this, "The location permission is needed", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     ///// EVENTS /////
 
     /**
      * When validation floating button is clicked
-     * @param v
+     * @param v view
      */
     public void onValidateButtonClick(View v) {
         // retrieve fields
@@ -194,8 +203,6 @@ public class NewBoardActivity extends AppCompatActivity {
 
     @Override
     public boolean onSupportNavigateUp() {
-        // return without any result
-//        setResult(MiscUtil.CANCEL_NEW_BOARD_RESULT);
         finish();
         return true;
     }

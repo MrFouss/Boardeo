@@ -18,12 +18,10 @@ import fr.fouss.boardeo.data.Board;
 
 public class BoardDetailsActivity extends AppCompatActivity {
 
-    String boardKey;
-
     /**
-     * The current board data to be returned
+     * Board key to retrieve its data
      */
-//    Intent boardIntent;
+    String boardKey;
 
     /**
      * Firebase database instance
@@ -37,6 +35,7 @@ public class BoardDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_board_details);
 
+        // data base reference
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
         // Setup toolbar
@@ -44,12 +43,8 @@ public class BoardDetailsActivity extends AppCompatActivity {
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        // get board data
         boardKey = getIntent().getStringExtra(Board.KEY_FIELD);
-
-//        boardIntent = new Intent();
-
-        // Copy intent
-//        boardIntent.putExtras(getIntent());
         updateTextFields();
 
         // Setup of the edit button and its listener
@@ -59,7 +54,7 @@ public class BoardDetailsActivity extends AppCompatActivity {
 
     /**
      * When edit button is clicked
-     * @param v
+     * @param v view
      */
     public void onEditBoardButtonClick(View v) {
         // Start new board activity
@@ -68,20 +63,7 @@ public class BoardDetailsActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        if (requestCode == MiscUtil.BOARD_CREATION_REQUEST
-//                && resultCode == MiscUtil.NEW_BOARD_RESULT) {
-//            // New board activity normal return
-//
-//            // Copy result intent
-//            boardIntent.putExtras(data);
-//            updateTextFields();
-//        }
-    }
-
     private void updateTextFields() {
-//        String boardKey = boardIntent.getStringExtra("BOARD_KEY");
         DatabaseReference dataReference = mDatabase.child("boards").child(boardKey);
 
         dataReference.addValueEventListener(new ValueEventListener() {
@@ -120,10 +102,6 @@ public class BoardDetailsActivity extends AppCompatActivity {
 
     @Override
     public boolean onSupportNavigateUp() {
-//        Intent intent = new Intent();
-//        // copy the current board data to update the requesting activity
-//        intent.putExtras(boardIntent);
-//        setResult(MiscUtil.BOARD_DETAIL_RESULT, intent);
         finish();
         return true;
     }
