@@ -6,24 +6,15 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 
+import fr.fouss.boardeo.data.Board;
 import fr.fouss.boardeo.listing.BoardAdapter;
 
 /**
  * Activity that displays a list of boards
  */
 public class BoardListActivity extends AppCompatActivity {
-
-    private MenuItem toolbarUnsubscribeButton;
-    private MenuItem toolbarSubscribeButton;
-    private MenuItem toolbarFilterButton;
-    private MenuItem toolbarDeleteButton;
-    private FloatingActionButton newBoardButton;
-
-    private BoardAdapter boardRecyclerViewAdapter;
 
     ///// LIFECYCLE /////
 
@@ -39,33 +30,22 @@ public class BoardListActivity extends AppCompatActivity {
         RecyclerView boardRecyclerView = findViewById(R.id.boardRecyclerList);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         boardRecyclerView.setLayoutManager(layoutManager);
-        boardRecyclerViewAdapter = new BoardAdapter(this);
-        boardRecyclerView.setAdapter(boardRecyclerViewAdapter);
-        boardRecyclerViewAdapter.initSubscriptionsListener();
+        BoardAdapter boardAdapter = new BoardAdapter(this);
+        boardRecyclerView.setAdapter(boardAdapter);
+        boardAdapter.initSubscriptionsListener();
+        boardAdapter.setBoardClickListener(this::onBoardClicked);
 
         // set new board button listener
-        newBoardButton = findViewById(R.id.addBoardButton);
-        newBoardButton.setOnClickListener(v -> onNewBoardButtonClick(v));
+        FloatingActionButton newBoardButton = findViewById(R.id.addBoardButton);
+        newBoardButton.setOnClickListener(this::onNewBoardButtonClick);
     }
 
     ///// EVENTS /////
 
-    /**
-     * When a board item is clicked
-     * @param position
-     */
-    public void onBoardClick(int position) {
-//        if (boardRecyclerViewAdapter.isSelectionMode()) {
-//            // toggle selection checkbox of the clicked item
-//            boardRecyclerViewAdapter.toggleSelect(position);
-//            boardRecyclerViewAdapter.notifyDataSetChanged();
-//        } else {
-//            // launch board detail activity
-//            Intent intent = new Intent(this, BoardDetailsActivity.class);
-//            BoardData boardData = boardRecyclerViewAdapter.getItem(position);
-//            boardData.fillIntentExtras(intent);
-//            startActivityForResult(intent, MiscUtil.BOARD_DETAIL_REQUEST);
-//        }
+    public void onBoardClicked(String key) {
+        Intent intent = new Intent(this, BoardDetailsActivity.class);
+        intent.putExtra(Board.KEY_FIELD, key);
+        startActivity(intent);
     }
 
     /**
@@ -75,135 +55,6 @@ public class BoardListActivity extends AppCompatActivity {
     public void onNewBoardButtonClick(View v) {
         // launch new board activity
         Intent intent = new Intent(this, NewBoardActivity.class);
-        startActivityForResult(intent, MiscUtil.BOARD_CREATION_REQUEST);
+        startActivity(intent);
     }
-
-    /**
-     * When a previously launched activity returns
-     * @param requestCode
-     * @param resultCode
-     * @param data
-     */
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        if (requestCode == MiscUtil.BOARD_CREATION_REQUEST && resultCode == MiscUtil.NEW_BOARD_RESULT) {
-//            // normal return of new board activity
-//            boardRecyclerViewAdapter.addItem(new fr.fouss.boardeo.listing.BoardData(data));
-//        } else if (requestCode == MiscUtil.BOARD_DETAIL_REQUEST && resultCode == MiscUtil.BOARD_DETAIL_RESULT) {
-//            // normal return of detail board activity
-//            BoardData boardData = boardRecyclerViewAdapter.getItemById(data.getIntExtra(BoardData.BOARD_ID_FIELD, -1));
-//            boardData.setFromIntent(data);
-//        }
-//        boardRecyclerViewAdapter.notifyDataSetChanged();
-    }
-
-    /**
-     * When creating the toolbar
-     * @param menu
-     * @return
-     */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.board_list_menu, menu);
-        toolbarUnsubscribeButton = menu.findItem(R.id.unsubscribeButton);
-        toolbarSubscribeButton = menu.findItem(R.id.subscribeButton);
-        toolbarFilterButton = menu.findItem(R.id.filterSetting);
-        toolbarDeleteButton = menu.findItem(R.id.deleteBoardButton);
-        return true;
-    }
-
-    /**
-     * When a menu item in the toolbar is clicked
-     * @param item
-     * @return
-     */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return true;
-//        switch (item.getItemId()) {
-//            case R.id.unsubscribeButton :
-//                boardRecyclerViewAdapter.setSelectionSubscription(false);
-//                boardRecyclerViewAdapter.clearSelection();
-//                boardRecyclerViewAdapter.notifyDataSetChanged();
-//                return true;
-//            case R.id.subscribeButton :
-//                boardRecyclerViewAdapter.setSelectionSubscription(true);
-//                boardRecyclerViewAdapter.clearSelection();
-//                boardRecyclerViewAdapter.notifyDataSetChanged();
-//                return true;
-//            case R.id.deleteBoardButton :
-//                onDeleteBoardButtonClick();
-//                return true;
-//            case R.id.filterSetting :
-//                // TODO
-//                return true;
-//            default :
-//                return super.onOptionsItemSelected(item);
-//        }
-    }
-
-    /**
-     * When the delete button is clicked in the toobar
-     */
-    public void onDeleteBoardButtonClick() {
-//        AlertDialog.Builder builder = new AlertDialog.Builder(this)
-//                .setMessage("Do you really want to delete boards?")
-//                .setTitle("Warning!")
-//                .setPositiveButton("Yes", (dialog, id) -> {
-//                    boardRecyclerViewAdapter.deleteSelection();
-//                    onSupportNavigateUp();
-//                })
-//                .setNegativeButton("No", (dialog, id) -> {});
-//        AlertDialog dialog = builder.create();
-//        dialog.show();
-    }
-
-    /**
-     * When the naviguation up button in toolbar is clicked
-     * @return
-     */
-    @Override
-    public boolean onSupportNavigateUp() {
-//        boardRecyclerViewAdapter.setSelectionMode(false);
-//        boardRecyclerViewAdapter.notifyDataSetChanged();
-        return true;
-    }
-
-    @Override
-    public void onBackPressed() {
-//        if (boardRecyclerViewAdapter.isSelectionMode()) {
-//            onSupportNavigateUp();
-//        } else {
-//            super.onBackPressed();
-//        }
-    }
-
-    /**
-     * When the mode of board list recycler view changes
-     * @param selectionMode
-     */
-    public void onSelectionModeChange(boolean selectionMode) {
-        // show/hide necessary options depending on the mode
-        if (selectionMode) {
-            toolbarUnsubscribeButton.setVisible(true);
-            toolbarSubscribeButton.setVisible(true);
-            toolbarFilterButton.setVisible(false);
-            toolbarDeleteButton.setVisible(true);
-            newBoardButton.setVisibility(View.GONE);
-
-            // show back button
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        } else {
-            toolbarUnsubscribeButton.setVisible(false);
-            toolbarSubscribeButton.setVisible(false);
-            toolbarFilterButton.setVisible(true);
-            toolbarDeleteButton.setVisible(false);
-            newBoardButton.setVisibility(View.VISIBLE);
-
-            // hide back button
-            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        }
-    }
-
 }

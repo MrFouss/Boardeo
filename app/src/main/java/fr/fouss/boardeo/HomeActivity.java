@@ -362,11 +362,10 @@ public class HomeActivity extends AppCompatActivity
     @Override
     public void onInfoWindowClick(Marker marker) {
         String key = (String) marker.getTag();
-        Board board = boardList.get(key);
 
         // Launch board detail activity
         Intent intent = new Intent(this, BoardDetailsActivity.class);
-        board.fillIntentExtras(intent);
+        intent.putExtra(Board.KEY_FIELD, key);
         startActivity(intent);
     }
 
@@ -503,7 +502,7 @@ public class HomeActivity extends AppCompatActivity
                 titleUi.setText(title);
 
                 String key = (String) marker.getTag();
-                Boolean isEditable = boardList.get(key).getPublic();
+                Boolean isEditable = boardList.get(key).getIsPublic();
                 if (isEditable)
                     titleUi.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_public, 0, 0, 0);
                 else

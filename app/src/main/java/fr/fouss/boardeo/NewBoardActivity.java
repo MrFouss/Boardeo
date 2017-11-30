@@ -36,7 +36,7 @@ public class NewBoardActivity extends AppCompatActivity {
 
     private Double latitude;
     private Double longitude;
-    private float minAccuracy = 5.0f;
+    private float minAccuracy = 15.0f;
 
     ///// LIFECYCLE /////
 
@@ -45,12 +45,60 @@ public class NewBoardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_board);
 
+        // data base
         mDatabase = FirebaseDatabase.getInstance().getReference();
         userUtils = new UserUtils(this);
 
+        // geolocation
+        retrieveLocation();
+
+        // Setup the toolbar
+        setSupportActionBar(findViewById(R.id.NewBoardToolbar));
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        // Setup validation button
+        findViewById(R.id.validateBoardEditionButton).setOnClickListener(this::onValidateButtonClick);
+
+        // Get the board's key if it exists, null otherwise
+        boardKey = getIntent().getStringExtra(Board.KEY_FIELD);
+        updateFields();
+    }
+
+    private void updateFields() {
+        if (boardKey != null) {
+            DatabaseReference dataReference = mDatabase.child("boards").child(boardKey);
+            dataReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    board = dataSnapshot.getValue(Board.class);
+
+                    // Setup fields based on request intent
+                    EditText title = findViewById(R.id.boardNameField);
+                    title.setText(board.getName());
+                    EditText shortDescription = findViewById(R.id.shortDescriptionField);
+                    shortDescription.setText(board.getShortDescription());
+                    EditText fullDescription = findViewById(R.id.fullDescriptionField);
+                    fullDescription.setText(board.getFullDescription());
+                    CheckBox isPublic = findViewById(R.id.isPublicCheckbox);
+                    isPublic.setChecked(board.getIsPublic());
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Toast.makeText(NewBoardActivity.this,
+                            "Board info couldn't be retrieved",
+                            Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
+
+    private void retrieveLocation() {
         LocationManager mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (mLocationManager != null && ActivityCompat.checkSelfPermission(this,
-                android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+
             mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0L, 0.0f, new LocationListener() {
                 @Override
                 public void onLocationChanged(Location location) {
@@ -70,44 +118,8 @@ public class NewBoardActivity extends AppCompatActivity {
                 @Override
                 public void onProviderDisabled(String provider) {}
             });
-        }
-
-        // Setup the toolbar
-        setSupportActionBar(findViewById(R.id.NewBoardToolbar));
-        if (getSupportActionBar() != null)
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        // Setup validation button
-        findViewById(R.id.validateBoardEditionButton).setOnClickListener(this::onValidateButtonClick);
-
-        // Get the board's key if it exists, null otherwise
-        boardKey = getIntent().getStringExtra("BOARD_KEY");
-
-        if (boardKey != null) {
-            DatabaseReference dataReference = mDatabase.child("boards").child(boardKey);
-            dataReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    board = (Board) dataSnapshot.getValue();
-
-                    // Setup fields based on request intent
-                    EditText title = findViewById(R.id.boardNameField);
-                    title.setText(board.getName());
-                    EditText shortDescription = findViewById(R.id.shortDescriptionField);
-                    shortDescription.setText(board.getShortDescription());
-                    EditText fullDescription = findViewById(R.id.fullDescriptionField);
-                    fullDescription.setText(board.getFullDescription());
-                    CheckBox isPublic = findViewById(R.id.isPublicCheckbox);
-                    isPublic.setChecked(board.getPublic());
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    Toast.makeText(NewBoardActivity.this,
-                            "Board info couldn't be retrieved",
-                            Toast.LENGTH_SHORT).show();
-                }
-            });
+        } else {
+            Toast.makeText(this, "The location permission is needed", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -115,7 +127,7 @@ public class NewBoardActivity extends AppCompatActivity {
 
     /**
      * When validation floating button is clicked
-     * @param v
+     * @param v view
      */
     public void onValidateButtonClick(View v) {
         // retrieve fields
@@ -156,7 +168,7 @@ public class NewBoardActivity extends AppCompatActivity {
             board.setName(name);
             board.setShortDescription(shortDescription);
             board.setFullDescription(fullDescription);
-            board.setIsPublicField(isPublic);
+            board.setIsPublic(isPublic);
 
             mDatabase.child("boards").child(boardKey).setValue(board);
 
@@ -166,7 +178,15 @@ public class NewBoardActivity extends AppCompatActivity {
                 board = new Board(name, userUtils.getUserUid(), latitude, longitude, isPublic);
                 board.setShortDescription(shortDescription);
                 board.setFullDescription(fullDescription);
-                mDatabase.child("boards").push().setValue(board);
+                String newBoardKey = mDatabase.child("boards").push().getKey();
+                mDatabase.child("boards")
+                        .child(newBoardKey)
+                        .setValue(board);
+                mDatabase.child("users")
+                        .child(userUtils.getUserUid())
+                        .child("subscriptions")
+                        .child(newBoardKey)
+                        .setValue(true);
             } else {
                 Toast.makeText(this, "A more precise location is required to create a new board.", Toast.LENGTH_LONG).show();
                 return;
@@ -182,8 +202,6 @@ public class NewBoardActivity extends AppCompatActivity {
 
     @Override
     public boolean onSupportNavigateUp() {
-        // return without any result
-        setResult(MiscUtil.CANCEL_NEW_BOARD_RESULT);
         finish();
         return true;
     }

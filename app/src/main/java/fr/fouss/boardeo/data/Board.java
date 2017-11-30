@@ -7,6 +7,7 @@ import java.util.Map;
 
 public class Board {
 
+    public final static String KEY_FIELD = "BOARD_KEY";
     public final static String NAME_FIELD = "boardName";
     public final static String SHORT_DESCRIPTION_FIELD = "boardShortDescription";
     public final static String FULL_DESCRIPTION_FIELD = "boardFullDescription";
@@ -60,7 +61,7 @@ public class Board {
         result.put(OWNER_UID_FIELD, getOwnerUid());
         result.put(LATITUDE_FIELD, getLatitude());
         result.put(LONGITUDE_FIELD, getLongitude());
-        result.put(IS_PUBLIC_FIELD, getPublic());
+        result.put(IS_PUBLIC_FIELD, getIsPublic());
 
         return result;
     }
@@ -93,7 +94,7 @@ public class Board {
         intent.putExtra(OWNER_UID_FIELD, getOwnerUid());
         intent.putExtra(LATITUDE_FIELD, getLatitude());
         intent.putExtra(LONGITUDE_FIELD, getLongitude());
-        intent.putExtra(IS_PUBLIC_FIELD, getPublic());
+        intent.putExtra(IS_PUBLIC_FIELD, getIsPublic());
 
         return intent;
     }
@@ -122,7 +123,7 @@ public class Board {
         return longitude;
     }
 
-    public Boolean getPublic() {
+    public Boolean getIsPublic() {
         return isPublic;
     }
 
@@ -150,7 +151,7 @@ public class Board {
         this.longitude = longitude;
     }
 
-    public void setIsPublicField(Boolean isPublic) {
-        isPublic = isPublic;
+    public void setIsPublic(Boolean isPublic) {
+        this.isPublic = isPublic;
     }
 }

@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Post {
-
+    public final static String KEY_FIELD = "POST_KEY";
     public final static String TITLE_FIELD = "postTitle";
     public final static String CONTENT_FIELD = "postContent";
     public final static String TIMESTAMP_FIELD = "postTimestamp";
