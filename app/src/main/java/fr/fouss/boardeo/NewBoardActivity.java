@@ -52,7 +52,8 @@ public class NewBoardActivity extends AppCompatActivity {
 
         LocationManager mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (mLocationManager != null && ActivityCompat.checkSelfPermission(this,
-                android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+
             mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0L, 0.0f, new LocationListener() {
                 @Override
                 public void onLocationChanged(Location location) {
@@ -72,6 +73,8 @@ public class NewBoardActivity extends AppCompatActivity {
                 @Override
                 public void onProviderDisabled(String provider) {}
             });
+        } else {
+            Toast.makeText(this, "The location permission is needed", Toast.LENGTH_SHORT).show();
         }
 
         // Setup the toolbar
