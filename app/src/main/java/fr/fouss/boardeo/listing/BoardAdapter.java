@@ -2,6 +2,7 @@ package fr.fouss.boardeo.listing;
 
 import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -80,7 +81,7 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.BoardViewHol
     public void onBindViewHolder(BoardViewHolder holder, int position) {
         Map.Entry<String, Board> entry = null;
         Iterator<Map.Entry<String, Board>> it = boards.entrySet().iterator();
-        for (int i = 0; i < position; ++i) {
+        for (int i = 0; i <= position; ++i) {
             entry = it.next();
         }
         if (entry != null) {
