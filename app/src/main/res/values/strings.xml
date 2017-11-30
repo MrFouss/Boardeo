@@ -93,5 +93,6 @@
     <string name="post_content_field">Post content</string>
     <string name="post_date_field">Post date</string>
     <string name="post_author_field">Post author</string>
+    <string name="title_post_activity">Post</string>
 
 </resources>
