@@ -23,7 +23,7 @@
     </android.support.design.widget.AppBarLayout>
 
     <include
-        android:layout="@layout/activity_new_board_content" />
+        layout="@layout/activity_new_board_content" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/validateBoardEditionButton"

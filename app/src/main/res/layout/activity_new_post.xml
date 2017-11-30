@@ -23,7 +23,7 @@
     </android.support.design.widget.AppBarLayout>
 
     <include
-        android:layout="@layout/activity_new_post_content" />
+        layout="@layout/activity_new_post_content" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/validatePostEditionButton"
