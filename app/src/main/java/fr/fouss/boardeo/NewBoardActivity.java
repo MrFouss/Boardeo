@@ -42,7 +42,6 @@ public class NewBoardActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-//        FirebaseDatabase.getInstance().setLogLevel(Logger.Level.INFO);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_board);
 

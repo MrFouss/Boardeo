@@ -3,6 +3,8 @@ package fr.fouss.boardeo;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -15,6 +17,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import fr.fouss.boardeo.data.Board;
+import fr.fouss.boardeo.listing.PostAdapter;
 
 public class BoardDetailsActivity extends AppCompatActivity {
 
@@ -50,6 +53,21 @@ public class BoardDetailsActivity extends AppCompatActivity {
         // Setup of the edit button and its listener
         Button editButton = findViewById(R.id.editBoardButton);
         editButton.setOnClickListener(this::onEditBoardButtonClick);
+
+        RecyclerView postsView = findViewById(R.id.postRecyclerView);
+        postsView.setLayoutManager(new LinearLayoutManager(this));
+        PostAdapter postAdapter = new PostAdapter(this);
+        postsView.setAdapter(postAdapter);
+        postAdapter.initPostListListener(boardKey);
+
+        findViewById(R.id.addPostButton).setOnClickListener(this::onAddPostButtonClick);
+    }
+
+    public void onAddPostButtonClick(View v) {
+        // Start new board activity
+        Intent intent = new Intent(this, NewPostActivity.class);
+        intent.putExtra(Board.KEY_FIELD, boardKey);
+        startActivity(intent);
     }
 
     /**
