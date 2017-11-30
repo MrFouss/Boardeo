@@ -7,6 +7,7 @@ import java.util.Map;
 
 public class Board {
 
+    public final static String KEY_FIELD = "BOARD_KEY";
     public final static String NAME_FIELD = "boardName";
     public final static String SHORT_DESCRIPTION_FIELD = "boardShortDescription";
     public final static String FULL_DESCRIPTION_FIELD = "boardFullDescription";

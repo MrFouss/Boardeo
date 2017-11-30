@@ -17,6 +17,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Logger;
 import com.google.firebase.database.ValueEventListener;
 
 import fr.fouss.boardeo.data.Board;
@@ -42,6 +43,7 @@ public class NewBoardActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+//        FirebaseDatabase.getInstance().setLogLevel(Logger.Level.INFO);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_board);
 
@@ -81,14 +83,14 @@ public class NewBoardActivity extends AppCompatActivity {
         findViewById(R.id.validateBoardEditionButton).setOnClickListener(this::onValidateButtonClick);
 
         // Get the board's key if it exists, null otherwise
-        boardKey = getIntent().getStringExtra("BOARD_KEY");
+        boardKey = getIntent().getStringExtra(Board.KEY_FIELD);
 
         if (boardKey != null) {
             DatabaseReference dataReference = mDatabase.child("boards").child(boardKey);
             dataReference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    board = (Board) dataSnapshot.getValue();
+                    board = dataSnapshot.getValue(Board.class);
 
                     // Setup fields based on request intent
                     EditText title = findViewById(R.id.boardNameField);
@@ -183,7 +185,7 @@ public class NewBoardActivity extends AppCompatActivity {
     @Override
     public boolean onSupportNavigateUp() {
         // return without any result
-        setResult(MiscUtil.CANCEL_NEW_BOARD_RESULT);
+//        setResult(MiscUtil.CANCEL_NEW_BOARD_RESULT);
         finish();
         return true;
     }
