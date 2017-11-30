@@ -37,7 +37,7 @@ public class NewBoardActivity extends AppCompatActivity {
 
     private Double latitude;
     private Double longitude;
-    private float minAccuracy = 5.0f;
+    private float minAccuracy = 15.0f;
 
     ///// LIFECYCLE /////
 
@@ -171,7 +171,15 @@ public class NewBoardActivity extends AppCompatActivity {
                 board = new Board(name, userUtils.getUserUid(), latitude, longitude, isPublic);
                 board.setShortDescription(shortDescription);
                 board.setFullDescription(fullDescription);
-                mDatabase.child("boards").push().setValue(board);
+                String newBoardKey = mDatabase.child("boards").push().getKey();
+                mDatabase.child("boards")
+                        .child(newBoardKey)
+                        .setValue(board);
+                mDatabase.child("users")
+                        .child(userUtils.getUserUid())
+                        .child("subscriptions")
+                        .child(newBoardKey)
+                        .setValue(true);
             } else {
                 Toast.makeText(this, "A more precise location is required to create a new board.", Toast.LENGTH_LONG).show();
                 return;
