@@ -127,13 +127,14 @@ public class BoardDetailsActivity extends AppCompatActivity {
                     editButton.setVisibility(View.GONE);
                 }
 
+                // enable subscription checkbox if your own board
                 CheckBox subCheckbox = findViewById(R.id.board_detail_subscription_checkbox);
                 myBoard = board.getOwnerUid().equals(userUtils.getUserUid());
                 if (!myBoard) {
                     subCheckbox.setEnabled(true);
                 }
 
-                // launch subscription listener once only after retrieving board data
+                // launch subscription listener only once, after retrieving board data
                 if (!subscriptionListenerLauched) {
                     subscriptionListenerLauched = true;
                     updateSubscription();
@@ -169,6 +170,7 @@ public class BoardDetailsActivity extends AppCompatActivity {
                     }
                 }
 
+                // enable checkbox if not your own
                 CheckBox subCheckbox = findViewById(R.id.board_detail_subscription_checkbox);
                 subCheckbox.setChecked(isKeyPresent);
                 if (!myBoard) {
@@ -186,6 +188,7 @@ public class BoardDetailsActivity extends AppCompatActivity {
     }
 
     public void onSubscriptionCheckboxCheckChange(CompoundButton button, boolean isChecked) {
+        // disable to wait for database update
         button.setEnabled(false);
         if (button.isChecked()) {
             mDatabase.child("users")

@@ -6,9 +6,12 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -82,6 +85,12 @@ public class NewBoardActivity extends AppCompatActivity {
                     fullDescription.setText(board.getFullDescription());
                     CheckBox isPublic = findViewById(R.id.isPublicCheckbox);
                     isPublic.setChecked(board.getIsPublic());
+
+                    Button deleteButton = findViewById(R.id.board_delete_button);
+                    deleteButton.setVisibility(View.VISIBLE);
+                    deleteButton.setOnClickListener(
+                            v -> onDeleteButtonClick(v)
+                    );
                 }
 
                 @Override
@@ -124,6 +133,20 @@ public class NewBoardActivity extends AppCompatActivity {
     }
 
     ///// EVENTS /////
+
+    public void onDeleteButtonClick(View v) {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setMessage("Do you really want to delete this board ?")
+                .setTitle("Deletion")
+                .setCancelable(false)
+                .setPositiveButton("Yes", (dialog, which) -> deleteBoard())
+                .setNegativeButton("No", (dialog, which) -> {});
+        alert.create().show();
+    }
+
+    public void deleteBoard() {
+        Toast.makeText(this, "Not implemented yet ...", Toast.LENGTH_LONG).show();
+    }
 
     /**
      * When validation floating button is clicked
