@@ -8,6 +8,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +32,11 @@ public class BoardDetailsActivity extends AppCompatActivity {
     String boardKey;
 
     private UserUtils userUtils;
+
+    private Board board;
+
+    private boolean myBoard = true;
+    private boolean subscriptionListenerLauched = false;
 
     /**
      * Firebase database instance
@@ -88,7 +95,7 @@ public class BoardDetailsActivity extends AppCompatActivity {
         dataReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Board board = dataSnapshot.getValue(Board.class);
+                board = dataSnapshot.getValue(Board.class);
                 assert board != null;
 
                 // Setup of texts
@@ -104,7 +111,6 @@ public class BoardDetailsActivity extends AppCompatActivity {
                 String coordinatesText = board.getLatitude() + " ; " + board.getLongitude();
                 coordinates.setText(coordinatesText);
 
-
                 // hide/show add post button depending on authorizations
                 FloatingActionButton addPostButton = findViewById(R.id.addPostButton);
                 if (board.getOwnerUid().equals(userUtils.getUserUid()) || board.getIsPublic()) {
@@ -112,13 +118,27 @@ public class BoardDetailsActivity extends AppCompatActivity {
                 } else {
                     addPostButton.setVisibility(View.GONE);
                 }
-                
+
                 // Setup of the edit button and its listener
                 Button editButton = findViewById(R.id.editBoardButton);
                 if (board.getOwnerUid().equals(userUtils.getUserUid())) {
                     editButton.setOnClickListener(v -> onEditBoardButtonClick(v));
                 } else {
                     editButton.setVisibility(View.GONE);
+                }
+
+                CheckBox subCheckbox = findViewById(R.id.board_detail_subscription_checkbox);
+                myBoard = board.getOwnerUid().equals(userUtils.getUserUid());
+                if (!myBoard) {
+                    subCheckbox.setEnabled(true);
+                }
+
+                // launch subscription listener once only after retrieving board data
+                if (!subscriptionListenerLauched) {
+                    subscriptionListenerLauched = true;
+                    updateSubscription();
+                    subCheckbox.setOnCheckedChangeListener((buttonView, isChecked) ->
+                        onSubscriptionCheckboxCheckChange(buttonView, isChecked));
                 }
             }
 
@@ -129,6 +149,57 @@ public class BoardDetailsActivity extends AppCompatActivity {
                         Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    public void updateSubscription() {
+
+        DatabaseReference dataReference = mDatabase
+                .child("users")
+                .child(userUtils.getUserUid())
+                .child("subscriptions");
+
+        dataReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Boolean isKeyPresent = false;
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    if (ds.getKey().equals(boardKey)) {
+                        isKeyPresent = true;
+                        break;
+                    }
+                }
+
+                CheckBox subCheckbox = findViewById(R.id.board_detail_subscription_checkbox);
+                subCheckbox.setChecked(isKeyPresent);
+                if (!myBoard) {
+                    subCheckbox.setEnabled(true);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Toast.makeText(BoardDetailsActivity.this,
+                        "Board subscription couldn't be retrieved",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void onSubscriptionCheckboxCheckChange(CompoundButton button, boolean isChecked) {
+        button.setEnabled(false);
+        if (button.isChecked()) {
+            mDatabase.child("users")
+                    .child(userUtils.getUserUid())
+                    .child("subscriptions")
+                    .child(boardKey)
+                    .setValue("true");
+        } else {
+            mDatabase.child("users")
+                    .child(userUtils.getUserUid())
+                    .child("subscriptions")
+                    .child(boardKey)
+                    .removeValue();
+        }
     }
 
     @Override

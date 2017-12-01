@@ -9,6 +9,15 @@
     tools:context="fr.fouss.boardeo.BoardDetailsActivity"
     tools:showIn="@layout/activity_board_details">
 
+    <CheckBox
+        android:id="@+id/board_detail_subscription_checkbox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:button="@drawable/subscription_checkbox"
+        android:checked="false"
+        android:enabled="false"
+        android:text="@string/subscription_field" />
+
     <TextView
         android:id="@+id/boardName"
         android:layout_width="match_parent"

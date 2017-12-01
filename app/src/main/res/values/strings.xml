@@ -94,5 +94,6 @@
     <string name="post_date_field">Post date</string>
     <string name="post_author_field">Post author</string>
     <string name="title_post_activity">Post</string>
+    <string name="subscription_field">Subscription</string>
 
 </resources>

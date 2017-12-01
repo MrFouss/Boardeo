@@ -2,5 +2,7 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- default state -->
     <item android:state_checked="false" android:state_enabled="true" android:drawable="@drawable/ic_sub_false" />
+    <item android:drawable="@drawable/ic_sub_false_disabled" android:state_checked="false" android:state_enabled="false" />
     <item android:state_checked="true" android:state_enabled="true" android:drawable="@drawable/ic_sub_true" />
+    <item android:drawable="@drawable/ic_sub_true_disabled" android:state_checked="true" android:state_enabled="false" />
 </selector>
