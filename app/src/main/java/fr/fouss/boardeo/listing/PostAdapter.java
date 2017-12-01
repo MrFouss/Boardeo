@@ -30,6 +30,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
     ///// FIELDS /////
 
     /**
+     * Parent activity
+     */
+    private Activity activity;
+
+    /**
      * Firebase database instance
      */
     private DatabaseReference mDatabase;
@@ -54,6 +59,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         super();
         mDatabase = FirebaseDatabase.getInstance().getReference();
         userUtils = new UserUtils(activity);
+        this.activity = activity;
     }
 
     ///// NECESSARY IMPLEMENTATIONS /////
@@ -207,7 +213,19 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             this.titleLabel.setText(post.getTitle());
             this.contentLabel.setText(post.getContent());
             this.dateLabel.setText(SimpleDateFormat.getDateTimeInstance().format(new Date(post.getTimestamp())));
-            this.authorLabel.setText(post.getAuthorUid()); // TODO replace with the right author's name
+
+            mDatabase.child("users").child(post.getAuthorUid()).child("username")
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            authorLabel.setText(activity.getResources().getString(R.string.by_author, dataSnapshot.getValue(String.class)));
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            throw databaseError.toException();
+                        }
+                    });
         }
     }
 
