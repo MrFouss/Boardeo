@@ -112,8 +112,7 @@ public class BoardDetailsActivity extends AppCompatActivity {
                 } else {
                     addPostButton.setVisibility(View.GONE);
                 }
-
-
+                
                 // Setup of the edit button and its listener
                 Button editButton = findViewById(R.id.editBoardButton);
                 if (board.getOwnerUid().equals(userUtils.getUserUid())) {

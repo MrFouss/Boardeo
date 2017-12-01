@@ -1,9 +1,11 @@
 package fr.fouss.boardeo;
 
+import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +27,8 @@ public class PostActivity extends AppCompatActivity {
     private String postKey;
     private UserUtils userUtils;
     private DatabaseReference mDatabase;
+
+    private Post post;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +56,7 @@ public class PostActivity extends AppCompatActivity {
         dataReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Post post = dataSnapshot.getValue(Post.class);
+                post = dataSnapshot.getValue(Post.class);
                 assert post != null;
 
                 // Setup of texts
@@ -65,13 +69,12 @@ public class PostActivity extends AppCompatActivity {
                 dateLabel.setText(SimpleDateFormat.getDateTimeInstance().format(new Date(post.getTimestamp())));
                 authorLabel.setText(post.getAuthorUid());
 
-                // hide/show add post button depending on authorizations
-//                FloatingActionButton addPostButton = findViewById(R.id.addPostButton);
-//                if (board.getOwnerUid().equals(userUtils.getUserUid()) || board.getIsPublic()) {
-//                    addPostButton.setOnClickListener(v -> onAddPostButtonClick(v));
-//                } else {
-//                    addPostButton.setVisibility(View.GONE);
-//                }
+                Button editPostButton = findViewById(R.id.edit_post_button);
+                if (post.getAuthorUid().equals(userUtils.getUserUid())) {
+                    editPostButton.setOnClickListener(v -> onEditPostButtonClicked(v));
+                } else {
+                    editPostButton.setVisibility(View.GONE);
+                }
             }
 
             @Override
@@ -83,6 +86,12 @@ public class PostActivity extends AppCompatActivity {
         });
     }
 
+    public void onEditPostButtonClicked(View v) {
+        Intent intent = new Intent(this, NewPostActivity.class);
+        intent.putExtra(Post.KEY_FIELD, postKey);
+        intent.putExtra(Board.KEY_FIELD, post.getBoardKey());
+        startActivity(intent);
+    }
 
     @Override
     public void onBackPressed() {
