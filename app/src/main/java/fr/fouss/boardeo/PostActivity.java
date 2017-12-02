@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import fr.fouss.boardeo.data.Board;
+import fr.fouss.boardeo.data.Comment;
 import fr.fouss.boardeo.data.Post;
 import fr.fouss.boardeo.listing.CommentAdapter;
 import fr.fouss.boardeo.utils.UserUtils;
@@ -61,16 +63,52 @@ public class PostActivity extends AppCompatActivity {
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        // post infos and fields
+        postKey = getIntent().getStringExtra(Post.KEY_FIELD);
+        updateTextFields();
+
         // comment list
         RecyclerView commentRecyclerView = findViewById(R.id.comment_recycler_view);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         commentRecyclerView.setLayoutManager(layoutManager);
-        CommentAdapter boardAdapter = new CommentAdapter(this);
-        commentRecyclerView.setAdapter(boardAdapter);
+        CommentAdapter commentAdapter = new CommentAdapter(this);
+        commentRecyclerView.setAdapter(commentAdapter);
+        commentAdapter.initCommentListListener(postKey);
 
-        // post infos and fields
-        postKey = getIntent().getStringExtra(Post.KEY_FIELD);
-        updateTextFields();
+        // comment button listener
+        findViewById(R.id.comment_button).setOnClickListener(this::onCommentButtonClick);
+    }
+
+    private void onCommentButtonClick(View v) {
+        EditText commentEditText = findViewById(R.id.comment_edit_text);
+        if (commentEditText.length() == 0) {
+            commentEditText.setError("Missing");
+        } else {
+            // create comment in comments
+            Comment newComment = new Comment(
+                    commentEditText.getText().toString(),
+                    new Date().getTime(),
+                    userUtils.getUserUid(),
+                    postKey);
+            String newCommentKey = mDatabase
+                    .child("comments")
+                    .push().getKey();
+            mDatabase
+                    .child("comments")
+                    .child(newCommentKey)
+                    .setValue(newComment);
+
+            // set comment ref in post
+            mDatabase
+                    .child("posts")
+                    .child(postKey)
+                    .child("comments")
+                    .child(newCommentKey)
+                    .setValue("true");
+
+            // clear comment edit text
+            commentEditText.setText("");
+        }
     }
 
     private void retrieveBoard() {

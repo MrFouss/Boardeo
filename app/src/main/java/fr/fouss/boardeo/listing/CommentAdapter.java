@@ -83,7 +83,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     public void onBindViewHolder(CommentViewHolder holder, int position) {
         Map.Entry<String, Comment> entry = null;
         Iterator<Map.Entry<String, Comment>> it = comments.entrySet().iterator();
-        for (int i = 0; i < position; ++i) {
+        for (int i = 0; i <= position; ++i) {
             entry = it.next();
         }
         if (entry != null) {
