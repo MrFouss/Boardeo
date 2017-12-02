@@ -2,9 +2,11 @@ package fr.fouss.boardeo.listing;
 
 import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
+import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.firebase.database.ChildEventListener;
@@ -29,6 +31,8 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
 
     ///// FIELDS /////
 
+    private Activity parentActivity;
+
     /**
      * Firebase database instance
      */
@@ -52,6 +56,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
 
     public CommentAdapter(Activity activity) {
         super();
+        this.parentActivity = activity;
         mDatabase = FirebaseDatabase.getInstance().getReference();
         userUtils = new UserUtils(activity);
     }
@@ -67,8 +72,12 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     @Override
     public CommentViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // inflate (parse and create) view from layout file
+//        View newView = LayoutInflater.from(parent.getContext())
+//                .inflate(R.layout.comment_list_item, parent, false);
+
         View newView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.comment_list_item, parent, false);
+        parentActivity.registerForContextMenu(newView.findViewById(R.id.comment_view));
         // TODO create comment_list_item
         return new CommentViewHolder(newView);
     }
@@ -87,8 +96,20 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
             entry = it.next();
         }
         if (entry != null) {
-            holder.set(entry.getKey(), entry.getValue());
+            holder.set(position, entry.getKey(), entry.getValue());
         }
+    }
+
+    public String getKey(int position) {
+        Map.Entry<String, Comment> entry = null;
+        Iterator<Map.Entry<String, Comment>> it = comments.entrySet().iterator();
+        for (int i = 0; i <= position; ++i) {
+            entry = it.next();
+        }
+        if (entry != null) {
+            return entry.getKey();
+        }
+        return null;
     }
 
     ///// DATA MANAGEMENT /////
@@ -183,6 +204,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
      */
     public class CommentViewHolder extends RecyclerView.ViewHolder {
 
+        private CommentView commentView;
         private TextView titleLabel;
         private TextView contentLabel;
         private TextView dateLabel;
@@ -195,6 +217,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
             this.contentLabel = itemView.findViewById(R.id.comment_content_label);
             this.dateLabel = itemView.findViewById(R.id.comment_date_label);
             this.authorLabel = itemView.findViewById(R.id.comment_author_label);
+            this.commentView = itemView.findViewById(R.id.comment_view);
 
             itemView.setOnClickListener(v -> {
                 if (clickListener != null) {
@@ -203,11 +226,16 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
             });
         }
 
-        public void set(String key, Comment comment) {
+        public void set(int position, String key, Comment comment) {
+            this.commentView.setPosition(position);
             this.key = key;
             this.contentLabel.setText(comment.getContent());
             this.dateLabel.setText(SimpleDateFormat.getDateTimeInstance().format(new Date(comment.getTimestamp())));
             this.authorLabel.setText(comment.getAuthorUid()); // TODO replace with the right author's name
+        }
+
+        public String getKey() {
+            return key;
         }
     }
 
