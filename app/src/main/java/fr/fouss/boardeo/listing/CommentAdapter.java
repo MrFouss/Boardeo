@@ -100,14 +100,14 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         }
     }
 
-    public String getKey(int position) {
+    public Comment getComment(int position) {
         Map.Entry<String, Comment> entry = null;
         Iterator<Map.Entry<String, Comment>> it = comments.entrySet().iterator();
         for (int i = 0; i <= position; ++i) {
             entry = it.next();
         }
         if (entry != null) {
-            return entry.getKey();
+            return entry.getValue();
         }
         return null;
     }
