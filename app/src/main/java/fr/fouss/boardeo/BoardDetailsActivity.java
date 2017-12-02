@@ -191,12 +191,22 @@ public class BoardDetailsActivity extends AppCompatActivity {
         // disable to wait for database update
         button.setEnabled(false);
         if (button.isChecked()) {
+            mDatabase.child("boards")
+                    .child(boardKey)
+                    .child("subscriptions")
+                    .child(userUtils.getUserUid())
+                    .setValue("true");
             mDatabase.child("users")
                     .child(userUtils.getUserUid())
                     .child("subscriptions")
                     .child(boardKey)
                     .setValue("true");
         } else {
+            mDatabase.child("boards")
+                    .child(boardKey)
+                    .child("subscriptions")
+                    .child(userUtils.getUserUid())
+                    .removeValue();
             mDatabase.child("users")
                     .child(userUtils.getUserUid())
                     .child("subscriptions")

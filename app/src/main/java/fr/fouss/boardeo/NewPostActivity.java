@@ -133,7 +133,7 @@ public class NewPostActivity extends AppCompatActivity {
                     .child(boardKey)
                     .child("posts")
                     .child(newPostKey)
-                    .setValue(true);
+                    .setValue("true");
         }
         finish();
     }
