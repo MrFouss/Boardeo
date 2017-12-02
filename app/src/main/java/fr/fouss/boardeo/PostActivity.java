@@ -343,7 +343,7 @@ public class PostActivity extends AppCompatActivity {
                 .child(postKey)
                 .removeEventListener(postListener);
 
-        // delete post reference in board
+        // unlink in board
         mDatabase
                 .child("boards")
                 .child(post.getBoardKey())
@@ -351,11 +351,28 @@ public class PostActivity extends AppCompatActivity {
                 .child(postKey)
                 .removeValue();
 
-        // remove post
-        mDatabase
-                .child("posts")
-                .child(postKey)
-                .removeValue();
+        // delete post data in board
+        mDatabase.child("posts").child(postKey).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // remove comments data
+                for (DataSnapshot commentKey : dataSnapshot.child("comments").getChildren()) {
+                    mDatabase.child("comments")
+                            .child(commentKey.getKey())
+                            .removeValue();
+                }
+                // remove post
+                mDatabase.child("posts")
+                        .child(postKey)
+                        .removeValue();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
         finish();
     }
 
