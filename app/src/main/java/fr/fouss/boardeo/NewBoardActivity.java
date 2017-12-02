@@ -22,6 +22,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.Date;
 import java.util.Iterator;
 import java.util.TreeMap;
 
@@ -248,7 +249,7 @@ public class NewBoardActivity extends AppCompatActivity {
         // If this is a board creation
         } else {
             if (latitude != null && longitude != null) {
-                board = new Board(name, userUtils.getUserUid(), latitude, longitude, isPublic);
+                board = new Board(name, userUtils.getUserUid(), latitude, longitude, isPublic, new Date().getTime());
                 board.setShortDescription(shortDescription);
                 board.setFullDescription(fullDescription);
                 String newBoardKey = mDatabase.child("boards").push().getKey();

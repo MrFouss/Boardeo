@@ -602,8 +602,6 @@ public class HomeActivity extends AppCompatActivity
                     titleUi.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_public, 0, 0, 0);
                 else
                     titleUi.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_locked, 0, 0, 0);
-//                SpannableString titleText = new SpannableString(title);
-//                titleText.setSpan(new ForegroundColorSpan(Color.RED), 0, titleText.length(), 0);
             } else {
                 titleUi.setText("");
             }

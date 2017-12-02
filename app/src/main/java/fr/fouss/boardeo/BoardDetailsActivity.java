@@ -73,8 +73,13 @@ public class BoardDetailsActivity extends AppCompatActivity {
         boardKey = getIntent().getStringExtra(Board.KEY_FIELD);
         updateTextFields();
 
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setReverseLayout(true);
+        layoutManager.setStackFromEnd(true);
+
         RecyclerView postsView = findViewById(R.id.postRecyclerView);
-        postsView.setLayoutManager(new LinearLayoutManager(this));
+        postsView.setLayoutManager(layoutManager);
         PostAdapter postAdapter = new PostAdapter(this);
         postsView.setAdapter(postAdapter);
         postAdapter.initPostListListener(boardKey);

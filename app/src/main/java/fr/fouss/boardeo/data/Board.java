@@ -15,6 +15,7 @@ public class Board {
     public final static String LATITUDE_FIELD = "boardLatitude";
     public final static String LONGITUDE_FIELD = "boardLongitude";
     public final static String IS_PUBLIC_FIELD = "boardIsPublic";
+    public final static String LAST_UPDATE_FIELD = "boardLastUpdate";
 
     private String name;
 
@@ -27,6 +28,7 @@ public class Board {
     private Double longitude;
 
     private Boolean isPublic;
+    private Long lastUpdate;
 
     public Board() {}
 
@@ -34,7 +36,8 @@ public class Board {
                  String ownerUid,
                  Double latitude,
                  Double longitude,
-                 Boolean isPublic) {
+                 Boolean isPublic,
+                 Long lastUpdate) {
 
         this.name = name;
         this.shortDescription = "";
@@ -43,6 +46,7 @@ public class Board {
         this.latitude = latitude;
         this.longitude = longitude;
         this.isPublic = isPublic;
+        this.lastUpdate = lastUpdate;
     }
 
     /**
@@ -62,6 +66,7 @@ public class Board {
         result.put(LATITUDE_FIELD, getLatitude());
         result.put(LONGITUDE_FIELD, getLongitude());
         result.put(IS_PUBLIC_FIELD, getIsPublic());
+        result.put(LAST_UPDATE_FIELD, getLastUpdate());
 
         return result;
     }
@@ -79,6 +84,7 @@ public class Board {
         this.latitude = intent.getDoubleExtra(LATITUDE_FIELD, 0.0);
         this.longitude = intent.getDoubleExtra(LONGITUDE_FIELD, 0.0);
         this.isPublic = intent.getBooleanExtra(IS_PUBLIC_FIELD, false);
+        this.lastUpdate = intent.getLongExtra(LAST_UPDATE_FIELD, 0);
     }
 
     /**
@@ -95,6 +101,7 @@ public class Board {
         intent.putExtra(LATITUDE_FIELD, getLatitude());
         intent.putExtra(LONGITUDE_FIELD, getLongitude());
         intent.putExtra(IS_PUBLIC_FIELD, getIsPublic());
+        intent.putExtra(LAST_UPDATE_FIELD, getLastUpdate());
 
         return intent;
     }
@@ -153,5 +160,13 @@ public class Board {
 
     public void setIsPublic(Boolean isPublic) {
         this.isPublic = isPublic;
+    }
+
+    public Long getLastUpdate() {
+        return lastUpdate;
+    }
+
+    public void setLastUpdate(Long lastUpdate) {
+        this.lastUpdate = lastUpdate;
     }
 }

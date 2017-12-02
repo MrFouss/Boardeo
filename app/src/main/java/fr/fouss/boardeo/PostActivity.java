@@ -76,8 +76,11 @@ public class PostActivity extends AppCompatActivity {
         updateTextFields();
 
         // comment list
-        RecyclerView commentRecyclerView = findViewById(R.id.comment_recycler_view);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setReverseLayout(true);
+        layoutManager.setStackFromEnd(true);
+
+        RecyclerView commentRecyclerView = findViewById(R.id.comment_recycler_view);
         commentRecyclerView.setLayoutManager(layoutManager);
         commentAdapter = new CommentAdapter(this);
         commentRecyclerView.setAdapter(commentAdapter);

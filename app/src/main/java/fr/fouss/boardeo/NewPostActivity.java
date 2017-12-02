@@ -124,7 +124,8 @@ public class NewPostActivity extends AppCompatActivity {
 
             // If this is a board creation
         } else {
-            post = new Post(title, content, new Date().getTime(), userUtils.getUserUid(), boardKey);
+            long timestamp = new Date().getTime();
+            post = new Post(title, content, timestamp, userUtils.getUserUid(), boardKey);
             String newPostKey = mDatabase.child("posts").push().getKey();
             mDatabase.child("posts")
                     .child(newPostKey)
@@ -133,7 +134,12 @@ public class NewPostActivity extends AppCompatActivity {
                     .child(boardKey)
                     .child("posts")
                     .child(newPostKey)
-                    .setValue("true");
+                    .child("timestamp")
+                    .setValue(timestamp);
+            mDatabase.child("boards")
+                    .child(boardKey)
+                    .child("lastUpdate")
+                    .setValue(timestamp);
         }
         finish();
     }

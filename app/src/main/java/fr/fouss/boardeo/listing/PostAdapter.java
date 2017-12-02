@@ -23,7 +23,6 @@ import java.util.TreeMap;
 
 import fr.fouss.boardeo.R;
 import fr.fouss.boardeo.data.Post;
-import fr.fouss.boardeo.utils.UserUtils;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder> {
 
@@ -40,11 +39,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
     private DatabaseReference mDatabase;
 
     /**
-     * User utility class instance
-     */
-    private UserUtils userUtils;
-
-    /**
      * Map of posts
      * A comparator can be specified to order them
      */
@@ -58,7 +52,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
     public PostAdapter(Activity activity) {
         super();
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        userUtils = new UserUtils(activity);
         this.parentActivity = activity;
     }
 
@@ -75,7 +68,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         // inflate (parse and create) view from layout file
         View newView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.post_list_item, parent, false);
-        // TODO create post_list_item
         return new PostViewHolder(newView);
     }
 
@@ -127,6 +119,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             };
 
             mDatabase.child("boards").child(boardKey).child("posts")
+                    .orderByChild("timestamp")
                     .addChildEventListener(postListListener);
         }
     }
@@ -144,7 +137,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         return posts.size();
     }
 
-    public void setPost(String postKey) {
+    private void setPost(String postKey) {
         if (!postListenerMap.containsKey(postKey)) {
             ValueEventListener listener = new ValueEventListener() {
                 @Override

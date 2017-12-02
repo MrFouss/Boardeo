@@ -27,8 +27,9 @@ public class BoardListActivity extends AppCompatActivity {
         setSupportActionBar(findViewById(R.id.boardToolbar));
 
         // setup recycler view
-        RecyclerView boardRecyclerView = findViewById(R.id.boardRecyclerList);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+
+        RecyclerView boardRecyclerView = findViewById(R.id.boardRecyclerList);
         boardRecyclerView.setLayoutManager(layoutManager);
         BoardAdapter boardAdapter = new BoardAdapter(this);
         boardRecyclerView.setAdapter(boardAdapter);
