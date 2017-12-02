@@ -52,6 +52,10 @@ public class PostActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private CommentAdapter commentAdapter;
 
+    private String editingCommentKey;
+    private Comment editingComment;
+    private boolean isEditingComment = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,12 +92,39 @@ public class PostActivity extends AppCompatActivity {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         switch (item.getItemId()) {
             case R.id.comment_edit_menu_item:
+                onEditCommentMenuItemClick(commentAdapter.getKey(info.position),
+                        commentAdapter.getComment(info.position));
                 return true;
             case R.id.comment_delete_menu_item:
+                onDeleteCommentMenuItemClick(commentAdapter.getKey(info.position));
                 return true;
             default:
                 return super.onContextItemSelected(item);
         }
+    }
+
+    private void onDeleteCommentMenuItemClick(String key) {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setMessage("Do you really want to delete this comment ?")
+                .setTitle("Deletion")
+                .setCancelable(false)
+                .setPositiveButton("Yes", (dialog, which) -> deleteComment(key))
+                .setNegativeButton("No", (dialog, which) -> {});
+        alert.create().show();
+    }
+
+    private void deleteComment(String key) {
+
+    }
+
+    private void onEditCommentMenuItemClick(String key, Comment comment) {
+        isEditingComment = true;
+        editingComment = comment;
+        editingCommentKey = key;
+        EditText editText = findViewById(R.id.comment_edit_text);
+        editText.setText(comment.getContent());
+        editText.requestFocus();
+        editText.setSelection(editText.length());
     }
 
 
@@ -121,34 +152,50 @@ public class PostActivity extends AppCompatActivity {
     }
 
     private void onCommentButtonClick(View v) {
-        EditText commentEditText = findViewById(R.id.comment_edit_text);
-        if (commentEditText.length() == 0) {
-            commentEditText.setError("Missing");
-        } else {
-            // create comment in comments
-            Comment newComment = new Comment(
-                    commentEditText.getText().toString(),
-                    new Date().getTime(),
-                    userUtils.getUserUid(),
-                    postKey);
-            String newCommentKey = mDatabase
-                    .child("comments")
-                    .push().getKey();
+        if (isEditingComment) {
+            isEditingComment = false;
+
+            EditText commentEditText = findViewById(R.id.comment_edit_text);
+            editingComment.setContent(commentEditText.getText().toString());
+            editingComment.setTimestamp(new Date().getTime());
+
             mDatabase
                     .child("comments")
-                    .child(newCommentKey)
-                    .setValue(newComment);
+                    .child(editingCommentKey)
+                    .setValue(editingComment);
 
-            // set comment ref in post
-            mDatabase
-                    .child("posts")
-                    .child(postKey)
-                    .child("comments")
-                    .child(newCommentKey)
-                    .setValue("true");
-
-            // clear comment edit text
             commentEditText.setText("");
+
+        } else {
+            EditText commentEditText = findViewById(R.id.comment_edit_text);
+            if (commentEditText.length() == 0) {
+                commentEditText.setError("Missing");
+            } else {
+                // create comment in comments
+                Comment newComment = new Comment(
+                        commentEditText.getText().toString(),
+                        new Date().getTime(),
+                        userUtils.getUserUid(),
+                        postKey);
+                String newCommentKey = mDatabase
+                        .child("comments")
+                        .push().getKey();
+                mDatabase
+                        .child("comments")
+                        .child(newCommentKey)
+                        .setValue(newComment);
+
+                // set comment ref in post
+                mDatabase
+                        .child("posts")
+                        .child(postKey)
+                        .child("comments")
+                        .child(newCommentKey)
+                        .setValue("true");
+
+                // clear comment edit text
+                commentEditText.setText("");
+            }
         }
     }
 
