@@ -3,11 +3,14 @@ package fr.fouss.boardeo;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
@@ -33,15 +36,21 @@ public class BoardDetailsActivity extends AppCompatActivity {
 
     private UserUtils userUtils;
 
+    private ValueEventListener boardListener;
+
     private Board board;
 
     private boolean myBoard = true;
     private boolean subscriptionListenerLauched = false;
 
+    private Toolbar toolbar;
+
     /**
      * Firebase database instance
      */
     private DatabaseReference mDatabase;
+    private boolean menuInflated = false;
+    private boolean boardRetrieved = false;
 
     ///// LIFECYCLE /////
 
@@ -55,7 +64,8 @@ public class BoardDetailsActivity extends AppCompatActivity {
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
         // Setup toolbar
-        setSupportActionBar(findViewById(R.id.toolbar));
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -80,9 +90,8 @@ public class BoardDetailsActivity extends AppCompatActivity {
 
     /**
      * When edit button is clicked
-     * @param v view
      */
-    public void onEditBoardButtonClick(View v) {
+    public void onEditMenuItemClick() {
         // Start new board activity
         Intent intent = new Intent(this, NewBoardActivity.class);
         intent.putExtra(Board.KEY_FIELD, boardKey);
@@ -92,7 +101,7 @@ public class BoardDetailsActivity extends AppCompatActivity {
     private void updateTextFields() {
         DatabaseReference dataReference = mDatabase.child("boards").child(boardKey);
 
-        dataReference.addValueEventListener(new ValueEventListener() {
+        boardListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 board = dataSnapshot.getValue(Board.class);
@@ -119,14 +128,6 @@ public class BoardDetailsActivity extends AppCompatActivity {
                     addPostButton.setVisibility(View.GONE);
                 }
 
-                // Setup of the edit button and its listener
-                Button editButton = findViewById(R.id.editBoardButton);
-                if (board.getOwnerUid().equals(userUtils.getUserUid())) {
-                    editButton.setOnClickListener(v -> onEditBoardButtonClick(v));
-                } else {
-                    editButton.setVisibility(View.GONE);
-                }
-
                 // enable subscription checkbox if your own board
                 CheckBox subCheckbox = findViewById(R.id.board_detail_subscription_checkbox);
                 myBoard = board.getOwnerUid().equals(userUtils.getUserUid());
@@ -141,6 +142,9 @@ public class BoardDetailsActivity extends AppCompatActivity {
                     subCheckbox.setOnCheckedChangeListener((buttonView, isChecked) ->
                         onSubscriptionCheckboxCheckChange(buttonView, isChecked));
                 }
+
+                boardRetrieved = true;
+                updateMenuVisibility();
             }
 
             @Override
@@ -149,7 +153,8 @@ public class BoardDetailsActivity extends AppCompatActivity {
                         "Board info couldn't be retrieved",
                         Toast.LENGTH_SHORT).show();
             }
-        });
+        };
+        dataReference.addValueEventListener(boardListener);
     }
 
     public void updateSubscription() {
@@ -230,6 +235,109 @@ public class BoardDetailsActivity extends AppCompatActivity {
         Intent intent = new Intent(this, PostActivity.class);
         intent.putExtra(Post.KEY_FIELD, postKey);
         startActivity(intent);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.board_detail_menu, menu);
+        // Setup of the edit button and its listener
+        menuInflated = true;
+        updateMenuVisibility();
+        return true;
+    }
+
+    private void updateMenuVisibility() {
+        if (menuInflated && boardRetrieved) {
+            if (board.getOwnerUid().equals(userUtils.getUserUid())) {
+                toolbar.getMenu().findItem(R.id.board_edit_menu_item).setVisible(true);
+                toolbar.getMenu().findItem(R.id.board_delete_menu_item).setVisible(true);
+            }
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.board_delete_menu_item :
+                onDeleteMenuItemClick();
+                return true;
+            case R.id.board_edit_menu_item :
+                onEditMenuItemClick();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+
+    public void onDeleteMenuItemClick() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setMessage("Do you really want to delete this board ?")
+                .setTitle("Deletion")
+                .setCancelable(false)
+                .setPositiveButton("Yes", (dialog, which) -> deleteBoard())
+                .setNegativeButton("No", (dialog, which) -> {});
+        alert.create().show();
+    }
+
+    public void deleteBoard() {
+        // remove board listener
+        mDatabase.child("boards").child(boardKey).removeEventListener(boardListener);
+
+        DatabaseReference boardRef = mDatabase
+                .child("boards")
+                .child(boardKey);
+
+        // unlink user subscriptions
+        boardRef.child("subscriptions")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for (DataSnapshot subscriber : dataSnapshot.getChildren()) {
+                            String subscriberKey = subscriber.getKey();
+                            mDatabase
+                                    .child("users")
+                                    .child(subscriberKey)
+                                    .child("subscriptions")
+                                    .child(boardKey)
+                                    .removeValue();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Toast.makeText(BoardDetailsActivity.this,
+                                "Board subscriptions info couldn't be retrieved",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+        // unlink and delete posts
+        boardRef.child("posts")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for (DataSnapshot post : dataSnapshot.getChildren()) {
+                            String postKey = post.getKey();
+                            mDatabase
+                                    .child("posts")
+                                    .child(postKey)
+                                    .removeValue();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Toast.makeText(BoardDetailsActivity.this,
+                                "Board posts info couldn't be retrieved",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+        // delete board
+        boardRef.removeValue();
+        finish();
     }
 
 }

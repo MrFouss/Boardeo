@@ -1,11 +1,20 @@
 package fr.fouss.boardeo;
 
 import android.content.Intent;
-import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.ContextMenu;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
+import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,16 +28,27 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import fr.fouss.boardeo.data.Board;
+import fr.fouss.boardeo.data.Comment;
 import fr.fouss.boardeo.data.Post;
+import fr.fouss.boardeo.listing.CommentAdapter;
 import fr.fouss.boardeo.utils.UserUtils;
 
 public class PostActivity extends AppCompatActivity {
 
-    private String postKey;
     private UserUtils userUtils;
     private DatabaseReference mDatabase;
 
+    private Board board;
     private Post post;
+    private String postKey;
+
+    private boolean boardRetrievalLauched = false;
+    private boolean boardRetrieved = false;
+    private boolean menuInflated = false;
+
+    private ValueEventListener postListener;
+
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,20 +60,102 @@ public class PostActivity extends AppCompatActivity {
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
         // Setup toolbar
-        setSupportActionBar(findViewById(R.id.toolbar));
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        // post infos and fields
         postKey = getIntent().getStringExtra(Post.KEY_FIELD);
-        if (postKey != null) {
-            updateTextFields();
+        updateTextFields();
+
+        // comment list
+        RecyclerView commentRecyclerView = findViewById(R.id.comment_recycler_view);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        commentRecyclerView.setLayoutManager(layoutManager);
+        CommentAdapter commentAdapter = new CommentAdapter(this);
+        commentRecyclerView.setAdapter(commentAdapter);
+        commentAdapter.initCommentListListener(postKey);
+
+        // comment button listener
+        findViewById(R.id.comment_button).setOnClickListener(this::onCommentButtonClick);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        Log.i("Comment", "onContextItemSelected: position=" + info.position);
+        switch (item.getItemId()) {
+            case R.id.comment_edit_menu_item:
+                return true;
+            default:
+                return super.onContextItemSelected(item);
         }
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.comment_context_menu, menu);
+    }
+
+    private void onCommentButtonClick(View v) {
+        EditText commentEditText = findViewById(R.id.comment_edit_text);
+        if (commentEditText.length() == 0) {
+            commentEditText.setError("Missing");
+        } else {
+            // create comment in comments
+            Comment newComment = new Comment(
+                    commentEditText.getText().toString(),
+                    new Date().getTime(),
+                    userUtils.getUserUid(),
+                    postKey);
+            String newCommentKey = mDatabase
+                    .child("comments")
+                    .push().getKey();
+            mDatabase
+                    .child("comments")
+                    .child(newCommentKey)
+                    .setValue(newComment);
+
+            // set comment ref in post
+            mDatabase
+                    .child("posts")
+                    .child(postKey)
+                    .child("comments")
+                    .child(newCommentKey)
+                    .setValue("true");
+
+            // clear comment edit text
+            commentEditText.setText("");
+        }
+    }
+
+    private void retrieveBoard() {
+        DatabaseReference dataReference = mDatabase.child("boards").child(post.getBoardKey());
+
+        dataReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                board = dataSnapshot.getValue(Board.class);
+                assert board != null;
+                boardRetrieved = true;
+                updateMenuVisibility();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Toast.makeText(PostActivity.this,
+                        "Board info couldn't be retrieved",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void updateTextFields() {
         DatabaseReference dataReference = mDatabase.child("posts").child(postKey);
 
-        dataReference.addValueEventListener(new ValueEventListener() {
+        postListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 post = dataSnapshot.getValue(Post.class);
@@ -69,11 +171,9 @@ public class PostActivity extends AppCompatActivity {
                 dateLabel.setText(SimpleDateFormat.getDateTimeInstance().format(new Date(post.getTimestamp())));
                 authorLabel.setText(post.getAuthorUid());
 
-                Button editPostButton = findViewById(R.id.edit_post_button);
-                if (post.getAuthorUid().equals(userUtils.getUserUid())) {
-                    editPostButton.setOnClickListener(v -> onEditPostButtonClicked(v));
-                } else {
-                    editPostButton.setVisibility(View.GONE);
+                if (!boardRetrievalLauched) {
+                    boardRetrievalLauched = true;
+                    retrieveBoard();
                 }
             }
 
@@ -83,14 +183,8 @@ public class PostActivity extends AppCompatActivity {
                         "Post info couldn't be retrieved",
                         Toast.LENGTH_SHORT).show();
             }
-        });
-    }
-
-    public void onEditPostButtonClicked(View v) {
-        Intent intent = new Intent(this, NewPostActivity.class);
-        intent.putExtra(Post.KEY_FIELD, postKey);
-        intent.putExtra(Board.KEY_FIELD, post.getBoardKey());
-        startActivity(intent);
+        };
+        dataReference.addValueEventListener(postListener);
     }
 
     @Override
@@ -102,5 +196,82 @@ public class PostActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         finish();
         return true;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.post_menu, menu);
+        // Setup of menu
+        menuInflated = true;
+        updateMenuVisibility();
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.post_delete_menu_item :
+                onDeleteMenuItemClick();
+                return true;
+            case R.id.post_edit_menu_item :
+                onEditMenuItemClick();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void updateMenuVisibility() {
+        if (menuInflated && boardRetrieved) {
+            if (post.getAuthorUid().equals(userUtils.getUserUid())) {
+                // author
+                toolbar.getMenu().findItem(R.id.post_edit_menu_item).setVisible(true);
+                toolbar.getMenu().findItem(R.id.post_delete_menu_item).setVisible(true);
+            } else if (board.getOwnerUid().equals(userUtils.getUserUid())) {
+                // board owner
+                toolbar.getMenu().findItem(R.id.post_delete_menu_item).setVisible(true);
+            }
+        }
+    }
+
+    private void onDeleteMenuItemClick() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setMessage("Do you really want to delete this post ?")
+                .setTitle("Deletion")
+                .setCancelable(false)
+                .setPositiveButton("Yes", (dialog, which) -> deletePost())
+                .setNegativeButton("No", (dialog, which) -> {});
+        alert.create().show();
+    }
+
+    private void deletePost() {
+        // remove listener
+        mDatabase
+                .child("posts")
+                .child(postKey)
+                .removeEventListener(postListener);
+
+        // delete post reference in board
+        mDatabase
+                .child("boards")
+                .child(post.getBoardKey())
+                .child("posts")
+                .child(postKey)
+                .removeValue();
+
+        // remove post
+        mDatabase
+                .child("posts")
+                .child(postKey)
+                .removeValue();
+        finish();
+    }
+
+    private void onEditMenuItemClick() {
+        Intent intent = new Intent(this, NewPostActivity.class);
+        intent.putExtra(Post.KEY_FIELD, postKey);
+        intent.putExtra(Board.KEY_FIELD, post.getBoardKey());
+        startActivity(intent);
     }
 }
