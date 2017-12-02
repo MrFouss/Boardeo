@@ -100,5 +100,7 @@
     <string name="action_home_maps">Nearby boards</string>
     <string name="board_edit_menu_item_label">Edit</string>
     <string name="board_delete_menu_item_label">Delete</string>
+    <string name="post_edit_menu_item_label">Edit</string>
+    <string name="post_delete_menu_item_label">Delete</string>
 
 </resources>

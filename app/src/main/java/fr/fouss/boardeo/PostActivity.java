@@ -4,6 +4,9 @@ import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -29,6 +32,12 @@ public class PostActivity extends AppCompatActivity {
     private DatabaseReference mDatabase;
 
     private Post post;
+    public boolean boardRetrievalLauched = false;
+    private boolean boardRetrieved = false;
+    private Board board;
+    private boolean menuInflated = false;
+
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,14 +49,34 @@ public class PostActivity extends AppCompatActivity {
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
         // Setup toolbar
-        setSupportActionBar(findViewById(R.id.toolbar));
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         postKey = getIntent().getStringExtra(Post.KEY_FIELD);
-        if (postKey != null) {
-            updateTextFields();
-        }
+        updateTextFields();
+    }
+
+    private void retrieveBoard() {
+        DatabaseReference dataReference = mDatabase.child("boards").child(post.getBoardKey());
+
+        dataReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                board = dataSnapshot.getValue(Board.class);
+                assert board != null;
+                boardRetrieved = true;
+                updateMenuVisibility();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Toast.makeText(PostActivity.this,
+                        "Board info couldn't be retrieved",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void updateTextFields() {
@@ -74,6 +103,11 @@ public class PostActivity extends AppCompatActivity {
                     editPostButton.setOnClickListener(v -> onEditPostButtonClicked(v));
                 } else {
                     editPostButton.setVisibility(View.GONE);
+                }
+
+                if (!boardRetrievalLauched) {
+                    boardRetrievalLauched = true;
+                    retrieveBoard();
                 }
             }
 
@@ -102,5 +136,50 @@ public class PostActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         finish();
         return true;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.post_menu, menu);
+        // Setup of menu
+        menuInflated = true;
+        updateMenuVisibility();
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.post_delete_menu_item :
+                onDeleteMenuItemClick();
+                return true;
+            case R.id.post_edit_menu_item :
+                onEditMenuItemClick();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void updateMenuVisibility() {
+        if (menuInflated && boardRetrieved) {
+            if (post.getAuthorUid().equals(userUtils.getUserUid())) {
+                // author
+                toolbar.getMenu().findItem(R.id.post_edit_menu_item).setVisible(true);
+                toolbar.getMenu().findItem(R.id.post_delete_menu_item).setVisible(true);
+            } else if (board.getOwnerUid().equals(userUtils.getUserUid())) {
+                // board owner
+                toolbar.getMenu().findItem(R.id.post_delete_menu_item).setVisible(true);
+            }
+        }
+    }
+
+    private void onDeleteMenuItemClick() {
+
+    }
+
+    private void onEditMenuItemClick() {
+
     }
 }

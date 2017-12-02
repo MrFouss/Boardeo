@@ -47,6 +47,8 @@ public class BoardDetailsActivity extends AppCompatActivity {
      * Firebase database instance
      */
     private DatabaseReference mDatabase;
+    private boolean menuInflated = false;
+    private boolean boardRetrieved = false;
 
     ///// LIFECYCLE /////
 
@@ -138,6 +140,9 @@ public class BoardDetailsActivity extends AppCompatActivity {
                     subCheckbox.setOnCheckedChangeListener((buttonView, isChecked) ->
                         onSubscriptionCheckboxCheckChange(buttonView, isChecked));
                 }
+
+                boardRetrieved = true;
+                updateMenuVisibility();
             }
 
             @Override
@@ -234,11 +239,18 @@ public class BoardDetailsActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.board_detail_menu, menu);
         // Setup of the edit button and its listener
-        if (board.getOwnerUid().equals(userUtils.getUserUid())) {
-            menu.findItem(R.id.board_edit_menu_item).setVisible(true);
-            menu.findItem(R.id.board_delete_menu_item).setVisible(true);
-        }
+        menuInflated = true;
+        updateMenuVisibility();
         return true;
+    }
+
+    private void updateMenuVisibility() {
+        if (menuInflated && boardRetrieved) {
+            if (board.getOwnerUid().equals(userUtils.getUserUid())) {
+                toolbar.getMenu().findItem(R.id.board_edit_menu_item).setVisible(true);
+                toolbar.getMenu().findItem(R.id.board_delete_menu_item).setVisible(true);
+            }
+        }
     }
 
     @Override
