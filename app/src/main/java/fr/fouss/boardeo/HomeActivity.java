@@ -472,7 +472,7 @@ public class HomeActivity extends AppCompatActivity
                 .target(new LatLng(0.0, 0.0))
                 .zoom(17.5f)
                 .build();
-        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
         mCircle = mMap.addCircle(new CircleOptions()
                 .center(new LatLng(0.0, 0.0))
