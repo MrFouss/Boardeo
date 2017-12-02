@@ -361,6 +361,8 @@ public class HomeActivity extends AppCompatActivity
             Marker marker = mMap.addMarker(new MarkerOptions()
                     .position(new LatLng(board.getLatitude(), board.getLongitude()))
                     .title(board.getName())
+                    .zIndex(2.0f)
+                    .visible(false)
                     .snippet(board.getShortDescription()));
             updateMarkerIcon(marker, key);
             marker.setTag(key);
@@ -416,6 +418,8 @@ public class HomeActivity extends AppCompatActivity
                             marker.setIcon(getMarkerIconFromDrawable(getResources().getDrawable(R.drawable.ic_subbed_board)));
                         else
                             marker.setIcon(getMarkerIconFromDrawable(getResources().getDrawable(R.drawable.ic_unsubbed_board)));
+
+                        marker.setVisible(true);
                     }
 
                     @Override
@@ -467,6 +471,7 @@ public class HomeActivity extends AppCompatActivity
                 .center(new LatLng(0.0, 0.0))
                 .clickable(false)
                 .radius(radius)
+                .zIndex(1.0f)
                 .fillColor(getResources().getColor(R.color.mapCircleFillColor))
                 .strokeColor(getResources().getColor(R.color.mapCircleStrokeColor))
                 .strokeWidth(5.0f));
