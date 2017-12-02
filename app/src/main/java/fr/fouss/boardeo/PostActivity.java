@@ -114,7 +114,15 @@ public class PostActivity extends AppCompatActivity {
     }
 
     private void deleteComment(String key) {
+        mDatabase.child("posts")
+                .child(postKey)
+                .child("comments")
+                .child(key)
+                .removeValue();
 
+        mDatabase.child("comments")
+                .child(key)
+                .removeValue();
     }
 
     private void onEditCommentMenuItemClick(String key, Comment comment) {
