@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Boardeo</string>
-    <string name="title_activity_home">Boardeo</string>
+    <string name="title_activity_home">Panneaux proches</string>
     <string name="auth_failed">Échec d\'authentification</string>
     <string name="loading">Chargement…</string>
     <string name="title_activity_sign_in_chooser">Connexion</string>
