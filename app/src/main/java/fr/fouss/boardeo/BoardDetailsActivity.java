@@ -339,10 +339,27 @@ public class BoardDetailsActivity extends AppCompatActivity {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         for (DataSnapshot post : dataSnapshot.getChildren()) {
                             String postKey = post.getKey();
-                            mDatabase
-                                    .child("posts")
-                                    .child(postKey)
-                                    .removeValue();
+
+                            mDatabase.child("posts").child(postKey).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    // remove comments data
+                                    for (DataSnapshot commentKey : dataSnapshot.child("comments").getChildren()) {
+                                        mDatabase.child("comments")
+                                                .child(commentKey.getKey())
+                                                .removeValue();
+                                    }
+                                    // remove post
+                                    mDatabase.child("posts")
+                                            .child(postKey)
+                                            .removeValue();
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
                         }
                     }
 
