@@ -1,6 +1,7 @@
 package fr.fouss.boardeo;
 
 import android.content.Intent;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -241,6 +242,8 @@ public class PostActivity extends AppCompatActivity {
                 assert post != null;
 
                 // Setup of texts
+                CollapsingToolbarLayout collapseLayout = findViewById(R.id.collapsing_toolbar_layout);
+                collapseLayout.setTitle(post.getTitle());
                 TextView titleLabel = findViewById(R.id.post_title_label);
                 TextView contentLabel = findViewById(R.id.post_content_label);
                 TextView dateLabel = findViewById(R.id.post_date_label);

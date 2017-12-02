@@ -7,45 +7,6 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginBottom="@dimen/fab_margin">
-
-        <TextView
-            android:id="@+id/post_title_label"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/Drawy.PostTitle"
-            android:text="@string/post_title_field" />
-
-        <TextView
-            android:id="@+id/post_author_label"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/small_spacing"
-            style="@style/Drawy.PostAuthor"
-            android:text="@string/post_author_field" />
-
-        <TextView
-            android:id="@+id/post_date_label"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/small_spacing"
-            style="@style/Drawy.PostDate"
-            android:text="@string/post_date_field" />
-
-        <TextView
-            android:id="@+id/post_content_label"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/fab_margin"
-            style="@style/Drawy.PostContent"
-            android:text="@string/post_content_field" />
-
-    </LinearLayout>
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/comment_recycler_view"
         android:layout_width="match_parent"
@@ -54,26 +15,26 @@
 
     </android.support.v7.widget.RecyclerView>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content">-->
 
-        <EditText
-            android:id="@+id/comment_edit_text"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:inputType="textLongMessage"
-            android:layout_weight="1"/>
+        <!--<EditText-->
+            <!--android:id="@+id/comment_edit_text"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:inputType="textLongMessage"-->
+            <!--android:layout_weight="1"/>-->
 
-        <Button
-            android:id="@+id/comment_button"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginLeft="@dimen/fab_margin"
-            android:layout_marginStart="@dimen/fab_margin"
-            android:layout_gravity="bottom"
-            android:background="@drawable/ic_send" />
+        <!--<Button-->
+            <!--android:id="@+id/comment_button"-->
+            <!--android:layout_width="24dp"-->
+            <!--android:layout_height="24dp"-->
+            <!--android:layout_marginLeft="@dimen/fab_margin"-->
+            <!--android:layout_marginStart="@dimen/fab_margin"-->
+            <!--android:layout_gravity="bottom"-->
+            <!--android:background="@drawable/ic_send" />-->
 
-    </LinearLayout>
+    <!--</LinearLayout>-->
 
 </LinearLayout>
