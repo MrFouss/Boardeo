@@ -5,6 +5,8 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,6 +26,7 @@ import java.util.Date;
 
 import fr.fouss.boardeo.data.Board;
 import fr.fouss.boardeo.data.Post;
+import fr.fouss.boardeo.listing.CommentAdapter;
 import fr.fouss.boardeo.utils.UserUtils;
 
 public class PostActivity extends AppCompatActivity {
@@ -58,6 +61,14 @@ public class PostActivity extends AppCompatActivity {
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        // comment list
+        RecyclerView commentRecyclerView = findViewById(R.id.comment_recycler_view);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        commentRecyclerView.setLayoutManager(layoutManager);
+        CommentAdapter boardAdapter = new CommentAdapter(this);
+        commentRecyclerView.setAdapter(boardAdapter);
+
+        // post infos and fields
         postKey = getIntent().getStringExtra(Post.KEY_FIELD);
         updateTextFields();
     }
