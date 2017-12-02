@@ -1,8 +1,12 @@
 package fr.fouss.boardeo;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -18,6 +22,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +36,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
@@ -41,8 +49,10 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import fr.fouss.boardeo.data.Board;
@@ -59,8 +69,6 @@ public class HomeActivity extends AppCompatActivity
     private static final int REQUEST_CODE_LOCATION_ALLOWANCE = 6942;
     private static final int REQUEST_CODE_LOCATION_ACTIVATE = 7357;
 
-    private static final double RADIUS = 100.0;
-
     /**
      * Firebase database instance
      */
@@ -73,6 +81,9 @@ public class HomeActivity extends AppCompatActivity
     private UserUtils userUtils;
 
     private TextView usernameLabel;
+
+    private double radius;
+    private LatLng lastPosition;
 
     private GoogleMap mMap;
     private LocationRequest mLocationRequest;
@@ -92,6 +103,9 @@ public class HomeActivity extends AppCompatActivity
         userUtils = new UserUtils(this);
         markerList = new HashMap<>();
         boardList = new HashMap<>();
+
+        radius = 100.0;
+        lastPosition = new LatLng(0.0, 0.0);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -204,48 +218,81 @@ public class HomeActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_clear_notifications) {
-            return true;
+        switch (item.getItemId()) {
+            case R.id.action_sort_by_distance:
+                sortByDistanceDialog();
+                return true;
+            case R.id.action_sort_by_tags:
+                sortByTagsDialog();
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
+    private void sortByDistanceDialog() {
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_sort_by_distance);
+        dialog.setCancelable(true);
+
+        TextView distanceLabel = dialog.findViewById(R.id.distanceLabel);
+        distanceLabel.setText(String.format(Locale.getDefault(), "%d", (int) radius));
+
+        SeekBar distanceBar = dialog.findViewById(R.id.distanceBar);
+        distanceBar.setProgress((int) radius);
+        distanceBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+                distanceLabel.setText(String.format(Locale.getDefault(), "%d", progress));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {}
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {}
+        });
+
+        dialog.findViewById(R.id.cancelButton).setOnClickListener(v -> dialog.cancel());
+        dialog.findViewById(R.id.applyButton).setOnClickListener(v -> {
+            radius = (double) distanceBar.getProgress();
+            displayNearbyBoards(lastPosition.latitude, lastPosition.longitude);
+            dialog.dismiss();
+        });
+
+        dialog.show();
+    }
+
+    private void sortByTagsDialog() {
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_sort_by_tags);
+        dialog.setCancelable(true);
+
+        dialog.show();
+    }
+
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.nav_my_boards:
-
+            case R.id.nav_home:
                 break;
-            case R.id.nav_boards:
+            case R.id.nav_my_boards:
                 startActivity(new Intent(this, BoardListActivity.class));
                 break;
             case R.id.nav_settings:
                 startActivity(new Intent(this, SettingsActivity.class));
                 break;
             case R.id.nav_sign_out:
-                // 1. Instantiate an AlertDialog.Builder with its constructor
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-                // 2. Chain together various setter methods to set the dialog characteristics
                 builder.setMessage(getString(R.string.dialog_content_sign_out))
                         .setTitle(getString(R.string.dialog_title_sign_out));
-
-                // Add the buttons
                 builder.setPositiveButton("Yes", (dialog, id1) -> {
                     userUtils.signOut();
                     startActivity(new Intent(this, SignInActivity.class));
                 });
-                builder.setNegativeButton("No", (dialog, id1) -> {
-                });
-
-                // 3. Get the AlertDialog from create()
+                builder.setNegativeButton("No", (dialog, id1) -> {});
                 AlertDialog dialog = builder.create();
                 dialog.show();
                 break;
@@ -266,7 +313,7 @@ public class HomeActivity extends AppCompatActivity
 
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                addMarker(dataSnapshot.getKey(), dataSnapshot.getValue(Board.class), latitude, longitude);
+                updateMarker(dataSnapshot.getKey(), dataSnapshot.getValue(Board.class), latitude, longitude);
             }
 
             @Override
@@ -293,16 +340,8 @@ public class HomeActivity extends AppCompatActivity
 
         dataReference.addChildEventListener(mNearbyBoardsListener);
 
-        if (mCircle != null)
-            mCircle.remove();
-
-        mCircle = mMap.addCircle(new CircleOptions()
-                .center(new LatLng(latitude, longitude))
-                .clickable(false)
-                .radius(RADIUS)
-                .fillColor(getResources().getColor(R.color.mapCircleFillColor))
-                .strokeColor(getResources().getColor(R.color.mapCircleStrokeColor))
-                .strokeWidth(5.0f));
+        mCircle.setRadius(radius);
+        mCircle.setCenter(new LatLng(latitude, longitude));
     }
 
     private Boolean isInRadius(Double centerLatitude,
@@ -318,11 +357,12 @@ public class HomeActivity extends AppCompatActivity
 
     private void addMarker(String key, Board board, Double currentLatitude, Double currentLongitude) {
         if (!markerList.containsKey(key)
-                && isInRadius(currentLatitude, currentLongitude, RADIUS, board.getLatitude(), board.getLongitude())) {
+                && isInRadius(currentLatitude, currentLongitude, radius, board.getLatitude(), board.getLongitude())) {
             Marker marker = mMap.addMarker(new MarkerOptions()
                     .position(new LatLng(board.getLatitude(), board.getLongitude()))
                     .title(board.getName())
                     .snippet(board.getShortDescription()));
+            updateMarkerIcon(marker, key);
             marker.setTag(key);
             markerList.put(key, marker);
             boardList.put(key, board);
@@ -335,10 +375,11 @@ public class HomeActivity extends AppCompatActivity
         // If the marker already exists
         if (marker != null) {
             // If it is still in range (it should be updated)
-            if (isInRadius(currentLatitude, currentLongitude, RADIUS, board.getLatitude(), board.getLongitude())) {
+            if (isInRadius(currentLatitude, currentLongitude, radius, board.getLatitude(), board.getLongitude())) {
                 marker.setPosition(new LatLng(board.getLatitude(), board.getLongitude()));
                 marker.setTitle(board.getName());
                 marker.setSnippet(board.getShortDescription());
+                updateMarkerIcon(marker, key);
 
             // If it is not anymore in range (it should be deleted)
             } else {
@@ -359,6 +400,41 @@ public class HomeActivity extends AppCompatActivity
         boardList.remove(key);
     }
 
+    private void updateMarkerIcon(Marker marker, String boardKey) {
+        mDatabase.child("users").child(userUtils.getUserUid()).child("subscriptions")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        boolean isSubscribed = false;
+
+                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                            if (ds.getKey().equals(boardKey))
+                                isSubscribed = true;
+                        }
+
+                        if (isSubscribed)
+                            marker.setIcon(getMarkerIconFromDrawable(getResources().getDrawable(R.drawable.ic_subbed_board)));
+                        else
+                            marker.setIcon(getMarkerIconFromDrawable(getResources().getDrawable(R.drawable.ic_unsubbed_board)));
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        throw databaseError.toException();
+                    }
+                });
+    }
+
+
+    private BitmapDescriptor getMarkerIconFromDrawable(Drawable drawable) {
+        Canvas canvas = new Canvas();
+        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        canvas.setBitmap(bitmap);
+        drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+        drawable.draw(canvas);
+        return BitmapDescriptorFactory.fromBitmap(bitmap);
+    }
+
     @Override
     public void onInfoWindowClick(Marker marker) {
         String key = (String) marker.getTag();
@@ -373,8 +449,6 @@ public class HomeActivity extends AppCompatActivity
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        mMap.setMinZoomPreference(17.5f);
-        mMap.setMaxZoomPreference(17.5f);
         mMap.setInfoWindowAdapter(new BoardeoInfoWindowAdapter());
         if (ActivityCompat.checkSelfPermission(this,
                 android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -382,15 +456,30 @@ public class HomeActivity extends AppCompatActivity
         }
 
         mMap.setOnInfoWindowClickListener(this);
+
+        CameraPosition cameraPosition = CameraPosition.builder()
+                .target(new LatLng(0.0, 0.0))
+                .zoom(17.5f)
+                .build();
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
+        mCircle = mMap.addCircle(new CircleOptions()
+                .center(new LatLng(0.0, 0.0))
+                .clickable(false)
+                .radius(radius)
+                .fillColor(getResources().getColor(R.color.mapCircleFillColor))
+                .strokeColor(getResources().getColor(R.color.mapCircleStrokeColor))
+                .strokeWidth(5.0f));
     }
 
     private void updateCameraPosition(Location location) {
 
-        CameraPosition cameraPosition = CameraPosition.builder()
-                .target(new LatLng(location.getLatitude(), location.getLongitude()))
-                .zoom(17.5f)
-                .build();
-        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+//        CameraPosition cameraPosition = CameraPosition.builder()
+//                .target(new LatLng(location.getLatitude(), location.getLongitude()))
+//                .build();
+//        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        mMap.animateCamera(CameraUpdateFactory.newLatLng(
+                new LatLng(location.getLatitude(), location.getLongitude())));
     }
 
     private void startLocationUpdates() {
@@ -467,6 +556,7 @@ public class HomeActivity extends AppCompatActivity
                 Location location = locationResult.getLastLocation();
                 updateCameraPosition(location);
                 displayNearbyBoards(location.getLatitude(), location.getLongitude());
+                lastPosition = new LatLng(location.getLatitude(), location.getLongitude());
             }
         }
     }

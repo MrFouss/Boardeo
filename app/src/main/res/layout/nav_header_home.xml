@@ -5,22 +5,19 @@
     android:background="@drawable/side_nav_bar"
     android:gravity="bottom"
     android:orientation="vertical"
-    android:padding="@dimen/activity_margin"
+    android:paddingTop="@dimen/big_spacing"
+    android:paddingBottom="@dimen/big_spacing"
+    android:paddingLeft="@dimen/fab_margin"
+    android:paddingRight="@dimen/fab_margin"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
-
-    <TextView
-        android:id="@+id/app_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="@dimen/big_spacing"
-        android:text="@string/app_name"
-        style="@style/Drawy.AppTitle" />
 
     <TextView
         android:id="@+id/username"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="@dimen/fab_margin"
+        android:layout_marginTop="@dimen/fab_margin"
+        android:textAllCaps="true"
+        android:textSize="20sp"
         android:text="@string/app_name" />
 
 </LinearLayout>

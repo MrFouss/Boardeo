@@ -5,13 +5,13 @@
 
     <group android:id="@+id/group_board">
         <item
-            android:id="@+id/nav_my_boards"
-            android:icon="@drawable/ic_my_boards"
-            android:title="@string/action_my_boards" />
+            android:id="@+id/nav_home"
+            android:icon="@drawable/ic_map"
+            android:title="@string/action_home_maps" />
         <item
-            android:id="@+id/nav_boards"
+            android:id="@+id/nav_my_boards"
             android:icon="@drawable/ic_dashboard"
-            android:title="@string/action_board_list" />
+            android:title="@string/action_my_boards" />
     </group>
 
     <group android:id="@+id/group_settings">
