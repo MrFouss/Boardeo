@@ -111,5 +111,7 @@
     <string name="comment_delete_label">Delete</string>
     <string name="coordinates">Coordinates : {%1$f ; %2$f}</string>
     <string name="owner">Owner : %1$s</string>
+    <string name="no_notification">No notification</string>
+    <string name="notification">New notification</string>
 
 </resources>

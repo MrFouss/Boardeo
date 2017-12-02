@@ -51,6 +51,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -182,6 +183,12 @@ public class HomeActivity extends AppCompatActivity
         super.onPause();
 
         stopLocationUpdates();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mDatabase.child("users").child(userUtils.getUserUid()).child("lastConnection").setValue(new Date().getTime());
     }
 
     @Override

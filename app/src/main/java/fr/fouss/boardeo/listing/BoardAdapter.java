@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.firebase.database.ChildEventListener;
@@ -27,6 +28,11 @@ import fr.fouss.boardeo.utils.UserUtils;
 public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.BoardViewHolder> {
 
     ///// FIELDS /////
+
+    /**
+     * Parent activity
+     */
+    private Activity activity;
 
     /**
      * Firebase database instance
@@ -51,6 +57,7 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.BoardViewHol
 
     public BoardAdapter(Activity activity) {
         super();
+        this.activity = activity;
         mDatabase = FirebaseDatabase.getInstance().getReference();
         userUtils = new UserUtils(activity);
     }
@@ -68,7 +75,7 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.BoardViewHol
         // inflate (parse and create) view from layout file
         View newView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.board_list_item, parent, false);
-        return new BoardViewHolder(newView);
+        return new BoardViewHolder(newView, activity);
     }
 
     /**
@@ -85,7 +92,21 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.BoardViewHol
             entry = it.next();
         }
         if (entry != null) {
-            holder.set(entry.getKey(), entry.getValue());
+            final Map.Entry<String, Board> tmpEntry = entry;
+            mDatabase.child("users").child(userUtils.getUserUid()).child("lastConnection")
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            Long timestamp = dataSnapshot.getValue(Long.class);
+                            assert timestamp != null;
+                            holder.set(tmpEntry.getKey(), tmpEntry.getValue(), timestamp);
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            throw databaseError.toException();
+                        }
+                    });
         }
     }
 
@@ -166,7 +187,7 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.BoardViewHol
         }
     }
 
-    public void removeBoard(String key) {
+    private void removeBoard(String key) {
         removeBoardListener(key);
         boards.remove(key);
         notifyDataSetChanged();
@@ -181,13 +202,18 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.BoardViewHol
 
         private TextView nameLabel;
         private TextView shortDescriptionLabel;
+        private ImageView notificationIcon;
         private String key;
+        private Activity activity;
 
-        public BoardViewHolder(View itemView) {
+        private BoardViewHolder(View itemView, Activity activity) {
             super(itemView);
+
+            this.activity = activity;
 
             this.nameLabel = itemView.findViewById(R.id.board_name_label);
             this.shortDescriptionLabel = itemView.findViewById(R.id.board_short_description_label);
+            this.notificationIcon = itemView.findViewById(R.id.board_notification_icon);
 
             itemView.setOnClickListener(v -> {
                 if (clickListener != null) {
@@ -196,10 +222,14 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.BoardViewHol
             });
         }
 
-        public void set(String key, Board board) {
+        public void set(String key, Board board, long userLastConnection) {
             this.key = key;
             this.nameLabel.setText(board.getName());
             this.shortDescriptionLabel.setText(board.getShortDescription());
+            if (board.getLastUpdate() > userLastConnection) {
+                this.notificationIcon.setImageDrawable(activity.getResources().getDrawable(R.drawable.ic_notification));
+                this.notificationIcon.setContentDescription(activity.getResources().getString(R.string.notification));
+            }
         }
     }
 
