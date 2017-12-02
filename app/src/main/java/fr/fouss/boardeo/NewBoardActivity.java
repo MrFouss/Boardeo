@@ -88,12 +88,6 @@ public class NewBoardActivity extends AppCompatActivity {
                     fullDescription.setText(board.getFullDescription());
                     CheckBox isPublic = findViewById(R.id.isPublicCheckbox);
                     isPublic.setChecked(board.getIsPublic());
-
-                    Button deleteButton = findViewById(R.id.board_delete_button);
-                    deleteButton.setVisibility(View.VISIBLE);
-                    deleteButton.setOnClickListener(
-                            v -> onDeleteButtonClick(v)
-                    );
                 }
 
                 @Override

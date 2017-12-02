@@ -231,7 +231,19 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
             this.key = key;
             this.contentLabel.setText(comment.getContent());
             this.dateLabel.setText(SimpleDateFormat.getDateTimeInstance().format(new Date(comment.getTimestamp())));
-            this.authorLabel.setText(comment.getAuthorUid()); // TODO replace with the right author's name
+
+            mDatabase.child("users").child(comment.getAuthorUid()).child("username")
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            authorLabel.setText(parentActivity.getResources().getString(R.string.by_author, dataSnapshot.getValue(String.class)));
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            throw databaseError.toException();
+                        }
+                    });
         }
 
         public String getKey() {

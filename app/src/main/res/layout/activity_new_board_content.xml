@@ -45,12 +45,4 @@
         android:layout_marginTop="@dimen/fab_margin"
         android:text="@string/public_board_field"/>
 
-    <Button
-        android:id="@+id/board_delete_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:text="@string/delete_board_button_text"
-        android:visibility="gone"/>
-
 </LinearLayout>

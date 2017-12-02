@@ -2,7 +2,7 @@
     <string name="app_name">Boardeo</string>
 
     <!-- Home activity -->
-    <string name="title_activity_home">Nearby boards</string>
+    <string name="title_activity_home">Boardeo</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_my_boards">My boards</string>
@@ -93,7 +93,6 @@
     <string name="post_date_field">Post date</string>
     <string name="post_author_field">Post author</string>
     <string name="title_post_activity">Post</string>
-    <string name="subscription_field">Subscription</string>
     <string name="delete_board_button_text">Delete</string>
     <string name="by_author">By %1$s</string>
     <string name="action_home_maps">Nearby boards</string>
@@ -110,5 +109,7 @@
     <string name="select_tags_filter">Select the tags to filter</string>
     <string name="comment_edit_label">Edit</string>
     <string name="comment_delete_label">Delete</string>
+    <string name="coordinates">Coordinates : {%1$f ; %2$f}</string>
+    <string name="owner">Owner : %1$s</string>
 
 </resources>

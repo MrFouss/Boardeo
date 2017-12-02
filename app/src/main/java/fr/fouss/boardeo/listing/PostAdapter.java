@@ -32,7 +32,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
     /**
      * Parent activity
      */
-    private Activity activity;
+    private Activity parentActivity;
 
     /**
      * Firebase database instance
@@ -59,7 +59,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         super();
         mDatabase = FirebaseDatabase.getInstance().getReference();
         userUtils = new UserUtils(activity);
-        this.activity = activity;
+        this.parentActivity = activity;
     }
 
     ///// NECESSARY IMPLEMENTATIONS /////
@@ -218,7 +218,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                     .addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
-                            authorLabel.setText(activity.getResources().getString(R.string.by_author, dataSnapshot.getValue(String.class)));
+                            authorLabel.setText(parentActivity.getResources().getString(R.string.by_author, dataSnapshot.getValue(String.class)));
                         }
 
                         @Override

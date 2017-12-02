@@ -187,10 +187,22 @@ public class PostActivity extends AppCompatActivity {
                 TextView contentLabel = findViewById(R.id.post_content_label);
                 TextView dateLabel = findViewById(R.id.post_date_label);
                 TextView authorLabel = findViewById(R.id.post_author_label);
+
                 titleLabel.setText(post.getTitle());
                 contentLabel.setText(post.getContent());
                 dateLabel.setText(SimpleDateFormat.getDateTimeInstance().format(new Date(post.getTimestamp())));
-                authorLabel.setText(post.getAuthorUid());
+                mDatabase.child("users").child(post.getAuthorUid()).child("username")
+                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                authorLabel.setText(getResources().getString(R.string.by_author, dataSnapshot.getValue(String.class)));
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                throw databaseError.toException();
+                            }
+                        });
 
                 if (!boardRetrievalLauched) {
                     boardRetrievalLauched = true;

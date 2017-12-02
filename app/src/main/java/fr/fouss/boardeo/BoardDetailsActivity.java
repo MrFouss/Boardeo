@@ -114,11 +114,25 @@ public class BoardDetailsActivity extends AppCompatActivity {
                 shortDescription.setText(board.getShortDescription());
                 TextView fullDescription = findViewById(R.id.boardFullDescription);
                 fullDescription.setText(board.getFullDescription());
-                TextView ownerUid = findViewById(R.id.boardOwnerUid);
-                ownerUid.setText(board.getOwnerUid());
                 TextView coordinates = findViewById(R.id.boardCoordinates);
-                String coordinatesText = board.getLatitude() + " ; " + board.getLongitude();
-                coordinates.setText(coordinatesText);
+                coordinates.setText(
+                        getResources().getString(R.string.coordinates,
+                                board.getLatitude(),
+                                board.getLongitude()));
+                TextView owner = findViewById(R.id.boardOwner);
+                mDatabase.child("users").child(board.getOwnerUid()).child("username")
+                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                owner.setText(getResources().getString(R.string.owner,
+                                        dataSnapshot.getValue(String.class)));
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                throw databaseError.toException();
+                            }
+                        });
 
                 // hide/show add post button depending on authorizations
                 FloatingActionButton addPostButton = findViewById(R.id.addPostButton);

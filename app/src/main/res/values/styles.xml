@@ -53,6 +53,43 @@
         <item name="android:ellipsize">end</item>
     </style>
 
+    <!-- Board detail -->
+
+    <style name="Drawy.BoardName">
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="Drawy.BoardAuthor">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/grey_400</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="Drawy.BoardCoordinates">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/grey_400</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="Drawy.BoardShortDescription">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/grey_100</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="Drawy.BoardFullDescription">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/grey_100</item>
+    </style>
+
     <!-- Board list items -->
 
     <style name="Drawy.BoardCardName">
@@ -69,6 +106,36 @@
         <item name="android:textColor">@color/grey_100</item>
         <item name="android:singleLine">true</item>
         <item name="android:ellipsize">end</item>
+    </style>
+
+    <!-- Post detail -->
+
+    <style name="Drawy.PostTitle">
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="Drawy.PostAuthor">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/grey_400</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="Drawy.PostDate">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/grey_400</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="Drawy.PostContent">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/grey_100</item>
     </style>
 
     <!-- Post list items -->
@@ -97,6 +164,29 @@
     </style>
 
     <style name="Drawy.PostCardContent">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/grey_100</item>
+        <item name="android:maxLines">5</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <!-- Comment list items -->
+
+    <style name="Drawy.CommentCardAuthor">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/grey_400</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="Drawy.CommentCardDate">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/grey_400</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="Drawy.CommentCardContent">
         <item name="android:textSize">12sp</item>
         <item name="android:textColor">@color/grey_100</item>
         <item name="android:maxLines">5</item>
