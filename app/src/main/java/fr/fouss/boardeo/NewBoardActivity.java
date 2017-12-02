@@ -22,6 +22,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.Iterator;
+import java.util.TreeMap;
+
 import fr.fouss.boardeo.data.Board;
 import fr.fouss.boardeo.utils.UserUtils;
 
@@ -145,7 +148,58 @@ public class NewBoardActivity extends AppCompatActivity {
     }
 
     public void deleteBoard() {
-        Toast.makeText(this, "Not implemented yet ...", Toast.LENGTH_LONG).show();
+        DatabaseReference boardRef = mDatabase
+                .child("boards")
+                .child(boardKey);
+
+        // unlink user subscriptions
+        boardRef.child("subscriptions")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot subscriber : dataSnapshot.getChildren()) {
+                    String subscriberKey = subscriber.getKey();
+                    mDatabase
+                            .child("users")
+                            .child(subscriberKey)
+                            .child("subscriptions")
+                            .child(boardKey)
+                            .removeValue();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Toast.makeText(NewBoardActivity.this,
+                        "Board subscriptions info couldn't be retrieved",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // unlink and delete posts
+        boardRef.child("posts")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for (DataSnapshot post : dataSnapshot.getChildren()) {
+                            String postKey = post.getKey();
+                            mDatabase
+                                    .child("posts")
+                                    .child(postKey)
+                                    .removeValue();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Toast.makeText(NewBoardActivity.this,
+                                "Board posts info couldn't be retrieved",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+        // delete board
+        boardRef.removeValue();
     }
 
     /**
@@ -188,12 +242,14 @@ public class NewBoardActivity extends AppCompatActivity {
 
         // If this is an update
         if (boardKey != null) {
-            board.setName(name);
-            board.setShortDescription(shortDescription);
-            board.setFullDescription(fullDescription);
-            board.setIsPublic(isPublic);
-
-            mDatabase.child("boards").child(boardKey).setValue(board);
+            TreeMap<String, Object> updates = new TreeMap<>();
+            updates.put("name", name);
+            updates.put("shortDescription", shortDescription);
+            updates.put("fullDescription", fullDescription);
+            updates.put("isPublic", isPublic);
+            mDatabase.child("boards")
+                    .child(boardKey)
+                    .updateChildren(updates);
 
         // If this is a board creation
         } else {
@@ -205,11 +261,16 @@ public class NewBoardActivity extends AppCompatActivity {
                 mDatabase.child("boards")
                         .child(newBoardKey)
                         .setValue(board);
+                mDatabase.child("boards")
+                        .child(newBoardKey)
+                        .child("subscriptions")
+                        .child(userUtils.getUserUid())
+                        .setValue("true");
                 mDatabase.child("users")
                         .child(userUtils.getUserUid())
                         .child("subscriptions")
                         .child(newBoardKey)
-                        .setValue(true);
+                        .setValue("true");
             } else {
                 Toast.makeText(this, "A more precise location is required to create a new board.", Toast.LENGTH_LONG).show();
                 return;
