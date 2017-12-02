@@ -31,6 +31,7 @@ import fr.fouss.boardeo.data.Board;
 import fr.fouss.boardeo.data.Comment;
 import fr.fouss.boardeo.data.Post;
 import fr.fouss.boardeo.listing.CommentAdapter;
+import fr.fouss.boardeo.listing.CommentView;
 import fr.fouss.boardeo.utils.UserUtils;
 
 public class PostActivity extends AppCompatActivity {
@@ -49,6 +50,7 @@ public class PostActivity extends AppCompatActivity {
     private ValueEventListener postListener;
 
     private Toolbar toolbar;
+    private CommentAdapter commentAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +75,7 @@ public class PostActivity extends AppCompatActivity {
         RecyclerView commentRecyclerView = findViewById(R.id.comment_recycler_view);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         commentRecyclerView.setLayoutManager(layoutManager);
-        CommentAdapter commentAdapter = new CommentAdapter(this);
+        commentAdapter = new CommentAdapter(this);
         commentRecyclerView.setAdapter(commentAdapter);
         commentAdapter.initCommentListListener(postKey);
 
@@ -84,19 +86,38 @@ public class PostActivity extends AppCompatActivity {
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        Log.i("Comment", "onContextItemSelected: position=" + info.position);
         switch (item.getItemId()) {
             case R.id.comment_edit_menu_item:
+                return true;
+            case R.id.comment_delete_menu_item:
                 return true;
             default:
                 return super.onContextItemSelected(item);
         }
     }
 
+
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        // inflate menu
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.comment_context_menu, menu);
+
+        // get corresponding comment key
+        CommentView commentView = v.findViewById(R.id.comment_view);
+        Comment comment = commentAdapter.getComment(commentView.getPosition());
+
+        if (userUtils.getUserUid().equals(comment.getAuthorUid())) {
+        // author
+        menu.findItem(R.id.comment_delete_menu_item).setVisible(true);
+        menu.findItem(R.id.comment_edit_menu_item).setVisible(true);
+        } else if (board.getOwnerUid().equals(userUtils.getUserUid())) {
+        menu.findItem(R.id.comment_delete_menu_item).setVisible(true);
+        menu.findItem(R.id.comment_edit_menu_item).setVisible(false);
+        } else {
+        menu.findItem(R.id.comment_delete_menu_item).setVisible(false);
+        menu.findItem(R.id.comment_edit_menu_item).setVisible(false);
+        }
     }
 
     private void onCommentButtonClick(View v) {

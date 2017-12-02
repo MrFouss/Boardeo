@@ -108,5 +108,7 @@
     <string name="cancel">Cancel</string>
     <string name="select_distance_filter">Select the filter distance</string>
     <string name="select_tags_filter">Select the tags to filter</string>
+    <string name="comment_edit_label">Edit</string>
+    <string name="comment_delete_label">Delete</string>
 
 </resources>
