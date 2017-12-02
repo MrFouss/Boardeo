@@ -98,13 +98,6 @@ public class PostActivity extends AppCompatActivity {
                 dateLabel.setText(SimpleDateFormat.getDateTimeInstance().format(new Date(post.getTimestamp())));
                 authorLabel.setText(post.getAuthorUid());
 
-                Button editPostButton = findViewById(R.id.edit_post_button);
-                if (post.getAuthorUid().equals(userUtils.getUserUid())) {
-                    editPostButton.setOnClickListener(v -> onEditPostButtonClicked(v));
-                } else {
-                    editPostButton.setVisibility(View.GONE);
-                }
-
                 if (!boardRetrievalLauched) {
                     boardRetrievalLauched = true;
                     retrieveBoard();
@@ -118,13 +111,6 @@ public class PostActivity extends AppCompatActivity {
                         Toast.LENGTH_SHORT).show();
             }
         });
-    }
-
-    public void onEditPostButtonClicked(View v) {
-        Intent intent = new Intent(this, NewPostActivity.class);
-        intent.putExtra(Post.KEY_FIELD, postKey);
-        intent.putExtra(Board.KEY_FIELD, post.getBoardKey());
-        startActivity(intent);
     }
 
     @Override
@@ -180,6 +166,9 @@ public class PostActivity extends AppCompatActivity {
     }
 
     private void onEditMenuItemClick() {
-
+        Intent intent = new Intent(this, NewPostActivity.class);
+        intent.putExtra(Post.KEY_FIELD, postKey);
+        intent.putExtra(Board.KEY_FIELD, post.getBoardKey());
+        startActivity(intent);
     }
 }

@@ -31,12 +31,6 @@
         android:layout_height="wrap_content"
         android:text="@string/post_author_field" />
 
-    <Button
-        android:id="@+id/edit_post_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/edit_field" />
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/comment_recycler_view"
         android:layout_width="match_parent"
