@@ -9,19 +9,101 @@
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        app:expanded="true">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/collapsing_toolbar_layout"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay"
-            app:title="Boardeo" />
+            android:layout_height="match_parent"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
+            style="@style/Widget.Shrine.CollapsingToolbar">
+
+            <LinearLayout
+                style="@style/Widget.Shrine.CollapsingToolbarContent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/fab_margin"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/boardName"
+                        style="@style/Drawy.BoardName"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:drawableLeft="@drawable/ic_locked_white"
+                        android:drawablePadding="@dimen/small_spacing"
+                        android:drawableStart="@drawable/ic_locked_white"
+                        android:text="@string/board_name_field" />
+
+                    <CheckBox
+                        android:id="@+id/board_detail_subscription_checkbox"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:button="@drawable/subscription_checkbox"
+                        android:checked="false"
+                        android:enabled="false" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/boardOwner"
+                    style="@style/Drawy.BoardAuthor"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/small_spacing"
+                    android:text="@string/owner_uid_field" />
+
+                <TextView
+                    android:id="@+id/boardCoordinates"
+                    style="@style/Drawy.BoardCoordinates"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/small_spacing"
+                    android:text="@string/coordinates_field" />
+
+                <TextView
+                    android:id="@+id/boardShortDescription"
+                    style="@style/Drawy.BoardShortDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/fab_margin"
+                    android:text="@string/short_description_field" />
+
+                <TextView
+                    android:id="@+id/boardFullDescription"
+                    style="@style/Drawy.BoardFullDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/fab_margin"
+                    android:text="@string/full_description_field" />
+
+            </LinearLayout>
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                app:layout_collapseMode="pin"/>
+
+        </android.support.design.widget.CollapsingToolbarLayout>
 
     </android.support.design.widget.AppBarLayout>
 
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="android.support.design.widget.AppBarLayout$ScrollingViewBehavior">
+
     <include layout="@layout/activity_board_details_content" />
+
+    </android.support.v4.widget.NestedScrollView>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/addPostButton"

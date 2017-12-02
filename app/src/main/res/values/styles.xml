@@ -193,4 +193,34 @@
         <item name="android:ellipsize">end</item>
     </style>
 
+    <!-- Collapsing toolbar -->
+
+    <style name="Invisible" parent="">
+        <item name="android:textColor">#00ffffff</item>
+    </style>
+
+    <style name="Widget.Shrine.CollapsingToolbar" parent="">
+        <item name="collapsedTitleTextAppearance">@style/TextAppearance.AppCompat.Title</item>
+        <item name="contentScrim">?attr/colorPrimary</item>
+        <item name="expandedTitleGravity">bottom</item>
+        <item name="expandedTitleMarginStart">124dp</item>
+        <item name="expandedTitleMarginTop">140dp</item>
+        <item name="expandedTitleTextAppearance">@style/Invisible</item>
+        <item name="scrimVisibleHeightTrigger">140dp</item>
+    </style>
+
+    <style name="Widget.Shrine.CollapsingToolbarImage" parent="">
+        <item name="android:layout_marginTop">48dp</item>
+        <item name="android:layout_marginLeft">-124dp</item>
+        <item name="android:adjustViewBounds">true</item>
+    </style>
+
+    <style name="Widget.Shrine.CollapsingToolbarContent" parent="">
+        <item name="android:layout_marginTop">?attr/actionBarSize</item>
+        <item name="android:layout_marginLeft">16dp</item>
+        <item name="android:layout_marginRight">16dp</item>
+        <item name="android:layout_gravity">top</item>
+        <item name="android:orientation">vertical</item>
+    </style>
+
 </resources>

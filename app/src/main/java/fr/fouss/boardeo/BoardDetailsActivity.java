@@ -2,6 +2,7 @@ package fr.fouss.boardeo;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -115,6 +116,8 @@ public class BoardDetailsActivity extends AppCompatActivity {
                 // Setup of texts
                 TextView name = findViewById(R.id.boardName);
                 name.setText(board.getName());
+                CollapsingToolbarLayout collapseToolbar = findViewById(R.id.collapsing_toolbar_layout);
+                collapseToolbar.setTitle(board.getName());
                 TextView shortDescription = findViewById(R.id.boardShortDescription);
                 shortDescription.setText(board.getShortDescription());
                 TextView fullDescription = findViewById(R.id.boardFullDescription);

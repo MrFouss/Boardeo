@@ -113,5 +113,6 @@
     <string name="owner">Owner : %1$s</string>
     <string name="no_notification">No notification</string>
     <string name="notification">New notification</string>
+    <string name="title_activity_test">TestActivity</string>
 
 </resources>
