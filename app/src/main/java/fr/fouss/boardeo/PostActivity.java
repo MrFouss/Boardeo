@@ -2,6 +2,7 @@ package fr.fouss.boardeo;
 
 import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -27,15 +28,18 @@ import fr.fouss.boardeo.utils.UserUtils;
 
 public class PostActivity extends AppCompatActivity {
 
-    private String postKey;
     private UserUtils userUtils;
     private DatabaseReference mDatabase;
 
-    private Post post;
-    public boolean boardRetrievalLauched = false;
-    private boolean boardRetrieved = false;
     private Board board;
+    private Post post;
+    private String postKey;
+
+    private boolean boardRetrievalLauched = false;
+    private boolean boardRetrieved = false;
     private boolean menuInflated = false;
+
+    private ValueEventListener postListener;
 
     private Toolbar toolbar;
 
@@ -61,7 +65,7 @@ public class PostActivity extends AppCompatActivity {
     private void retrieveBoard() {
         DatabaseReference dataReference = mDatabase.child("boards").child(post.getBoardKey());
 
-        dataReference.addValueEventListener(new ValueEventListener() {
+        dataReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 board = dataSnapshot.getValue(Board.class);
@@ -82,7 +86,7 @@ public class PostActivity extends AppCompatActivity {
     private void updateTextFields() {
         DatabaseReference dataReference = mDatabase.child("posts").child(postKey);
 
-        dataReference.addValueEventListener(new ValueEventListener() {
+        postListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 post = dataSnapshot.getValue(Post.class);
@@ -110,7 +114,8 @@ public class PostActivity extends AppCompatActivity {
                         "Post info couldn't be retrieved",
                         Toast.LENGTH_SHORT).show();
             }
-        });
+        };
+        dataReference.addValueEventListener(postListener);
     }
 
     @Override
@@ -162,7 +167,36 @@ public class PostActivity extends AppCompatActivity {
     }
 
     private void onDeleteMenuItemClick() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setMessage("Do you really want to delete this post ?")
+                .setTitle("Deletion")
+                .setCancelable(false)
+                .setPositiveButton("Yes", (dialog, which) -> deletePost())
+                .setNegativeButton("No", (dialog, which) -> {});
+        alert.create().show();
+    }
 
+    private void deletePost() {
+        // remove listener
+        mDatabase
+                .child("posts")
+                .child(postKey)
+                .removeEventListener(postListener);
+
+        // delete post reference in board
+        mDatabase
+                .child("boards")
+                .child(post.getBoardKey())
+                .child("posts")
+                .child(postKey)
+                .removeValue();
+
+        // remove post
+        mDatabase
+                .child("posts")
+                .child(postKey)
+                .removeValue();
+        finish();
     }
 
     private void onEditMenuItemClick() {

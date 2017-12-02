@@ -36,6 +36,8 @@ public class BoardDetailsActivity extends AppCompatActivity {
 
     private UserUtils userUtils;
 
+    private ValueEventListener boardListener;
+
     private Board board;
 
     private boolean myBoard = true;
@@ -99,7 +101,7 @@ public class BoardDetailsActivity extends AppCompatActivity {
     private void updateTextFields() {
         DatabaseReference dataReference = mDatabase.child("boards").child(boardKey);
 
-        dataReference.addValueEventListener(new ValueEventListener() {
+        boardListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 board = dataSnapshot.getValue(Board.class);
@@ -151,7 +153,8 @@ public class BoardDetailsActivity extends AppCompatActivity {
                         "Board info couldn't be retrieved",
                         Toast.LENGTH_SHORT).show();
             }
-        });
+        };
+        dataReference.addValueEventListener(boardListener);
     }
 
     public void updateSubscription() {
@@ -279,6 +282,9 @@ public class BoardDetailsActivity extends AppCompatActivity {
     }
 
     public void deleteBoard() {
+        // remove board listener
+        mDatabase.child("boards").child(boardKey).removeEventListener(boardListener);
+
         DatabaseReference boardRef = mDatabase
                 .child("boards")
                 .child(boardKey);
@@ -331,6 +337,7 @@ public class BoardDetailsActivity extends AppCompatActivity {
 
         // delete board
         boardRef.removeValue();
+        finish();
     }
 
 }
