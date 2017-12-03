@@ -486,10 +486,6 @@ public class HomeActivity extends AppCompatActivity
 
     private void updateCameraPosition(Location location) {
 
-//        CameraPosition cameraPosition = CameraPosition.builder()
-//                .target(new LatLng(location.getLatitude(), location.getLongitude()))
-//                .build();
-//        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
         mMap.animateCamera(CameraUpdateFactory.newLatLng(
                 new LatLng(location.getLatitude(), location.getLongitude())));
     }
