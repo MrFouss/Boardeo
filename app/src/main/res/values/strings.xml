@@ -8,13 +8,15 @@
     <string name="action_my_boards">My boards</string>
     <string name="action_board_list">Browse boards</string>
     <string name="action_settings">Settings</string>
-    <string name="action_clear_notifications">Clear notifications</string>
 
     <!-- Board list activity -->
-    <string name="title_activity_board_list">Board list</string>
+    <string name="title_activity_board_list">My boards</string>
 
     <!-- New board activity -->
     <string name="title_activity_new_board">Create a board</string>
+
+    <!-- New post activity -->
+    <string name="title_activity_new_post">Create new post</string>
 
     <!-- Board details activity -->
     <string name="title_activity_board_details">Board details</string>
@@ -36,7 +38,7 @@
     <string name="dialog_content_sign_out">Do you really want to sign out?</string>
 
     <!-- Email/password create account activity -->
-    <string name="title_activity_emailpassword_create_account">Create an account</string>
+    <string name="title_activity_create_account">Create an account</string>
     <string name="hint_username">Username</string>
     <string name="hint_password_again">Password (again)</string>
     <string name="dialog_title_email_account_created">Account successfully created</string>
@@ -68,5 +70,52 @@
     </string>
     <string name="verify_email">Verify email</string>
     <string name="auth_failed">Authentication failed</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="login_or_sign_in_with_google">Or sign in with Google</string>
+    <string name="login_no_account_yet_create_one">No account yet? Create one!</string>
+    <string name="login_forgot_your_password">Forgot your password?</string>
+    <string name="allow_location">Allow location</string>
+    <string name="activate_location">Activate location</string>
+    <string name="board_status">Board status</string>
+    <string name="board_name_field">Board name</string>
+    <string name="short_description_field">Short description</string>
+    <string name="full_description_field">Full description</string>
+    <string name="owner_uid_field">Owner UID</string>
+    <string name="coordinates_field">Coordinates</string>
+    <string name="edit_field">Edit</string>
+    <string name="public_board_field">Public board</string>
+    <string name="post_title_field">Post title</string>
+    <string name="comment_content_field">Comment content</string>
+    <string name="comment_date_field">Comment date</string>
+    <string name="comment_author_field">Comment author</string>
+    <string name="post_content_field">Post content</string>
+    <string name="post_date_field">Post date</string>
+    <string name="post_author_field">Post author</string>
+    <string name="title_post_activity">Post</string>
+    <string name="delete_board_button_text">Delete</string>
+    <string name="by_author">By %1$s</string>
+    <string name="action_home_maps">Nearby boards</string>
+    <string name="board_edit_menu_item_label">Edit</string>
+    <string name="board_delete_menu_item_label">Delete</string>
+    <string name="post_edit_menu_item_label">Edit</string>
+    <string name="post_delete_menu_item_label">Delete</string>
+    <string name="action_sort_boards">Sort nearby boards</string>
+    <string name="action_sort_by_distance">By distance</string>
+    <string name="action_sort_by_tags">By tags</string>
+    <string name="apply">Apply</string>
+    <string name="cancel">Cancel</string>
+    <string name="select_distance_filter">Select the filter distance</string>
+    <string name="select_tags_filter">Select the tags to filter</string>
+    <string name="comment_edit_label">Edit</string>
+    <string name="comment_delete_label">Delete</string>
+    <string name="coordinates">Coordinates : {%1$f ; %2$f}</string>
+    <string name="owner">Owner : %1$s</string>
+    <string name="no_notification">No notification</string>
+    <string name="notification">New notification</string>
+    <string name="board_color">Board color</string>
+    <string name="edit_board">Edit board</string>
+    <string name="edit_post">Edit post</string>
+    <string name="create_board">Create board</string>
+    <string name="create_post">Create post</string>
 
 </resources>

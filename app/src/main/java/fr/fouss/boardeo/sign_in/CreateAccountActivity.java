@@ -17,7 +17,7 @@ import fr.fouss.boardeo.utils.UserUtils;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
-public class EmailPasswordCreateAccountActivity extends SignInBaseActivity
+public class CreateAccountActivity extends SignInBaseActivity
         implements View.OnClickListener {
 
     /**
@@ -35,7 +35,7 @@ public class EmailPasswordCreateAccountActivity extends SignInBaseActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_email_password_create_account);
+        setContentView(R.layout.activity_create_account);
 
         mAuth = FirebaseAuth.getInstance();
 
