@@ -17,8 +17,8 @@
             android:background="?attr/colorPrimary"
             android:minHeight="?attr/actionBarSize"
             android:theme="?attr/actionBarTheme"
-            app:subtitle="Edit board"
-            app:title="Boardeo" />
+            app:subtitle="@string/edit_board"
+            app:title="@string/app_name" />
 
     </android.support.design.widget.AppBarLayout>
 

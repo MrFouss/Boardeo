@@ -2,20 +2,19 @@ package fr.fouss.boardeo;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
+import android.support.v7.widget.Toolbar;
 
 import com.flask.colorpicker.ColorPickerView;
 import com.flask.colorpicker.builder.ColorPickerDialogBuilder;
@@ -26,7 +25,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.Date;
-import java.util.Iterator;
 import java.util.TreeMap;
 
 import fr.fouss.boardeo.data.Board;
@@ -97,17 +95,29 @@ public class NewBoardActivity extends AppCompatActivity {
     }
 
     private void updateFields() {
+
+        Toolbar toolbar = findViewById(R.id.NewBoardToolbar);
+
         if (boardKey != null) {
+
             DatabaseReference dataReference = mDatabase.child("boards").child(boardKey);
             dataReference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     board = dataSnapshot.getValue(Board.class);
+                    assert board != null;
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        toolbar.setTitle(board.getName());
+                        toolbar.setSubtitle(R.string.edit_board);
+                    }
 
                     // Setup fields based on request intent
                     EditText title = findViewById(R.id.boardNameField);
                     title.setText(board.getName());
                     color = board.getColor();
+                    findViewById(R.id.appbar).setBackgroundColor(color.intValue());
+                    toolbar.setBackgroundColor(color.intValue());
                     Button colorButton = findViewById(R.id.colorButton);
                     colorButton.setBackgroundColor(color.intValue());
                     EditText shortDescription = findViewById(R.id.shortDescriptionField);
@@ -126,9 +136,14 @@ public class NewBoardActivity extends AppCompatActivity {
                 }
             });
         } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+                toolbar.setSubtitle(R.string.create_board);
+
             color = (long) 0xff555555;
             Button colorButton = findViewById(R.id.colorButton);
             colorButton.setBackgroundColor(color.intValue());
+            findViewById(R.id.appbar).setBackgroundColor(color.intValue());
+            toolbar.setBackgroundColor(color.intValue());
         }
     }
 

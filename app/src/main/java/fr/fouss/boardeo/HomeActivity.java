@@ -385,13 +385,10 @@ public class HomeActivity extends AppCompatActivity
         if (marker != null) {
             // If it is still in range (it should be updated)
             if (isInRadius(currentLatitude, currentLongitude, radius, board.getLatitude(), board.getLongitude())) {
-//                marker.setPosition(new LatLng(board.getLatitude(), board.getLongitude()));
-//                marker.setTitle(board.getName());
-//                marker.setSnippet(board.getShortDescription());
-//                updateMarkerIcon(marker, key);
-
-                removeMarker(key);
-                addMarker(key, board, currentLatitude, currentLongitude);
+                marker.setPosition(new LatLng(board.getLatitude(), board.getLongitude()));
+                marker.setTitle(board.getName());
+                marker.setSnippet(board.getShortDescription());
+                updateMarkerIcon(marker, key);
 
             // If it is not anymore in range (it should be deleted)
             } else {
@@ -586,19 +583,15 @@ public class HomeActivity extends AppCompatActivity
             // This means that getInfoContents will be called.
             render(marker, mContents);
             return mContents;
-//            return null;
         }
 
         @Override
         public View getInfoContents(Marker marker) {
-//            render(marker, mContents);
-//            return mContents;
             return null;
         }
 
         private void render(Marker marker, View view) {
             String key = (String) marker.getTag();
-
 
             int color = boardList.get(key).getColor().intValue();
             LinearLayout colorBanner = view.findViewById(R.id.colorBanner);

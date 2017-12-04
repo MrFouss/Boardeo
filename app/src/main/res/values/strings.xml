@@ -113,5 +113,9 @@
     <string name="no_notification">No notification</string>
     <string name="notification">New notification</string>
     <string name="board_color">Board color</string>
+    <string name="edit_board">Edit board</string>
+    <string name="edit_post">Edit post</string>
+    <string name="create_board">Create board</string>
+    <string name="create_post">Create post</string>
 
 </resources>

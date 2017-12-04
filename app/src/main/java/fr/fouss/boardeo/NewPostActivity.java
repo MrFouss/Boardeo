@@ -1,10 +1,12 @@
 package fr.fouss.boardeo;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
+import android.support.v7.widget.Toolbar;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -57,18 +59,19 @@ public class NewPostActivity extends AppCompatActivity {
     }
 
     private void updateFields() {
-        if (postKey != null && boardKey != null) {
-            DatabaseReference dataReference = mDatabase.child("posts").child(postKey);
-            dataReference.addListenerForSingleValueEvent(new ValueEventListener() {
+        Toolbar toolbar = findViewById(R.id.NewPostToolbar);
+
+        if (boardKey != null) {
+
+            DatabaseReference boardDataReference = mDatabase.child("boards").child(boardKey);
+            boardDataReference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    post = dataSnapshot.getValue(Post.class);
+                    Board board = dataSnapshot.getValue(Board.class);
+                    assert board != null;
 
-                    // Setup fields based on request intent
-                    EditText title = findViewById(R.id.post_title_field);
-                    title.setText(post.getTitle());
-                    EditText content = findViewById(R.id.post_content_field);
-                    content.setText(post.getContent());
+                    findViewById(R.id.appbar).setBackgroundColor(board.getColor().intValue());
+                    toolbar.setBackgroundColor(board.getColor().intValue());
                 }
 
                 @Override
@@ -78,7 +81,41 @@ public class NewPostActivity extends AppCompatActivity {
                             Toast.LENGTH_SHORT).show();
                 }
             });
+
+            if (postKey != null) {
+
+                DatabaseReference dataReference = mDatabase.child("posts").child(postKey);
+                dataReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        post = dataSnapshot.getValue(Post.class);
+                        assert post != null;
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            toolbar.setTitle(post.getTitle());
+                            toolbar.setSubtitle(R.string.edit_post);
+                        }
+
+                        // Setup fields based on request intent
+                        EditText title = findViewById(R.id.post_title_field);
+                        title.setText(post.getTitle());
+                        EditText content = findViewById(R.id.post_content_field);
+                        content.setText(post.getContent());
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Toast.makeText(NewPostActivity.this,
+                                "Post info couldn't be retrieved",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } else {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+                    toolbar.setSubtitle(R.string.create_post);
+            }
         }
+
     }
 
     ///// EVENTS /////
