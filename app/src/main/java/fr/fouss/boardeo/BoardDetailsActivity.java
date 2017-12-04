@@ -2,6 +2,7 @@ package fr.fouss.boardeo;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
@@ -114,9 +115,13 @@ public class BoardDetailsActivity extends AppCompatActivity {
                 assert board != null;
 
                 // Setup of texts
+                findViewById(R.id.app_bar_container).setBackgroundColor(board.getColor().intValue());
+                CollapsingToolbarLayout collapseToolbar = findViewById(R.id.collapsing_toolbar_layout);
+                collapseToolbar.setBackgroundColor(board.getColor().intValue());
+                collapseToolbar.setContentScrimColor(board.getColor().intValue());
+                toolbar.setBackgroundColor(board.getColor().intValue());
                 TextView name = findViewById(R.id.boardName);
                 name.setText(board.getName());
-                CollapsingToolbarLayout collapseToolbar = findViewById(R.id.collapsing_toolbar_layout);
                 collapseToolbar.setTitle(board.getName());
                 TextView shortDescription = findViewById(R.id.boardShortDescription);
                 shortDescription.setText(board.getShortDescription());

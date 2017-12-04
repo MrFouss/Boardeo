@@ -126,7 +126,7 @@ public class NewBoardActivity extends AppCompatActivity {
                 }
             });
         } else {
-            color = (long) 0xffffffff;
+            color = (long) 0xff555555;
             Button colorButton = findViewById(R.id.colorButton);
             colorButton.setBackgroundColor(color.intValue());
         }

@@ -7,6 +7,7 @@
     tools:context="fr.fouss.boardeo.BoardDetailsActivity">
 
     <android.support.design.widget.AppBarLayout
+        android:id="@+id/app_bar_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:expanded="true">
@@ -36,9 +37,9 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:drawableLeft="@drawable/ic_locked_white"
+                        android:drawableLeft="@drawable/ic_private"
                         android:drawablePadding="@dimen/small_spacing"
-                        android:drawableStart="@drawable/ic_locked_white"
+                        android:drawableStart="@drawable/ic_private"
                         android:text="@string/board_name_field" />
 
                     <CheckBox

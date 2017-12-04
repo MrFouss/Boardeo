@@ -22,11 +22,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
-import android.widget.Space;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -616,7 +613,7 @@ public class HomeActivity extends AppCompatActivity
                 if (isEditable)
                     titleUi.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_public, 0, 0, 0);
                 else
-                    titleUi.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_locked, 0, 0, 0);
+                    titleUi.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_private, 0, 0, 0);
             } else {
                 titleUi.setText("");
             }
