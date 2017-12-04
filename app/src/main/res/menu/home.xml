@@ -14,10 +14,10 @@
                 android:title="@string/action_sort_by_distance"
                 app:showAsAction="withText" />
 
-            <item
-                android:id="@+id/action_sort_by_tags"
-                android:title="@string/action_sort_by_tags"
-                app:showAsAction="withText" />
+            <!--<item-->
+                <!--android:id="@+id/action_sort_by_tags"-->
+                <!--android:title="@string/action_sort_by_tags"-->
+                <!--app:showAsAction="withText" />-->
 
         </menu>
 

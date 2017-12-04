@@ -230,9 +230,9 @@ public class HomeActivity extends AppCompatActivity
             case R.id.action_sort_by_distance:
                 sortByDistanceDialog();
                 return true;
-            case R.id.action_sort_by_tags:
-                sortByTagsDialog();
-                return true;
+//            case R.id.action_sort_by_tags:
+//                sortByTagsDialog();
+//                return true;
         }
 
         return super.onOptionsItemSelected(item);
