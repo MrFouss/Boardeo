@@ -123,6 +123,11 @@ public class BoardDetailsActivity extends AppCompatActivity {
 
                 // Setup of texts
                 TextView name = findViewById(R.id.boardName);
+                Boolean isPublic = board.getIsPublic();
+                if (isPublic)
+                    name.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_public, 0, 0, 0);
+                else
+                    name.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_private, 0, 0, 0);
                 name.setText(board.getName());
                 collapseToolbar.setTitle(board.getName());
                 TextView shortDescription = findViewById(R.id.boardShortDescription);

@@ -602,8 +602,8 @@ public class HomeActivity extends AppCompatActivity
             if (title != null) {
                 titleUi.setText(title);
 
-                Boolean isEditable = boardList.get(key).getIsPublic();
-                if (isEditable)
+                Boolean isPublic = boardList.get(key).getIsPublic();
+                if (isPublic)
                     titleUi.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_public, 0, 0, 0);
                 else
                     titleUi.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_private, 0, 0, 0);
