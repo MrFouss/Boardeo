@@ -76,7 +76,6 @@
     <string name="login_forgot_your_password">Forgot your password?</string>
     <string name="allow_location">Allow location</string>
     <string name="activate_location">Activate location</string>
-    <string name="board_banner">Board banner</string>
     <string name="board_status">Board status</string>
     <string name="board_name_field">Board name</string>
     <string name="short_description_field">Short description</string>
@@ -113,6 +112,5 @@
     <string name="owner">Owner : %1$s</string>
     <string name="no_notification">No notification</string>
     <string name="notification">New notification</string>
-    <string name="title_activity_test">TestActivity</string>
 
 </resources>

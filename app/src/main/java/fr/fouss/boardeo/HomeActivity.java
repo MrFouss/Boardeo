@@ -23,7 +23,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
+import android.widget.Space;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -385,10 +388,13 @@ public class HomeActivity extends AppCompatActivity
         if (marker != null) {
             // If it is still in range (it should be updated)
             if (isInRadius(currentLatitude, currentLongitude, radius, board.getLatitude(), board.getLongitude())) {
-                marker.setPosition(new LatLng(board.getLatitude(), board.getLongitude()));
-                marker.setTitle(board.getName());
-                marker.setSnippet(board.getShortDescription());
-                updateMarkerIcon(marker, key);
+//                marker.setPosition(new LatLng(board.getLatitude(), board.getLongitude()));
+//                marker.setTitle(board.getName());
+//                marker.setSnippet(board.getShortDescription());
+//                updateMarkerIcon(marker, key);
+
+                removeMarker(key);
+                addMarker(key, board, currentLatitude, currentLongitude);
 
             // If it is not anymore in range (it should be deleted)
             } else {
@@ -581,25 +587,34 @@ public class HomeActivity extends AppCompatActivity
         @Override
         public View getInfoWindow(Marker marker) {
             // This means that getInfoContents will be called.
-            return null;
+            render(marker, mContents);
+            return mContents;
+//            return null;
         }
 
         @Override
         public View getInfoContents(Marker marker) {
-            render(marker, mContents);
-            return mContents;
+//            render(marker, mContents);
+//            return mContents;
+            return null;
         }
 
         private void render(Marker marker, View view) {
-//            int bannerId = 0;
-//            ((ImageView) view.findViewById(R.id.banner)).setImageResource(bannerId);
+            String key = (String) marker.getTag();
+
+
+            int color = boardList.get(key).getColor().intValue();
+            LinearLayout colorBanner = view.findViewById(R.id.colorBanner);
+
+//            colorBanner.setActivated(false);
+//            colorBanner.setClickable(false);
+            colorBanner.setBackgroundColor(color);
 
             String title = marker.getTitle();
             TextView titleUi = view.findViewById(R.id.title);
             if (title != null) {
                 titleUi.setText(title);
 
-                String key = (String) marker.getTag();
                 Boolean isEditable = boardList.get(key).getIsPublic();
                 if (isEditable)
                     titleUi.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_public, 0, 0, 0);

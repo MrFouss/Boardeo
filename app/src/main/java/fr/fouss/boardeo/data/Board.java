@@ -1,23 +1,11 @@
 package fr.fouss.boardeo.data;
 
-import android.content.Intent;
-
-import java.util.HashMap;
-import java.util.Map;
-
 public class Board {
 
     public final static String KEY_FIELD = "BOARD_KEY";
-    public final static String NAME_FIELD = "boardName";
-    public final static String SHORT_DESCRIPTION_FIELD = "boardShortDescription";
-    public final static String FULL_DESCRIPTION_FIELD = "boardFullDescription";
-    public final static String OWNER_UID_FIELD = "boardOwnerUid";
-    public final static String LATITUDE_FIELD = "boardLatitude";
-    public final static String LONGITUDE_FIELD = "boardLongitude";
-    public final static String IS_PUBLIC_FIELD = "boardIsPublic";
-    public final static String LAST_UPDATE_FIELD = "boardLastUpdate";
 
     private String name;
+    private Long color;
 
     private String shortDescription;
     private String fullDescription;
@@ -33,6 +21,7 @@ public class Board {
     public Board() {}
 
     public Board(String name,
+                 Long color,
                  String ownerUid,
                  Double latitude,
                  Double longitude,
@@ -40,6 +29,7 @@ public class Board {
                  Long lastUpdate) {
 
         this.name = name;
+        this.color = color;
         this.shortDescription = "";
         this.fullDescription = "";
         this.ownerUid = ownerUid;
@@ -49,65 +39,12 @@ public class Board {
         this.lastUpdate = lastUpdate;
     }
 
-    /**
-     * Create a new Board from an intent
-     * @param intent
-     */
-    public Board(Intent intent) {
-        setFromIntent(intent);
-    }
-
-    public Map<String, Object> toMap() {
-        HashMap<String, Object> result = new HashMap<>();
-        result.put(NAME_FIELD, getName());
-        result.put(SHORT_DESCRIPTION_FIELD, getShortDescription());
-        result.put(FULL_DESCRIPTION_FIELD, getFullDescription());
-        result.put(OWNER_UID_FIELD, getOwnerUid());
-        result.put(LATITUDE_FIELD, getLatitude());
-        result.put(LONGITUDE_FIELD, getLongitude());
-        result.put(IS_PUBLIC_FIELD, getIsPublic());
-        result.put(LAST_UPDATE_FIELD, getLastUpdate());
-
-        return result;
-    }
-
-    /**
-     * Set data from intent
-     *
-     * @param intent the intent containing the board's info
-     */
-    public void setFromIntent(Intent intent) {
-        this.name = intent.getStringExtra(NAME_FIELD);
-        this.shortDescription = intent.getStringExtra(SHORT_DESCRIPTION_FIELD);
-        this.fullDescription = intent.getStringExtra(FULL_DESCRIPTION_FIELD);
-        this.ownerUid = intent.getStringExtra(OWNER_UID_FIELD);
-        this.latitude = intent.getDoubleExtra(LATITUDE_FIELD, 0.0);
-        this.longitude = intent.getDoubleExtra(LONGITUDE_FIELD, 0.0);
-        this.isPublic = intent.getBooleanExtra(IS_PUBLIC_FIELD, false);
-        this.lastUpdate = intent.getLongExtra(LAST_UPDATE_FIELD, 0);
-    }
-
-    /**
-     * Translate to an intent
-     *
-     * @param intent the intent to fill
-     * @return the same intent, but filled with the board's info
-     */
-    public Intent fillIntentExtras(Intent intent) {
-        intent.putExtra(NAME_FIELD, getName());
-        intent.putExtra(SHORT_DESCRIPTION_FIELD, getShortDescription());
-        intent.putExtra(FULL_DESCRIPTION_FIELD, getFullDescription());
-        intent.putExtra(OWNER_UID_FIELD, getOwnerUid());
-        intent.putExtra(LATITUDE_FIELD, getLatitude());
-        intent.putExtra(LONGITUDE_FIELD, getLongitude());
-        intent.putExtra(IS_PUBLIC_FIELD, getIsPublic());
-        intent.putExtra(LAST_UPDATE_FIELD, getLastUpdate());
-
-        return intent;
-    }
-
     public String getName() {
         return name;
+    }
+
+    public Long getColor() {
+        return color;
     }
 
     public String getShortDescription() {
@@ -136,6 +73,10 @@ public class Board {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setColor(Long color) {
+        this.color = color;
     }
 
     public void setShortDescription(String shortDescription) {

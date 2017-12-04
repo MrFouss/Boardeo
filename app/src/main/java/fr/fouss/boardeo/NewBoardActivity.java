@@ -2,6 +2,7 @@ package fr.fouss.boardeo;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -16,6 +17,8 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.flask.colorpicker.ColorPickerView;
+import com.flask.colorpicker.builder.ColorPickerDialogBuilder;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -41,6 +44,7 @@ public class NewBoardActivity extends AppCompatActivity {
     private String boardKey;
     private Board board;
 
+    private Long color;
     private Double latitude;
     private Double longitude;
     private float minAccuracy = 15.0f;
@@ -67,6 +71,26 @@ public class NewBoardActivity extends AppCompatActivity {
         // Setup validation button
         findViewById(R.id.validateBoardEditionButton).setOnClickListener(this::onValidateButtonClick);
 
+        // Setup color button
+        findViewById(R.id.colorButton).setOnClickListener(v -> ColorPickerDialogBuilder
+                .with(this)
+                .setTitle("Choose a color")
+                .initialColor(color.intValue())
+                .wheelType(ColorPickerView.WHEEL_TYPE.CIRCLE)
+                .density(10)
+                .showAlphaSlider(false)
+                .showLightnessSlider(false)
+                .showColorEdit(false)
+                .showColorPreview(false)
+                .setOnColorSelectedListener(selectedColor -> {})
+                .setPositiveButton("Ok", (dialog, selectedColor, allColors) -> {
+                    color = (long) selectedColor;
+                    findViewById(R.id.colorButton).setBackgroundColor(selectedColor);
+                })
+                .setNegativeButton("Cancel", (dialog, which) -> {})
+                .build()
+                .show());
+
         // Get the board's key if it exists, null otherwise
         boardKey = getIntent().getStringExtra(Board.KEY_FIELD);
         updateFields();
@@ -83,6 +107,9 @@ public class NewBoardActivity extends AppCompatActivity {
                     // Setup fields based on request intent
                     EditText title = findViewById(R.id.boardNameField);
                     title.setText(board.getName());
+                    color = board.getColor();
+                    Button colorButton = findViewById(R.id.colorButton);
+                    colorButton.setBackgroundColor(color.intValue());
                     EditText shortDescription = findViewById(R.id.shortDescriptionField);
                     shortDescription.setText(board.getShortDescription());
                     EditText fullDescription = findViewById(R.id.fullDescriptionField);
@@ -98,6 +125,10 @@ public class NewBoardActivity extends AppCompatActivity {
                             Toast.LENGTH_SHORT).show();
                 }
             });
+        } else {
+            color = (long) 0xffffffff;
+            Button colorButton = findViewById(R.id.colorButton);
+            colorButton.setBackgroundColor(color.intValue());
         }
     }
 
@@ -131,71 +162,6 @@ public class NewBoardActivity extends AppCompatActivity {
     }
 
     ///// EVENTS /////
-
-    public void onDeleteButtonClick(View v) {
-        AlertDialog.Builder alert = new AlertDialog.Builder(this);
-        alert.setMessage("Do you really want to delete this board ?")
-                .setTitle("Deletion")
-                .setCancelable(false)
-                .setPositiveButton("Yes", (dialog, which) -> deleteBoard())
-                .setNegativeButton("No", (dialog, which) -> {});
-        alert.create().show();
-    }
-
-    public void deleteBoard() {
-        DatabaseReference boardRef = mDatabase
-                .child("boards")
-                .child(boardKey);
-
-        // unlink user subscriptions
-        boardRef.child("subscriptions")
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot subscriber : dataSnapshot.getChildren()) {
-                    String subscriberKey = subscriber.getKey();
-                    mDatabase
-                            .child("users")
-                            .child(subscriberKey)
-                            .child("subscriptions")
-                            .child(boardKey)
-                            .removeValue();
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Toast.makeText(NewBoardActivity.this,
-                        "Board subscriptions info couldn't be retrieved",
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        // unlink and delete posts
-        boardRef.child("posts")
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        for (DataSnapshot post : dataSnapshot.getChildren()) {
-                            String postKey = post.getKey();
-                            mDatabase
-                                    .child("posts")
-                                    .child(postKey)
-                                    .removeValue();
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        Toast.makeText(NewBoardActivity.this,
-                                "Board posts info couldn't be retrieved",
-                                Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-        // delete board
-        boardRef.removeValue();
-    }
 
     /**
      * When validation floating button is clicked
@@ -239,6 +205,7 @@ public class NewBoardActivity extends AppCompatActivity {
         if (boardKey != null) {
             TreeMap<String, Object> updates = new TreeMap<>();
             updates.put("name", name);
+            updates.put("color", color);
             updates.put("shortDescription", shortDescription);
             updates.put("fullDescription", fullDescription);
             updates.put("isPublic", isPublic);
@@ -249,7 +216,7 @@ public class NewBoardActivity extends AppCompatActivity {
         // If this is a board creation
         } else {
             if (latitude != null && longitude != null) {
-                board = new Board(name, userUtils.getUserUid(), latitude, longitude, isPublic, new Date().getTime());
+                board = new Board(name, color, userUtils.getUserUid(), latitude, longitude, isPublic, new Date().getTime());
                 board.setShortDescription(shortDescription);
                 board.setFullDescription(fullDescription);
                 String newBoardKey = mDatabase.child("boards").push().getKey();
