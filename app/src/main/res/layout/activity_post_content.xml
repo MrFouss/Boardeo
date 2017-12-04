@@ -15,26 +15,4 @@
 
     </android.support.v7.widget.RecyclerView>
 
-    <!--<LinearLayout-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content">-->
-
-        <!--<EditText-->
-            <!--android:id="@+id/comment_edit_text"-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:inputType="textLongMessage"-->
-            <!--android:layout_weight="1"/>-->
-
-        <!--<Button-->
-            <!--android:id="@+id/comment_button"-->
-            <!--android:layout_width="24dp"-->
-            <!--android:layout_height="24dp"-->
-            <!--android:layout_marginLeft="@dimen/fab_margin"-->
-            <!--android:layout_marginStart="@dimen/fab_margin"-->
-            <!--android:layout_gravity="bottom"-->
-            <!--android:background="@drawable/ic_send" />-->
-
-    <!--</LinearLayout>-->
-
 </LinearLayout>

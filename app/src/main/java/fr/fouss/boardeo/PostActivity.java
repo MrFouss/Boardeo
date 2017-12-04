@@ -219,6 +219,14 @@ public class PostActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 board = dataSnapshot.getValue(Board.class);
                 assert board != null;
+
+                // Setup of colors
+                findViewById(R.id.app_bar_container).setBackgroundColor(board.getColor().intValue());
+                CollapsingToolbarLayout collapseToolbar = findViewById(R.id.collapsing_toolbar_layout);
+                collapseToolbar.setBackgroundColor(board.getColor().intValue());
+                collapseToolbar.setContentScrimColor(board.getColor().intValue());
+                toolbar.setBackgroundColor(board.getColor().intValue());
+
                 boardRetrieved = true;
                 updateMenuVisibility();
             }
@@ -242,8 +250,8 @@ public class PostActivity extends AppCompatActivity {
                 assert post != null;
 
                 // Setup of texts
-                CollapsingToolbarLayout collapseLayout = findViewById(R.id.collapsing_toolbar_layout);
-                collapseLayout.setTitle(post.getTitle());
+                CollapsingToolbarLayout collapseToolbar = findViewById(R.id.collapsing_toolbar_layout);
+                collapseToolbar.setTitle(post.getTitle());
                 TextView titleLabel = findViewById(R.id.post_title_label);
                 TextView contentLabel = findViewById(R.id.post_content_label);
                 TextView dateLabel = findViewById(R.id.post_date_label);

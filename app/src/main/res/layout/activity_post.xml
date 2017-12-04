@@ -5,7 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="fr.fouss.boardeo.BoardDetailsActivity">
+
     <android.support.design.widget.AppBarLayout
+        android:id="@+id/app_bar_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:expanded="true">
@@ -84,7 +86,7 @@
         <EditText
             android:id="@+id/comment_edit_text"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:inputType="textLongMessage"
             android:layout_weight="1"/>
 

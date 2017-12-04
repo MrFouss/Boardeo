@@ -114,12 +114,14 @@ public class BoardDetailsActivity extends AppCompatActivity {
                 board = dataSnapshot.getValue(Board.class);
                 assert board != null;
 
-                // Setup of texts
+                // Setup of colors
                 findViewById(R.id.app_bar_container).setBackgroundColor(board.getColor().intValue());
                 CollapsingToolbarLayout collapseToolbar = findViewById(R.id.collapsing_toolbar_layout);
                 collapseToolbar.setBackgroundColor(board.getColor().intValue());
                 collapseToolbar.setContentScrimColor(board.getColor().intValue());
                 toolbar.setBackgroundColor(board.getColor().intValue());
+
+                // Setup of texts
                 TextView name = findViewById(R.id.boardName);
                 name.setText(board.getName());
                 collapseToolbar.setTitle(board.getName());
