@@ -15,6 +15,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.Date;
+import java.util.TreeMap;
 
 import fr.fouss.boardeo.data.Board;
 import fr.fouss.boardeo.data.Post;
@@ -155,11 +156,15 @@ public class NewPostActivity extends AppCompatActivity {
         if (postKey != null) {
             post.setTitle(title);
             post.setContent(content);
-            post.setTimestamp(new Date().getTime());
 
-            mDatabase.child("posts").child(postKey).setValue(post);
+            TreeMap<String, Object> updates = new TreeMap<>();
+            updates.put("title", title);
+            updates.put("content", content);
+            mDatabase.child("posts")
+                    .child(postKey)
+                    .updateChildren(updates);
 
-            // If this is a board creation
+        // If this is a board creation
         } else {
             long timestamp = new Date().getTime();
             post = new Post(title, content, timestamp, userUtils.getUserUid(), boardKey);

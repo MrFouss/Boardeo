@@ -27,6 +27,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TreeMap;
 
 import fr.fouss.boardeo.data.Board;
 import fr.fouss.boardeo.data.Comment;
@@ -164,50 +165,49 @@ public class PostActivity extends AppCompatActivity {
     }
 
     private void onCommentButtonClick(View v) {
+
+        EditText commentEditText = findViewById(R.id.comment_edit_text);
+        if (commentEditText.length() == 0) {
+            commentEditText.setError("Missing");
+            return;
+        }
+
         if (isEditingComment) {
             isEditingComment = false;
 
-            EditText commentEditText = findViewById(R.id.comment_edit_text);
-            editingComment.setContent(commentEditText.getText().toString());
-            editingComment.setTimestamp(new Date().getTime());
-
-            mDatabase
-                    .child("comments")
+            TreeMap<String, Object> updates = new TreeMap<>();
+            updates.put("content", commentEditText.getText().toString());
+            mDatabase.child("comments")
                     .child(editingCommentKey)
-                    .setValue(editingComment);
+                    .updateChildren(updates);
 
             commentEditText.setText("");
 
         } else {
-            EditText commentEditText = findViewById(R.id.comment_edit_text);
-            if (commentEditText.length() == 0) {
-                commentEditText.setError("Missing");
-            } else {
-                // create comment in comments
-                Comment newComment = new Comment(
-                        commentEditText.getText().toString(),
-                        new Date().getTime(),
-                        userUtils.getUserUid(),
-                        postKey);
-                String newCommentKey = mDatabase
-                        .child("comments")
-                        .push().getKey();
-                mDatabase
-                        .child("comments")
-                        .child(newCommentKey)
-                        .setValue(newComment);
+            // create comment in comments
+            Comment newComment = new Comment(
+                    commentEditText.getText().toString(),
+                    new Date().getTime(),
+                    userUtils.getUserUid(),
+                    postKey);
+            String newCommentKey = mDatabase
+                    .child("comments")
+                    .push().getKey();
+            mDatabase
+                    .child("comments")
+                    .child(newCommentKey)
+                    .setValue(newComment);
 
-                // set comment ref in post
-                mDatabase
-                        .child("posts")
-                        .child(postKey)
-                        .child("comments")
-                        .child(newCommentKey)
-                        .setValue("true");
+            // set comment ref in post
+            mDatabase
+                    .child("posts")
+                    .child(postKey)
+                    .child("comments")
+                    .child(newCommentKey)
+                    .setValue("true");
 
-                // clear comment edit text
-                commentEditText.setText("");
-            }
+            // clear comment edit text
+            commentEditText.setText("");
         }
     }
 
