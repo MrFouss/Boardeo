@@ -605,9 +605,6 @@ public class HomeActivity extends AppCompatActivity
 
             int color = boardList.get(key).getColor().intValue();
             LinearLayout colorBanner = view.findViewById(R.id.colorBanner);
-
-//            colorBanner.setActivated(false);
-//            colorBanner.setClickable(false);
             colorBanner.setBackgroundColor(color);
 
             String title = marker.getTitle();

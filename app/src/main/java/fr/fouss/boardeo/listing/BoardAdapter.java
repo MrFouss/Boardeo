@@ -200,6 +200,7 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.BoardViewHol
      */
     public class BoardViewHolder extends RecyclerView.ViewHolder {
 
+        private ImageView colorBanner;
         private TextView nameLabel;
         private TextView shortDescriptionLabel;
         private ImageView notificationIcon;
@@ -211,6 +212,7 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.BoardViewHol
 
             this.activity = activity;
 
+            this.colorBanner = itemView.findViewById(R.id.colorBanner);
             this.nameLabel = itemView.findViewById(R.id.board_name_label);
             this.shortDescriptionLabel = itemView.findViewById(R.id.board_short_description_label);
             this.notificationIcon = itemView.findViewById(R.id.board_notification_icon);
@@ -222,8 +224,9 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.BoardViewHol
             });
         }
 
-        public void set(String key, Board board, long userLastConnection) {
+        private void set(String key, Board board, long userLastConnection) {
             this.key = key;
+            this.colorBanner.setBackgroundColor(board.getColor().intValue());
             this.nameLabel.setText(board.getName());
             this.shortDescriptionLabel.setText(board.getShortDescription());
             if (board.getLastUpdate() > userLastConnection) {

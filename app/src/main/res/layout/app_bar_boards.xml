@@ -20,7 +20,7 @@
             android:background="?attr/colorPrimary"
             android:minHeight="?attr/actionBarSize"
             android:theme="?attr/actionBarTheme"
-            app:title="Boardeo" />
+            app:title="@string/title_activity_board_list" />
 
     </android.support.design.widget.AppBarLayout>
 
